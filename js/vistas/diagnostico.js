@@ -7,7 +7,7 @@
    ============================================================ */
 "use strict";
 
-const VERSION_APP = "13";
+const VERSION_APP = "14";
 
 V.diagnostico = function(){
   const u = SESION.usuario;

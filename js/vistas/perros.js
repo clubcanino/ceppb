@@ -25,7 +25,13 @@ V.perros = function(){
     {t:"Sexo", s:p=>p.sexo, r:p=>`<span class="sexo">${p.sexo==="M"?"♂":"♀"}</span>`},
     {t:"Nacimiento", s:p=>p.fechaNacimiento||"", r:p=>`<span class="num">${fmtF(p.fechaNacimiento)}</span><div class="mini">${edadTxt(meses(p.fechaNacimiento))}</div>`},
     {t:"LOE", s:p=>p.loe||"", r:p=>`<span class="num">${esc(p.loe||"—")}</span>`},
-    {t:"Anexo A", s:p=>R.anexoA(p).ok?1:0, r:p=>{const a=R.anexoA(p); return a.ok?`<span class="chip ok">Completo</span>`:a.bloqueos.length?`<span class="chip block">Excluido</span>`:`<span class="chip warn">${a.items.filter(i=>i.e==="falta").length} pendientes</span>`;}},
+    {t:"Anexo A", s:p=>R.anexoA(p).ok?1:0, r:p=>{
+      const a = R.anexoA(p);
+      if (a.ok) return `<span class="chip ok">Completo</span>`;
+      if (a.bloqueos.length) return `<span class="chip block">Excluido</span>`;
+      const faltan = a.items.filter(i => i.e === "falta").map(i => i.t);
+      return `<span class="chip warn" title="Falta: ${esc(faltan.join(" · "))}">Falta ${esc(faltan.slice(0,1).join(""))}${faltan.length>1?` +${faltan.length-1}`:""}</span>`;
+    }},
     {t:"Aptos de cría", s:p=>R.aptosDe(p,res).length, r:p=>chipApto(R.aptosDe(p,res))},
     {t:"Sin validar", s:p=>R.pendientes(p,res).total, r:p=>{const n=R.pendientes(p,res).total; return n?`<span class="chip warn">${n}</span>`:`<span class="dim">—</span>`;}},
     {t:"Propietario", s:p=>p.propietarioNombre||"", r:p=>p.propietarioId ? esc(nombreSocio(p.propietarioId)) : esc(p.propietarioNombre||"—")},

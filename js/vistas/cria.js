@@ -8,7 +8,15 @@ V.aptos = function(){
   const cols = [
     {t:"Ejemplar", s:x=>x.p.nombre, r:x=>`<span class="nm">${esc(x.p.nombre)}</span><div class="mini">${esc(x.p.variedad||"")} · ${x.p.sexo==="M"?"♂":"♀"}</div>`},
     {t:"Edad", s:x=>meses(x.p.fechaNacimiento)||0, r:x=>`<span class="num">${edadTxt(meses(x.p.fechaNacimiento))}</span>`},
-    {t:"Anexo A", s:x=>R.anexoA(x.p).ok?1:0, r:x=>{const a=R.anexoA(x.p);return a.ok?`<span class="chip ok">✓</span>`:a.bloqueos.length?`<span class="chip block">✕</span>`:`<span class="chip warn">${a.items.filter(i=>i.e==="falta").length}</span>`;}},
+    {t:"Anexo A", s:x=>R.anexoA(x.p).ok?1:0, r:x=>{
+      const a = R.anexoA(x.p);
+      if (a.ok) return `<span class="chip ok">✓</span>`;
+      if (a.bloqueos.length)
+        return `<span class="chip block" title="${esc(a.bloqueos.map(b=>b.t+": "+b.d).join(" · "))}">✕ ${esc(a.bloqueos[0].t)}</span>`;
+      /* Qué falta, no cuántas cosas faltan: «2» no le dice nada a nadie */
+      const faltan = a.items.filter(i => i.e === "falta").map(i => i.t);
+      return `<span class="chip warn" title="Falta: ${esc(faltan.join(" · "))}">Falta ${esc(faltan.slice(0,2).join(", "))}${faltan.length>2?` +${faltan.length-2}`:""}</span>`;
+    }},
     ...FIGURAS.map(f => ({t:f.c, via:f.via, s:x=>{const g=x.figs.find(y=>y.fig.c===f.c);return g.cumple?2:g.excluido?0:1;},
       r:x=>{const g=x.figs.find(y=>y.fig.c===f.c);
         return g.cumple?`<span class="chip ok">Cumple</span>`:g.excluido?`<span class="chip block">Excluido</span>`:`<span class="chip warn" title="${esc(g.items.filter(i=>i.e!=="ok").map(i=>i.t).join(" · "))}">Faltan ${g.faltan}</span>`;}})),
@@ -46,6 +54,7 @@ V.cruce = function(){
         :v==="aviso"?"<b>Cruce posible con condiciones.</b> Revisa los avisos antes de solicitarlo a la Comisión de Cría."
         :"<b>Cruce conforme al reglamento.</b> Ambos reproductores cumplen los requisitos comprobables."}</div>
       ${listaReq(l.map(x=>({t:x.t, d:x.r||"", e:x.n==="bloqueo"?"no":x.n==="aviso"?"falta":"ok"})))}
+      ${tarjetaConsanguinidad(m, h)}
       ${R.esInter(m,h) ? (()=>{ const sol = solicitudDe(m.id,h.id); const e = sol?EST_SOL[sol.estado]:null;
         return `<div class="card lift" style="margin-top:16px"><div class="card-h"><h3>Autorización previa del club</h3>
           <span class="spacer"></span>${sol?`<span class="chip ${e.c}">${esc(e.t)}</span>`:`<span class="chip warn">Sin solicitar</span>`}</div>
@@ -142,3 +151,64 @@ V.intervar = function(){
 };
 
 /* --- Camadas --- */
+
+
+/* ============================================================
+   Lo que la genealogía dice de una alianza
+   ============================================================ */
+function tarjetaConsanguinidad(macho, hembra){
+  ponerCenso(C("perros"));
+
+  const f    = consanguinidadPrevista(macho.id, hembra.id);
+  const j    = juzgarConsanguinidad(f);
+  const com  = ancestrosComunes(macho.id, hembra.id);
+  const gm   = profundidadPedigri(macho.id), gh = profundidadPedigri(hembra.id);
+  const cm   = completitudPedigri(macho.id, 5), ch = completitudPedigri(hembra.id, 5);
+  const pct  = x => (x * 100).toFixed(2).replace(".", ",") + " %";
+  const gen  = Math.min(gm, gh);
+
+  return `
+  <div class="card lift" style="margin-top:16px">
+    <div class="card-h"><h3>Consanguinidad prevista</h3>
+      <span class="hint">coeficiente de Wright</span></div>
+    <div class="card-b">
+      <div style="display:flex;gap:22px;align-items:baseline;flex-wrap:wrap">
+        <div>
+          <div class="v" style="font-family:var(--disp);font-size:38px;font-weight:800;line-height:1;
+               color:var(--${j.nivel === "block" ? "block" : j.nivel === "warn" ? "warn" : "ok"})">${pct(f)}</div>
+          <div class="mini" style="margin-top:4px">de la camada</div>
+        </div>
+        <div style="flex:1;min-width:220px">
+          <div class="chip ${j.nivel}">${esc(j.t)}</div>
+          <div class="mini" style="margin-top:6px">${esc(j.d)}</div>
+        </div>
+      </div>
+
+      ${gen < 3 ? `<div class="note warn" style="margin-top:14px">
+        <b>Este número vale poco todavía.</b> El club solo conoce
+        ${gen === 0 ? "ninguna generación" : gen === 1 ? "una generación" : gen + " generaciones"}
+        de estos ejemplares. Con pedigríes cortos, la consanguinidad real casi siempre es mayor
+        que la calculada: lo que no se conoce no puede contarse.</div>` : ""}
+
+      <table style="margin-top:14px"><tbody>
+        <tr><td>Generaciones conocidas</td>
+            <td style="text-align:right"><b>${gm}</b> del macho · <b>${gh}</b> de la hembra</td></tr>
+        <tr><td>Pedigrí completo hasta 5 generaciones</td>
+            <td style="text-align:right"><b>${pct(cm)}</b> · <b>${pct(ch)}</b></td></tr>
+        <tr><td>Ancestros comunes</td>
+            <td style="text-align:right"><b>${com.length}</b></td></tr>
+      </tbody></table>
+
+      ${com.length ? `
+        <div class="mini" style="margin:14px 0 6px">De dónde viene la consanguinidad:</div>
+        <table><thead><tr><th>Ancestro</th><th style="text-align:right">Por el macho</th>
+          <th style="text-align:right">Por la hembra</th><th style="text-align:right">Aporta</th></tr></thead>
+          <tbody>${com.slice(0, 10).map(a => `<tr>
+            <td>${a.id ? `<a class="linkish" href="#/perro/${esc(a.id)}">${esc(a.nombre || "—")}</a>` : esc(a.nombre)}</td>
+            <td style="text-align:right" class="num">${a.porPadre ? a.porPadre + "ª gen." : "él mismo"}</td>
+            <td style="text-align:right" class="num">${a.porMadre ? a.porMadre + "ª gen." : "ella misma"}</td>
+            <td style="text-align:right" class="num">${pct(a.aporta)}</td></tr>`).join("")}
+          </tbody></table>` : ""}
+    </div>
+  </div>`;
+}

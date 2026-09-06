@@ -12,7 +12,7 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
 const ARCHIVOS = [
-  "js/config.js", "js/util.js", "js/reglamento.js", "js/privacidad.js",
+  "js/config.js", "js/util.js", "js/reglamento.js", "js/genealogia.js", "js/privacidad.js",
   "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js", "js/media.js",
   "js/formularios.js", "js/formularios-def.js",
   "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
