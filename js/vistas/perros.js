@@ -40,8 +40,43 @@ V.perros = function(){
           .map(a=>`<option ${fPer.afijo===a?"selected":""}>${esc(a)}</option>`).join("")}</select>
       <select class="inp" id="f-per-salud"><option value="">Salud: cualquiera</option><option value="completa" ${fPer.salud==="completa"?"selected":""}>Anexo A completo</option><option value="pendiente" ${fPer.salud==="pendiente"?"selected":""}>Anexo A pendiente</option></select>
       <span class="spacer"></span><span class="mini">${l.length} ejemplares</span>
-    </div>${tabla("per", cols, l, p=>"perro/"+p.id)}`;
+      ${puedeDarDeAlta() ? `<button class="btn brand" data-form="perro|">Dar de alta un ejemplar</button>` : ""}
+    </div>
+    ${l.length
+      ? tabla("per", cols, l, p => "perro/" + p.id)
+      : vacioEjemplares()}`;
 };
+
+/* Un socio registra sus perros; la junta, cualquiera. El visitante mira. */
+function puedeDarDeAlta(){
+  return SESION.rol !== "visitante" && (SESION.esAdmin || !!SESION.socio);
+}
+
+function vacioEjemplares(){
+  const hayFiltro = fPer.q || fPer.var || fPer.sexo || fPer.apto || fPer.salud || fPer.afijo;
+  const total = perrosVisibles().length;
+
+  if (hayFiltro && total){
+    return `<div class="card"><div class="empty">
+      <b>Ningún ejemplar cumple estos filtros</b>
+      Hay ${total} registrados: prueba a quitar alguno.
+    </div></div>`;
+  }
+
+  return `<div class="card"><div class="empty">
+    <b>Todavía no hay ejemplares registrados</b>
+    ${SESION.rol === "visitante"
+      ? `Entra con tu correo de socio para ver el libro y registrar tus perros.
+         <div style="margin-top:14px"><a class="btn brand" href="#/entrar">Entrar</a></div>`
+      : SESION.socio || SESION.esAdmin
+        ? `Empieza por el tuyo: nombre, variedad, LOE y fecha de nacimiento.
+           Las pruebas de salud y los resultados se añaden después, en su ficha.
+           <div style="margin-top:14px"><button class="btn brand" data-form="perro|">Dar de alta un ejemplar</button></div>`
+        : `Tu cuenta no está atada a ninguna ficha de socio, así que todavía no puedes
+           registrar ejemplares.
+           <div style="margin-top:14px"><button class="btn" data-ir="ajustes">Vincular mi cuenta</button></div>`}
+  </div></div>`;
+}
 
 /* --- Ficha de ejemplar --- */
 let tabPerro = "resumen";

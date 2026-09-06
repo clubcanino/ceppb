@@ -162,3 +162,28 @@ test("ninguna columna del esquema se queda fuera de columnas.js", async () => {
     }
   }
 });
+
+/* ============================================================
+   Campos en blanco
+   ============================================================ */
+test("un desplegable sin elegir no viaja como texto vacío", () => {
+  /* Postgres rechaza "" en una columna de identificador: dar de alta
+     un perro sin padre ni madre registrados fallaba por esto. */
+  const f = aFila({
+    nombre: "Uma", variedad: "Malinois", sexo: "H",
+    padreId: "", madreId: "", criadorId: "", propietarioId: "s1",
+    fechaNacimiento: "", loe: "",
+  }, "perros");
+  assert.equal(f.padre_id, null);
+  assert.equal(f.madre_id, null);
+  assert.equal(f.criador_id, null);
+  assert.equal(f.fecha_nacimiento, null, "una fecha en blanco es null, no una cadena");
+  assert.equal(f.loe, null);
+  assert.equal(f.propietario_id, "s1", "lo que sí tiene valor se mantiene");
+});
+
+test("el cero y el falso no se confunden con vacío", () => {
+  const f = aFila({nMachos: 0, nHembras: 0, recomendada: false}, "camadas");
+  assert.equal(f.n_machos, 0, "cero cachorros macho es un dato, no un hueco");
+  assert.equal(f.recomendada, false);
+});

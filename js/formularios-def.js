@@ -86,7 +86,7 @@ const FORMS = {
       n.propietarioNombre = byId(C("socios"), n.propietarioId)?.nombreCompleto || "";
       n.criadorNombre = cri?.nombreCompleto || "";
       if(cri && cri.afijo && !d.afijo) n.afijo = cri.afijo;          // el afijo lo pone el criador
-      n.afijoSocioId = (cri && cri.afijo && n.afijo === cri.afijo) ? cri.id : "";
+      n.afijoSocioId = (cri && cri.afijo && n.afijo === cri.afijo) ? cri.id : null;
       if(!n.fechaAlta) n.fechaAlta = hoy();
       delete n.id;
       const nid = await guardar("perros", id, n);

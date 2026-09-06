@@ -47,7 +47,12 @@ function aFila(obj, col){
        activo, es_criador). Ni unos ni otros son columnas: mandarlos haría
        fallar el guardado entero. */
     if (permitidas && !permitidas.includes(columna)) continue;
-    o[columna] = fuente[k];
+
+    /* Un desplegable sin elegir y una fecha en blanco llegan como texto
+       vacío. Postgres no admite "" donde espera un identificador, una
+       fecha o un número: sin esto, dar de alta un perro sin padre
+       registrado fallaba entero. Vacío significa «no hay dato». */
+    o[columna] = fuente[k] === "" ? null : fuente[k];
   }
   return o;
 }

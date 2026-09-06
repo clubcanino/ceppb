@@ -177,3 +177,42 @@ test("con ficha de socio, el área de socio vuelve a aparecer", () => {
   assert.equal(rutas.includes("yo"), true);
   assert.equal(rutas.includes("cuenta"), true);
 });
+
+/* ============================================================
+   Dar de alta un ejemplar tiene que estar a la vista
+   ============================================================ */
+test("un socio ve el botón de dar de alta en Ejemplares", () => {
+  vm.runInContext(`
+    SESION.rol = "socio"; SESION.esAdmin = false;
+    SESION.usuario = {id:"u1", email:"socio@ejemplo.test"};
+    SESION.socio = {id:"s1", numero:896, nombre:"Ana", apellidos:"Ruiz", nombreCompleto:"Ana Ruiz"};
+    S.listo = true; S.error = null; S.data.perros = [];
+  `, ctx);
+  const html = vm.runInContext('String(V.perros(""))', ctx);
+  assert.match(html, /Dar de alta un ejemplar/,
+    "el sitio natural para registrar un perro es la pantalla de Ejemplares");
+  assert.match(html, /data-form="perro\|"/);
+});
+
+test("la junta también puede dar de alta ejemplares", () => {
+  vm.runInContext(`SESION.rol = "admin"; SESION.esAdmin = true; SESION.socio = null;`, ctx);
+  const html = vm.runInContext('String(V.perros(""))', ctx);
+  assert.match(html, /Dar de alta un ejemplar/);
+});
+
+test("un visitante no ve el botón, ve la invitación a entrar", () => {
+  vm.runInContext(`SESION.rol = "visitante"; SESION.esAdmin = false;
+                   SESION.usuario = null; SESION.socio = null;`, ctx);
+  const html = vm.runInContext('String(V.perros(""))', ctx);
+  assert.doesNotMatch(html, /data-form="perro\|"/,
+    "quien no ha entrado no registra perros");
+  assert.match(html, /Entrar/);
+});
+
+test("con la lista vacía se explica qué hacer, no se deja en blanco", () => {
+  vm.runInContext(`SESION.rol = "socio"; SESION.esAdmin = false;
+    SESION.socio = {id:"s1", numero:896, nombre:"Ana", apellidos:"Ruiz", nombreCompleto:"Ana Ruiz"};
+    S.data.perros = [];`, ctx);
+  const html = vm.runInContext('String(V.perros(""))', ctx);
+  assert.match(html, /Todavía no hay ejemplares registrados/);
+});
