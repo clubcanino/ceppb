@@ -38,6 +38,12 @@ SESION.iniciar = async function(sb){
       await SESION.reclamarPendiente();
       await SESION.refrescar();
       await recargar();
+      /* Ha entrado por el enlace del correo y todavía no tiene
+         contraseña: lo primero es que se ponga una. */
+      if (!SESION.tieneContrasena()){
+        location.hash = "#/ajustes";
+        setTimeout(() => toast("Elige una contraseña para entrar a partir de ahora"), 500);
+      }
     } else {
       SESION.socio = null; SESION.esAdmin = false; SESION.rol = "visitante";
     }
@@ -90,20 +96,25 @@ SESION.pedirEnlace = async function(email){
   if (error) throw error;
 };
 
-/* La contraseña se la pone el socio; nadie más la ve, tampoco la junta */
+/* La contraseña se la pone el socio; nadie más la ve, tampoco la junta.
+
+   Se deja además una marca en la cuenta —no la contraseña, solo el
+   hecho de tenerla— porque Supabase no dice si una cuenta la tiene, y
+   hace falta saberlo para llevar al socio a ponerla la primera vez. */
 SESION.ponerContrasena = async function(contrasena){
   if (!contrasena || contrasena.length < 8)
     throw new Error("La contraseña necesita ocho caracteres como mínimo");
-  const { error } = await SESION.sb.auth.updateUser({ password: contrasena });
+  const { data, error } = await SESION.sb.auth.updateUser({
+    password: contrasena,
+    data: { tiene_clave: true },
+  });
   if (error) throw error;
+  if (data && data.user) SESION.usuario = data.user;
 };
 
-/* ¿Tiene ya contraseña puesta, o entró solo por el enlace? */
 SESION.tieneContrasena = function(){
   const u = SESION.usuario;
-  if (!u) return false;
-  const ident = u.identities || [];
-  return ident.some(i => i.provider === "email") && !!u.confirmed_at;
+  return !!(u && u.user_metadata && u.user_metadata.tiene_clave);
 };
 
 SESION.salir = async function(){
