@@ -13,7 +13,7 @@ import vm from "node:vm";
 
 const ARCHIVOS = [
   "js/config.js", "js/util.js", "js/reglamento.js", "js/privacidad.js",
-  "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js",
+  "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js", "js/media.js",
   "js/formularios.js", "js/formularios-def.js",
   "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
   "js/vistas/perros.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
@@ -215,4 +215,31 @@ test("con la lista vacía se explica qué hacer, no se deja en blanco", () => {
     S.data.perros = [];`, ctx);
   const html = vm.runInContext('String(V.perros(""))', ctx);
   assert.match(html, /Todavía no hay ejemplares registrados/);
+});
+
+/* ============================================================
+   Alta de ejemplar: afijo y criador
+   ============================================================ */
+test("el criador se escribe con sugerencias, no con un desplegable", () => {
+  const def = readFileSync(new URL("../js/formularios-def.js", import.meta.url), "utf8");
+  const bloque = def.slice(def.indexOf("  perro(id){"), def.indexOf("  salud(id){"));
+  assert.match(bloque, /k:"criadorNombre".*tipo:"buscador"/s,
+    "el criador es un campo de escribir con sugerencias");
+  assert.doesNotMatch(bloque, /k:"criadorId".*tipo:"select"/s,
+    "no puede ser un desplegable cerrado de 347 nombres");
+});
+
+test("las sugerencias son solo nombres, sin decir quién tiene afijo", () => {
+  const def = readFileSync(new URL("../js/formularios-def.js", import.meta.url), "utf8");
+  const fn = def.slice(def.indexOf("function nombresDeSocios"));
+  assert.doesNotMatch(fn.slice(0, 300), /afijo/,
+    "quien registra un perro no tiene por qué ver quién es criador y quién no");
+});
+
+test("el afijo se escribe a mano y no depende de elegir criador", () => {
+  const def = readFileSync(new URL("../js/formularios-def.js", import.meta.url), "utf8");
+  const bloque = def.slice(def.indexOf("  perro(id){"), def.indexOf("  salud(id){"));
+  const campoAfijo = bloque.match(/\{k:"afijo"[^}]*\}/)[0];
+  assert.doesNotMatch(campoAfijo, /tipo:"select"/, "el afijo es texto libre");
+  assert.doesNotMatch(campoAfijo, /Se rellena solo/, "ya no depende del desplegable de criador");
 });

@@ -19,6 +19,17 @@ function campo(f){
   if(f.tipo === "check")
     return `<div class="f ${f.wide?"wide":""}"><label style="display:flex;gap:7px;align-items:center;cursor:pointer">
       <input type="checkbox" name="${f.k}" ${v?"checked":""}> ${esc(f.l)}</label>${f.h?`<span class="hint2">${esc(f.h)}</span>`:""}</div>`;
+  /* Campo de escribir con sugerencias: se teclea y van saliendo los
+     nombres que encajan. No es un desplegable cerrado: si el criador
+     no es socio del club, se escribe y ya está. */
+  if(f.tipo === "buscador"){
+    const id = "dl-" + f.k + "-" + Math.random().toString(36).slice(2, 7);
+    return `<div class="f ${f.wide?"wide":""}"><label>${esc(f.l)}</label>
+      <input class="inp" name="${f.k}" value="${esc(v)}" list="${id}" autocomplete="off" placeholder="${esc(f.ph||"")}">
+      <datalist id="${id}">${(f.op||[]).map(o => `<option value="${esc(o)}"></option>`).join("")}</datalist>
+      ${f.h?`<span class="hint2">${esc(f.h)}</span>`:""}</div>`;
+  }
+
   return `<div class="f ${f.wide?"wide":""}"><label>${esc(f.l)}</label>
     <input class="inp" type="${f.tipo||"text"}" name="${f.k}" value="${esc(v)}" placeholder="${esc(f.ph||"")}">${f.h?`<span class="hint2">${esc(f.h)}</span>`:""}</div>`;
 }

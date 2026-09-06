@@ -57,17 +57,26 @@ const FORMS = {
     const p = byId(C("perros"), id) || {};
     abrirForm(id ? "Editar ejemplar" : "Dar de alta un ejemplar", [
       {t:"Identificación", f:[
-        {k:"nombre", l:"Nombre", v:p.nombre, wide:true},
-        {k:"afijo", l:"Afijo del criadero", v:p.afijo, h:"Se rellena solo con el afijo del criador; edítalo si el criador no es socio"},
+        {k:"nombre", l:"Nombre", v:p.nombre, h:"Sin el afijo: ese va en el campo de al lado"},
+        {k:"afijo", l:"Afijo del criadero", v:p.afijo, ph:"Del criador, tal como figura en el LOE",
+         h:"Escríbelo tal cual. Si es el afijo de un socio del club, la ficha se enlaza sola con él"},
         {k:"variedad", l:"Variedad", tipo:"select", op:[""].concat(VARIEDADES), v:p.variedad},
         {k:"sexo", l:"Sexo", tipo:"select", op:[["M","Macho"],["H","Hembra"]], v:p.sexo||"M"},
         {k:"fechaNacimiento", l:"Fecha de nacimiento", tipo:"date", v:p.fechaNacimiento},
         {k:"loe", l:"LOE", v:p.loe, h:"Libro de Orígenes Español"}, {k:"chip", l:"Microchip", v:p.chip},
         {k:"tatuaje", l:"Tatuaje", v:p.tatuaje}, {k:"color", l:"Color / capa", v:p.color},
       ]},
-      {t:"Vínculos", f:[
-        {k:"propietarioId", l:"Propietario", tipo:"select", op:optSocios(), v:p.propietarioId ?? (miSocioId()||""), wide:true},
-        {k:"criadorId", l:"Criador", tipo:"select", op:optSociosAfijo(), v:p.criadorId, wide:true, h:"El afijo forma parte del nombre registrado del ejemplar y pertenece al criador"},
+      {t:"Criador", d:"Quien crió la camada. Escribe y van saliendo los socios del club; si el criador no lo es, escribe su nombre y ya está.", f:[
+        {k:"criadorNombre", l:"Nombre del criador", tipo:"buscador",
+         op: nombresDeSocios(), v: nombreDelCriador(p), wide:true,
+         ph:"Empieza a escribir el nombre"},
+      ]},
+
+      {t:"Vínculos", d:"Solo si los progenitores ya están registrados en el club. Si no lo están, déjalo en blanco: se puede completar más adelante.", f:[
+        {k:"propietarioId", l:"Propietario", tipo:"select",
+         op: SESION.esAdmin ? optSocios() : [[miSocioId()||"", (SESION.socio && SESION.socio.nombreCompleto) || "Tú"]],
+         v: p.propietarioId ?? (miSocioId()||""), wide:true,
+         h: SESION.esAdmin ? "" : "Tus perros van a tu nombre"},
         {k:"padreId", l:"Padre", tipo:"select", op:optPerros("M"), v:p.padreId},
         {k:"madreId", l:"Madre", tipo:"select", op:optPerros("H"), v:p.madreId},
       ]},
@@ -82,12 +91,20 @@ const FORMS = {
     ], async d => {
       const n = Object.assign({}, p, d);
       n.adnProgenitores = !!d.adnProgenitores;
-      const cri = byId(C("socios"), n.criadorId);
-      n.propietarioNombre = byId(C("socios"), n.propietarioId)?.nombreCompleto || "";
-      n.criadorNombre = cri?.nombreCompleto || "";
-      if(cri && cri.afijo && !d.afijo) n.afijo = cri.afijo;          // el afijo lo pone el criador
-      n.afijoSocioId = (cri && cri.afijo && n.afijo === cri.afijo) ? cri.id : null;
-      if(!n.fechaAlta) n.fechaAlta = hoy();
+      n.afijo = limpiarAfijo(d.afijo);
+
+      /* El criador se escribe con el buscador. Si el nombre es de un
+         socio del club, la ficha se enlaza con él y así ese criador
+         sigue viendo lo criado bajo su afijo. Si no lo es —que pasa a
+         menudo— se guarda igual y no pasa nada.
+
+         Si no se escribió criador, se prueba por el afijo: muchos
+         afijos del censo identifican al criador sin más. */
+      const cri = socioPorNombre(d.criadorNombre) || socioPorAfijo(n.afijo);
+      n.criadorId    = cri ? cri.id : null;
+      n.afijoSocioId = cri ? cri.id : null;
+      delete n.criadorNombre;
+
       delete n.id;
       const nid = await guardar("perros", id, n);
       toast(id ? "Ficha actualizada" : "Ejemplar dado de alta");
@@ -307,9 +324,11 @@ const FORMS = {
       ]},
     ], async d => {
       if(!/^https?:\/\//i.test(d.url)) return toast("El enlace debe empezar por https://");
-      await guardar("media", null, {tipo:"video", sujeto:"perro", sujetoId:perroId, url:d.url,
-        titulo:d.titulo || "Vídeo", proveedor:proveedorDe(d.url), fecha:hoy(), subidoPor:miSocioId() || "junta"});
-      olvidarMedia(perroId); toast("Vídeo añadido"); render();
+      /* sujetoId no es columna: el vínculo se llama perro_id */
+      await guardar("media", null, {tipo:"video", sujeto:"perro", perroId, url:d.url,
+        titulo:d.titulo || "Vídeo", proveedor:proveedorDe(d.url), fecha:hoy(),
+        subidoPor:miSocioId()});
+      toast("Vídeo añadido"); render();
     });
   },
   bancario(id){
@@ -324,3 +343,44 @@ const FORMS = {
     });
   },
 };
+
+
+/* ------------------------------------------------------------
+   Afijos
+   ------------------------------------------------------------ */
+
+/* Se guarda como lo escribe el propietario, solo sin espacios de más */
+function limpiarAfijo(v){
+  const t = String(v ?? "").replace(/\s+/g, " ").trim();
+  return t || null;
+}
+
+/* ¿Hay un socio con este afijo? Se compara sin distinguir mayúsculas
+   ni acentos: en el censo conviven «ALT BARIDA» y «Alt Baridà». */
+function socioPorAfijo(afijo){
+  if (!afijo) return null;
+  const buscado = norm(afijo);
+  return C("socios").find(s => s.afijo && norm(s.afijo) === buscado) || null;
+}
+
+/* Los nombres del censo, para las sugerencias del buscador. Solo el
+   nombre: si tiene afijo o no es cosa suya, no de quien registra. */
+function nombresDeSocios(){
+  return C("socios")
+    .map(s => s.nombreCompleto)
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, "es"));
+}
+
+function nombreDelCriador(p){
+  const s = p && p.criadorId ? byId(C("socios"), p.criadorId) : null;
+  return s ? s.nombreCompleto : "";
+}
+
+/* ¿Es este nombre el de un socio? Se compara sin acentos ni mayúsculas
+   para que «Mª Ángeles» encuentre a «M ANGELES». */
+function socioPorNombre(nombre){
+  const buscado = norm(nombre || "");
+  if (!buscado) return null;
+  return C("socios").find(s => norm(s.nombreCompleto || "") === buscado) || null;
+}

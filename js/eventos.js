@@ -56,7 +56,6 @@ document.addEventListener("change", async ev => {
       const {dataUri, w, h} = await procesarImagen(file, {max:1200, calidad:0.78});
       await guardar("media", null, {tipo:"foto", sujeto:tipo, sujetoId:id, dataUri, w, h,
         titulo:file.name.replace(/\.[^.]+$/, "").slice(0, 60), fecha:hoy(), subidoPor: miSocioId()});
-      olvidarMedia(id);
       toast("Foto añadida a la galería");
     }
     render();
@@ -123,30 +122,42 @@ document.addEventListener("click", async ev => {
     render(); return;
   }
   const b = ev.target.closest("[data-media]");
-  if(!b) return;
+  if (!b) return;
   ev.stopPropagation();
   const [accion, perroId, mediaId] = b.dataset.media.split("|");
-  const l = MED.porSujeto[perroId] || [];
-  const m = l.find(x => x.id === mediaId);
-  if(!m) return;
-  if(accion === "principal"){
-    const p = byId(C("perros"), perroId);
-    /* se guarda una miniatura, no la foto completa: la ficha viaja en cada listado */
-    const {dataUri} = await procesarFuente(m.dataUri, {max:320, cuadrada:true, calidad:0.8});
-    const n = Object.assign({}, p, {avatar:dataUri, avatarDe:mediaId}); delete n.id;
-    await guardar("perros", perroId, n); toast("Foto principal actualizada");
-  }
-  if(accion === "borrar"){
-    if(!confirm("¿Borrar este archivo de la ficha?")) return;
-    const p = byId(C("perros"), perroId);
-    if(p && p.avatarDe === mediaId){
-      const n = Object.assign({}, p); delete n.avatar; delete n.id;
-      await guardar("perros", perroId, n);
+
+  try {
+    if (accion === "principal"){
+      await hacerPrincipal(perroId, mediaId);
+      toast("Foto principal actualizada");
     }
-    await borrar("media", mediaId);
-    olvidarMedia(perroId); toast("Archivo borrado");
-  }
+    if (accion === "borrar"){
+      if (!confirm("¿Borrar este archivo de la ficha? No se puede deshacer.")) return;
+      await borrarMedia(mediaId);
+      toast("Archivo borrado");
+    }
+  } catch(e){ toast(e.message || "No se ha podido hacer"); }
   render();
+});
+
+/* --- subir una foto --- */
+document.addEventListener("change", async ev => {
+  const inp = ev.target;
+  if (!inp.dataset || !inp.dataset.up) return;
+  const [modo, tipo, id] = inp.dataset.up.split("|");
+  const file = inp.files && inp.files[0];
+  if (!file) return;
+  inp.value = "";
+
+  if (tipo !== "perro") return;
+  toast("Subiendo la foto…");
+  try {
+    await subirFotoPerro(file, id);
+    toast("Foto subida");
+    render();
+  } catch(e){
+    toast(e.message || "No se ha podido subir la foto");
+  }
 });
 
 document.addEventListener("change", ev => {

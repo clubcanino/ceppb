@@ -204,7 +204,10 @@ V.perro = function(id){
       return `<div class="ped-n ${d.sexo==="M"?"m":"h"} clic" data-go="perro/${esc(d.id)}"><b>${esc(d.nombre)}</b><small>${esc(d.loe||d.variedad||"")}</small></div>`; };
     const pa = p.padreId?byId(C("perros"),p.padreId):null, ma = p.madreId?byId(C("perros"),p.madreId):null;
     cuerpo = `<div class="card"><div class="card-h"><h3>Pedigrí — tres generaciones</h3>
-      ${puedo?`<span class="spacer"></span><button class="btn sm" data-form="pedigri|${esc(p.id)}">Vincular progenitores / importar</button>`:""}</div>
+      <span class="spacer"></span>
+      ${p.workingdogUrl ? `<a class="btn sm" href="${esc(p.workingdogUrl)}" target="_blank" rel="noopener noreferrer">Ver pedigrí en working-dog</a>` : ""}
+      ${p.loe ? `<a class="btn sm" href="https://www.working-dog.com/search?q=${encodeURIComponent(p.loe)}" target="_blank" rel="noopener noreferrer">Buscar por LOE</a>` : ""}
+      ${puedo?`<button class="btn sm" data-form="pedigri|${esc(p.id)}">Vincular progenitores / importar</button>`:""}</div>
       <div class="card-b" style="overflow-x:auto"><div class="ped">
         <div class="ped-col">${n(p.padreId)}${n(p.madreId)}</div>
         <div class="ped-col">${n(pa?.padreId)}${n(pa?.madreId)}${n(ma?.padreId)}${n(ma?.madreId)}</div>

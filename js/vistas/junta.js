@@ -155,22 +155,7 @@ V.cobros = function(){
    Las fotos se reducen en el navegador antes de guardarse.
    Los vídeos se enlazan: alojarlos requiere almacenamiento propio.
    ============================================================ */
-const MED = {porSujeto:{}, cargando:{}};
 
-function cargarMedia(sujetoId){
-  if(!sujetoId || MED.porSujeto[sujetoId] || MED.cargando[sujetoId]) return;
-  MED.cargando[sujetoId] = true;
-  if(!S.db){ MED.porSujeto[sujetoId] = []; MED.cargando[sujetoId] = false; return; }
-  S.db.collection("media").where("sujetoId", "==", sujetoId).get()
-    .then(snap => { MED.porSujeto[sujetoId] = snap.docs.map(d => Object.assign({id:d.id}, d.data())); })
-    .catch(() => { MED.porSujeto[sujetoId] = []; })
-    .then(() => { MED.cargando[sujetoId] = false; render(); });
-}
-function mediaDe(sujetoId){
-  cargarMedia(sujetoId);
-  return MED.porSujeto[sujetoId] || null;   // null = todavía cargando
-}
-function olvidarMedia(sujetoId){ delete MED.porSujeto[sujetoId]; delete MED.cargando[sujetoId]; }
 
 /* Reduce una imagen a JPEG dentro del límite de un documento (256 KiB) */
 function procesarImagen(file, opts){
@@ -199,18 +184,17 @@ function procesarFuente(src, {max = 1200, cuadrada = false, calidad = 0.78} = {}
           c.width = w; c.height = h;
           g.fillStyle = "#ffffff"; g.fillRect(0, 0, w, h);
           g.drawImage(im, sx, sy, sw, sh, 0, 0, w, h);
-          return {dataUri: c.toDataURL("image/jpeg", q), w, h};
+          return {dataUri: c.toDataURL("image/jpeg", q), lienzo: c, w, h};
         };
-        /* Se baja primero la calidad y después la resolución hasta entrar en el
-           límite de 256 KiB por documento. Una foto normal entra en el primer intento. */
-        const intentos = [[max, calidad], [max, 0.62], [max * 0.78, 0.6], [max * 0.62, 0.55],
-                          [max * 0.5, 0.5], [max * 0.38, 0.45], [max * 0.28, 0.4]];
-        for(const [lado, q] of intentos){
-          const r = dibujar(Math.max(180, Math.round(lado)), q);
-          if(r.dataUri.length <= 185000)
-            return res({dataUri: r.dataUri, w: r.w, h: r.h, bytes: Math.round(r.dataUri.length * 0.75)});
-        }
-        rej(new Error("No se ha podido reducir esta imagen lo suficiente. Prueba con otra."));
+        /* Las fotos van al almacén de Supabase, así que caben de sobra.
+           Aun así se reducen: una foto de móvil son 6 MB y en pantalla
+           no se nota la diferencia, pero el club sí nota la factura y
+           los socios la espera. Un lado máximo de 1600 px basta. */
+        const r = dibujar(Math.max(180, Math.round(max)), calidad);
+        r.lienzo.toBlob(
+          b => b ? res({archivo: b, dataUri: r.dataUri, w: r.w, h: r.h, bytes: b.size})
+                 : rej(new Error("No se ha podido preparar la imagen")),
+          "image/jpeg", calidad);
       };
       im.src = src;
     }
@@ -218,17 +202,7 @@ function procesarFuente(src, {max = 1200, cuadrada = false, calidad = 0.78} = {}
 }
 
 /* ---------- vídeos: se guarda el enlace ---------- */
-const PROVEEDORES = [
-  {re:/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([\w-]{6,})/i, n:"YouTube"},
-  {re:/vimeo\.com\/(\d+)/i, n:"Vimeo"},
-  {re:/instagram\.com\/(?:p|reel|tv)\/([\w-]+)/i, n:"Instagram"},
-  {re:/facebook\.com\/.+\/videos\/(\d+)/i, n:"Facebook"},
-  {re:/working-dog\.(?:com|eu)\//i, n:"working-dog"},
-];
-function proveedorDe(url){
-  const p = PROVEEDORES.find(x => x.re.test(url || ""));
-  return p ? p.n : (/^https?:\/\//i.test(url || "") ? "Enlace externo" : "");
-}
+/* PROVEEDORES y proveedorDe viven ahora en js/media.js */
 
 /* ---------- componentes ---------- */
 function iniciales(nombre){
@@ -250,7 +224,6 @@ function botonFoto(modo, tipo, id, texto){
 /* Galería de un ejemplar */
 function galeria(perro, puedo){
   const l = mediaDe(perro.id);
-  if(l === null) return `<div class="card"><div class="card-b"><div class="empty" style="padding:30px">Cargando la galería…</div></div></div>`;
   const fotos = l.filter(m => m.tipo === "foto"), videos = l.filter(m => m.tipo === "video");
   return `
   <div class="cols23">
@@ -259,9 +232,9 @@ function galeria(perro, puedo){
         ${puedo ? `<span class="spacer"></span>${botonFoto("galeria", "perro", perro.id, "Subir foto")}` : ""}</div>
         <div class="card-b">
           ${fotos.length ? `<div class="gal">${fotos.map(m => `<figure>
-              <img src="${m.dataUri}" alt="${esc(m.titulo || perro.nombre)}" loading="lazy">
+              <img src="${esc(m.url || "")}" alt="${esc(m.titulo || perro.nombre)}" loading="lazy">
               ${puedo ? `<span class="acts">
-                ${perro.avatarDe === m.id ? `<span class="chip ok">Principal</span>`
+                ${perro.avatarUrl && perro.avatarUrl === m.url ? `<span class="chip ok">Principal</span>`
                   : `<button class="btn sm" data-media="principal|${esc(perro.id)}|${esc(m.id)}">Principal</button>`}
                 <button class="btn sm danger" data-media="borrar|${esc(perro.id)}|${esc(m.id)}">Borrar</button></span>` : ""}
               <figcaption>${esc(m.titulo || "Sin pie")}<span class="spacer"></span><span class="num">${fmtF(m.fecha).slice(0,10)}</span></figcaption>
