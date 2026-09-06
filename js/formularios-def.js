@@ -72,13 +72,25 @@ const FORMS = {
          ph:"Empieza a escribir el nombre"},
       ]},
 
-      {t:"Vínculos", d:"Solo si los progenitores ya están registrados en el club. Si no lo están, déjalo en blanco: se puede completar más adelante.", f:[
+      {t:"Propietario", f:[
         {k:"propietarioId", l:"Propietario", tipo:"select",
          op: SESION.esAdmin ? optSocios() : [[miSocioId()||"", (SESION.socio && SESION.socio.nombreCompleto) || "Tú"]],
          v: p.propietarioId ?? (miSocioId()||""), wide:true,
          h: SESION.esAdmin ? "" : "Tus perros van a tu nombre"},
-        {k:"padreId", l:"Padre", tipo:"select", op:optPerros("M"), v:p.padreId},
-        {k:"madreId", l:"Madre", tipo:"select", op:optPerros("H"), v:p.madreId},
+      ]},
+
+      {t:"Padres", d:"Escribe el nombre y, a partir de tres letras, salen los del libro del club. Si el perro no está, escríbelo igual: se añade al libro y su pedigrí se irá completando.", f:[
+        {k:"padreNombre", l:"Padre", tipo:"buscador", op:nombresDePerros("M"),
+         v:nombreDePerro(p.padreId), wide:true, ph:"Empieza a escribir"},
+        {k:"madreNombre", l:"Madre", tipo:"buscador", op:nombresDePerros("H"),
+         v:nombreDePerro(p.madreId), wide:true, ph:"Empieza a escribir"},
+      ]},
+
+      {t:"Abuelos", d:"Solo si sus padres no están todavía en el libro. Si ya están, sus padres se heredan solos y esto se puede dejar en blanco.", f:[
+        {k:"abueloPP", l:"Padre del padre", tipo:"buscador", op:nombresDePerros("M"), v:nombreDePerro(abueloDe(p,"P","P"))},
+        {k:"abuelaPM", l:"Madre del padre", tipo:"buscador", op:nombresDePerros("H"), v:nombreDePerro(abueloDe(p,"P","M"))},
+        {k:"abueloMP", l:"Padre de la madre", tipo:"buscador", op:nombresDePerros("M"), v:nombreDePerro(abueloDe(p,"M","P"))},
+        {k:"abuelaMM", l:"Madre de la madre", tipo:"buscador", op:nombresDePerros("H"), v:nombreDePerro(abueloDe(p,"M","M"))},
       ]},
       {t:"Importar pedigrí", d:"Pega el enlace de la ficha en working-dog y los datos que quieras traer. La plataforma no puede descargarlos por sí sola: working-dog no ofrece acceso automatizado libre.", f:[
         {k:"workingdogUrl", l:"Enlace working-dog", v:p.workingdogUrl, wide:true, ph:"https://www.working-dog.com/dogs-details/…"},
@@ -104,6 +116,16 @@ const FORMS = {
       n.criadorId    = cri ? cri.id : null;
       n.afijoSocioId = cri ? cri.id : null;
       delete n.criadorNombre;
+
+      /* Padres y abuelos: se buscan en el libro por el nombre y, si no
+         están, se añaden. Así el árbol del club crece con cada alta en
+         lugar de quedarse en lo que trajimos de working-dog. */
+      n.padreId = await perroPorNombreOAlta(d.padreNombre, "M");
+      n.madreId = await perroPorNombreOAlta(d.madreNombre, "H");
+      await ponerAbuelos(n.padreId, d.abueloPP, d.abuelaPM);
+      await ponerAbuelos(n.madreId, d.abueloMP, d.abuelaMM);
+      for (const k of ["padreNombre","madreNombre","abueloPP","abuelaPM","abueloMP","abuelaMM"])
+        delete n[k];
 
       delete n.id;
       const nid = await guardar("perros", id, n);
@@ -419,3 +441,69 @@ const ENTIDADES_DIAGNOSTICO = [
   "AVEPA",
   "Otra entidad reconocida",
 ];
+
+
+/* ------------------------------------------------------------
+   El libro genealógico, por nombre
+   ------------------------------------------------------------ */
+
+/* Los nombres del libro, para las sugerencias. Se ofrecen los del sexo
+   que toca y también los que aún no lo tienen: en el libro hay
+   ejemplares antiguos sin sexo confirmado. */
+function nombresDePerros(sexo){
+  return C("perros")
+    .filter(p => !sexo || !p.sexo || p.sexo === sexo)
+    .map(p => p.nombre)
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, "es"));
+}
+
+function nombreDePerro(id){
+  const p = id ? byId(C("perros"), id) : null;
+  return p ? p.nombre : "";
+}
+
+function abueloDe(perro, lado, cual){
+  const padre = perro && perro[lado === "P" ? "padreId" : "madreId"];
+  const p = padre ? byId(C("perros"), padre) : null;
+  return p ? p[cual === "P" ? "padreId" : "madreId"] : null;
+}
+
+/* Busca un ejemplar por su nombre. Si no está en el libro, lo añade:
+   entra sin dueño, como los que vinieron de working-dog, porque un
+   ancestro no es de nadie hasta que alguien lo reclame. */
+async function perroPorNombreOAlta(nombre, sexo){
+  const t = String(nombre || "").replace(/\s+/g, " ").trim();
+  if (!t) return null;
+
+  const buscado = norm(t);
+  const ya = C("perros").find(p => norm(p.nombre || "") === buscado);
+  if (ya) return ya.id;
+
+  const nuevo = {nombre: t, sexo: sexo || null, visibilidad: "socios",
+                 origen: "añadido al registrar un ejemplar"};
+  try {
+    return await guardar("perros", null, nuevo);
+  } catch(e){
+    toast(`No se ha podido añadir «${t}» al libro: ${e.message || ""}`);
+    return null;
+  }
+}
+
+/* A un padre recién añadido se le pueden poner sus propios padres.
+   Si ya los tenía, no se tocan: lo que está en el libro manda. */
+async function ponerAbuelos(hijoId, nombrePadre, nombreMadre){
+  if (!hijoId) return;
+  const hijo = byId(C("perros"), hijoId);
+  if (!hijo) return;
+  if (hijo.padreId && hijo.madreId) return;
+
+  const pId = hijo.padreId || await perroPorNombreOAlta(nombrePadre, "M");
+  const mId = hijo.madreId || await perroPorNombreOAlta(nombreMadre, "H");
+  if (!pId && !mId) return;
+
+  const n = Object.assign({}, hijo, {padreId: pId, madreId: mId});
+  delete n.id;
+  try { await guardar("perros", hijoId, n); }
+  catch(e){ /* si no tiene permiso sobre esa ficha, se deja como está */ }
+}

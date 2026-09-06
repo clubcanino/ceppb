@@ -122,12 +122,27 @@ async function abrirDB(){
 }
 
 /* Trae todas las colecciones. Lo que el usuario no tenga derecho a ver
-   sencillamente no llega: lo filtra la base de datos, no el navegador. */
+   sencillamente no llega: lo filtra la base de datos, no el navegador.
+
+   Se pide por tandas porque Supabase devuelve como mucho mil filas por
+   consulta, y el libro genealógico del club ya pasa de mil ejemplares:
+   sin esto, faltarían perros y sus pedigríes saldrían rotos. */
+const TANDA = 1000;
+
+async function traerTodo(col){
+  const filas = [];
+  for (let desde = 0; ; desde += TANDA){
+    const { data, error } = await S.sb.from(col).select("*").range(desde, desde + TANDA - 1);
+    if (error){ console.warn("[" + col + "]", error.message); break; }
+    filas.push(...(data || []));
+    if (!data || data.length < TANDA) break;
+  }
+  return filas;
+}
+
 async function recargar(){
   const tareas = COLS.map(async col => {
-    const { data, error } = await S.sb.from(col).select("*");
-    if (error){ console.warn("[" + col + "]", error.message); S.data[col] = []; return; }
-    S.data[col] = (data || []).map(f => deFila(f, col));
+    S.data[col] = (await traerTodo(col)).map(f => deFila(f, col));
   });
   await Promise.all(tareas);
 }

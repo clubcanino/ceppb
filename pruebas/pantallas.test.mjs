@@ -431,3 +431,39 @@ test("el límite es de cinco minutos y trescientos megas", () => {
   assert.match(m, /VIDEO_MAX_BYTES\s*=\s*300 \* 1024 \* 1024/);
   assert.match(m, /duracionDeVideo/, "se comprueba la duración ANTES de subir nada");
 });
+
+/* ============================================================
+   Padres y abuelos por buscador
+   ============================================================ */
+test("padre y madre se escriben con sugerencias, no en un desplegable", () => {
+  const def = readFileSync(new URL("../js/formularios-def.js", import.meta.url), "utf8");
+  const bloque = def.slice(def.indexOf("  perro(id){"), def.indexOf("  salud(id){"));
+  assert.match(bloque, /k:"padreNombre".*tipo:"buscador"/s);
+  assert.match(bloque, /k:"madreNombre".*tipo:"buscador"/s);
+  assert.doesNotMatch(bloque, /k:"padreId".*tipo:"select"/s,
+    "con mil ejemplares en el libro, un desplegable no sirve");
+});
+
+test("se pueden meter los abuelos cuando los padres no están en el libro", () => {
+  const def = readFileSync(new URL("../js/formularios-def.js", import.meta.url), "utf8");
+  const bloque = def.slice(def.indexOf("  perro(id){"), def.indexOf("  salud(id){"));
+  for (const k of ["abueloPP", "abuelaPM", "abueloMP", "abuelaMM"]){
+    assert.match(bloque, new RegExp(`k:"${k}"`), "falta el campo " + k);
+  }
+});
+
+test("un nombre que no está en el libro se añade en vez de perderse", () => {
+  const def = readFileSync(new URL("../js/formularios-def.js", import.meta.url), "utf8");
+  assert.match(def, /async function perroPorNombreOAlta/);
+  assert.match(def, /origen: "añadido al registrar un ejemplar"/,
+    "queda marcado de dónde salió");
+  assert.match(def, /visibilidad: "socios"/,
+    "el libro genealógico lo ven los socios, que para eso está");
+});
+
+test("la web trae todos los perros, no solo los mil primeros", () => {
+  const d = readFileSync(new URL("../js/datos.js", import.meta.url), "utf8");
+  assert.match(d, /\.range\(desde, desde \+ TANDA - 1\)/,
+    "Supabase corta en mil filas y el libro ya pasa de mil");
+  assert.match(d, /if \(!data \|\| data\.length < TANDA\) break/);
+});
