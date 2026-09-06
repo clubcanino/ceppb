@@ -1,0 +1,38 @@
+#!/bin/sh
+# ============================================================
+#  Cerrojo mínimo: el censo no entra al repositorio.
+#
+#  Este repositorio es público y en Git nada se borra del todo.
+#  Solo se vigilan las tres cosas que hacen daño de verdad: el
+#  IBAN, el DNI y el censo entero.
+#
+#  Se activa con:  git config core.hooksPath .githooks
+# ============================================================
+
+archivos=$(git diff --cached --name-only --diff-filter=ACM | grep -v '^\.githooks/')
+[ -z "$archivos" ] && exit 0
+
+fallos=0
+
+case "$archivos" in
+  *.csv*) echo "BLOQUEADO: un CSV. El censo se queda en tu ordenador."; fallos=1 ;;
+esac
+
+for f in $archivos; do
+  # Se descartan los valores de relleno de la documentación y las
+  # pruebas: todo ceros no identifica a nadie.
+  nuevo=$(git diff --cached -U0 -- "$f" | grep '^+' | grep -v '^+++' \
+          | grep -vE 'ES[0 ]{22,28}' | grep -vE '0{8}[A-Z]')
+
+  echo "$nuevo" | grep -qE 'ES[0-9]{2}[ ]?([0-9]{4}[ ]?){5}' && {
+    echo "BLOQUEADO: algo con forma de IBAN en $f"; fallos=1; }
+
+  echo "$nuevo" | grep -qE '[0-9]{8}[A-HJ-NP-TV-Z]([^A-Za-z0-9]|$)' && {
+    echo "BLOQUEADO: algo con forma de DNI en $f"; fallos=1; }
+
+  echo "$nuevo" | grep -qE 'eyJ[A-Za-z0-9_-]{20,}' && {
+    echo "BLOQUEADO: una clave de Supabase escrita en $f"; fallos=1; }
+done
+
+[ "$fallos" -ne 0 ] && { echo ""; echo "Para datos de ejemplo usa ES00 0000... o 00000000T."; exit 1; }
+exit 0
