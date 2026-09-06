@@ -26,6 +26,15 @@ function proveedorDe(url){
   return "Enlace";
 }
 
+/* Las fotos y los vídeos de un ejemplar o de un socio. Vienen ya
+   cargados con el resto de datos: aquí solo se filtran y se ordenan,
+   lo más reciente primero. */
+function mediaDe(sujetoId){
+  return C("media")
+    .filter(m => m.perroId === sujetoId || m.socioId === sujetoId)
+    .sort((a, b) => String(b.fecha || "").localeCompare(String(a.fecha || "")));
+}
+
 /* Sube una foto de un ejemplar y la deja enlazada a su ficha */
 async function subirFotoPerro(file, perroId, titulo){
   const perro = byId(C("perros"), perroId);

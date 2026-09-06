@@ -19,14 +19,19 @@ function campo(f){
   if(f.tipo === "check")
     return `<div class="f ${f.wide?"wide":""}"><label style="display:flex;gap:7px;align-items:center;cursor:pointer">
       <input type="checkbox" name="${f.k}" ${v?"checked":""}> ${esc(f.l)}</label>${f.h?`<span class="hint2">${esc(f.h)}</span>`:""}</div>`;
-  /* Campo de escribir con sugerencias: se teclea y van saliendo los
-     nombres que encajan. No es un desplegable cerrado: si el criador
-     no es socio del club, se escribe y ya está. */
+  /* Campo de escribir con sugerencias. No es un desplegable cerrado:
+     si el criador no es socio del club, se escribe y ya está.
+
+     Las sugerencias NO salen hasta que hay tres letras escritas: con
+     347 socios, una lista que se abre entera al hacer clic estorba
+     más que ayuda. */
   if(f.tipo === "buscador"){
     const id = "dl-" + f.k + "-" + Math.random().toString(36).slice(2, 7);
+    SUGERENCIAS[id] = f.op || [];
     return `<div class="f ${f.wide?"wide":""}"><label>${esc(f.l)}</label>
-      <input class="inp" name="${f.k}" value="${esc(v)}" list="${id}" autocomplete="off" placeholder="${esc(f.ph||"")}">
-      <datalist id="${id}">${(f.op||[]).map(o => `<option value="${esc(o)}"></option>`).join("")}</datalist>
+      <input class="inp" name="${f.k}" value="${esc(v)}" list="${id}"
+             data-sugerencias="${id}" autocomplete="off" placeholder="${esc(f.ph||"")}">
+      <datalist id="${id}"></datalist>
       ${f.h?`<span class="hint2">${esc(f.h)}</span>`:""}</div>`;
   }
 
@@ -64,3 +69,29 @@ const optSociosAfijo = () => [["", "— criador no socio o desconocido —"]].co
   C("socios").slice().sort((a,b)=>(b.afijo?1:0)-(a.afijo?1:0) || a.apellidos.localeCompare(b.apellidos,"es"))
     .map(s=>[s.id, s.afijo ? `${s.afijo} — ${s.nombreCompleto}` : `${s.nombreCompleto} (sin afijo)`]));
 const optPerros = sexo => [["", "— sin registrar —"]].concat(C("perros").filter(p=>!sexo||p.sexo===sexo).map(p=>[p.id, `${p.nombre}${p.variedad?" · "+p.variedad:""}`]));
+
+
+/* ------------------------------------------------------------
+   Sugerencias de los campos de buscador
+   ------------------------------------------------------------ */
+const SUGERENCIAS = {};
+const LETRAS_MINIMAS = 3;
+const SUGERENCIAS_MAX = 12;
+
+document.addEventListener("input", ev => {
+  const inp = ev.target;
+  if (!inp.dataset || !inp.dataset.sugerencias) return;
+
+  const lista = document.getElementById(inp.dataset.sugerencias);
+  if (!lista) return;
+
+  const escrito = norm(inp.value || "");
+  if (escrito.length < LETRAS_MINIMAS){ lista.innerHTML = ""; return; }
+
+  const todas = SUGERENCIAS[inp.dataset.sugerencias] || [];
+  const encajan = todas
+    .filter(o => norm(o).includes(escrito))
+    .slice(0, SUGERENCIAS_MAX);
+
+  lista.innerHTML = encajan.map(o => `<option value="${esc(o)}"></option>`).join("");
+});

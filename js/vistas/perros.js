@@ -248,6 +248,7 @@ V.perro = function(id){
           ${chipApto(aptos.map(f=>f.fig.c))}</div>
       </div>
       ${puedo?`<button class="btn" data-form="perro|${esc(p.id)}">Editar ficha</button>`:""}
+      ${puedeCertificar(p)?`<a class="btn brand" href="#/certificado/${esc(p.id)}">Certificado del club</a>`:""}
     </div>
     <div class="tabs">${tabs.map(([k,n])=>`<button data-tab="${k}" class="${tabPerro===k?"on":""}">${esc(n)}</button>`).join("")}</div>
     ${cuerpo}`;

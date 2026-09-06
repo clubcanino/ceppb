@@ -13,19 +13,56 @@ document.addEventListener("click", async ev => {
     ordenTabla[k] = (o.c === +i) ? {c:+i, d:!o.d} : {c:+i, d:false}; render(); return; }
   const fm = ev.target.closest("[data-form]");
   if(fm){ const [n, id] = fm.dataset.form.split("|"); if(FORMS[n]) FORMS[n](id || null); return; }
+  /* Los tres botones de privacidad guardaban bien pero no volvían a
+     dibujar la pantalla: el socio pulsaba, no veía cambiar nada y
+     creía que la plataforma no le dejaba. */
   const vis = ev.target.closest("[data-vis]");
-  if(vis){ const [pid, v] = vis.dataset.vis.split("|"); const p = byId(C("perros"), pid);
-    const n = Object.assign({}, p, {visibilidad:v}); delete n.id; await guardar("perros", pid, n); toast("Visibilidad actualizada"); return; }
+  if(vis){
+    const [pid, v] = vis.dataset.vis.split("|");
+    const p = byId(C("perros"), pid);
+    const n = Object.assign({}, p, {visibilidad:v}); delete n.id;
+    try {
+      await guardar("perros", pid, n);
+      toast(v === "privado" ? "Solo tú ves esta ficha"
+          : v === "socios"  ? "Los socios del club ven esta ficha"
+          :                   "Esta ficha es pública");
+    } catch(e){ toast(e.message || "No se ha podido cambiar"); }
+    render();
+    return;
+  }
+
   const pf = ev.target.closest("[data-perfil]");
-  if(pf){ const [sid, v] = pf.dataset.perfil.split("|"); const s = byId(C("socios"), sid);
+  if(pf){
+    const [sid, v] = pf.dataset.perfil.split("|");
+    const s = byId(C("socios"), sid);
     const n = Object.assign({}, s, {perfilPublico:v}); delete n.id;
-    await guardar("socios", sid, n);
-    toast(v === "oculto" ? "Tu perfil deja de ser visible para el resto del club" : "Perfil visible actualizado");
-    return; }
+    try {
+      await guardar("socios", sid, n);
+      if (esYo(sid)) await SESION.refrescar();
+      toast(v === "oculto"  ? "Tu perfil deja de aparecer en el directorio"
+          : v === "socios"  ? "Ahora te ven los socios del club"
+          :                   "Tu perfil es público");
+    } catch(e){ toast(e.message || "No se ha podido cambiar"); }
+    render();
+    return;
+  }
+
   const pv = ev.target.closest("[data-priv]");
-  if(pv){ const [sid, campo, v] = pv.dataset.priv.split("|"); const s = byId(C("socios"), sid);
-    const n = Object.assign({}, s, {priv: Object.assign({}, s.priv, {[campo]: v})}); delete n.id;
-    await guardar("socios", sid, n); return; }
+  if(pv){
+    const [sid, campo, v] = pv.dataset.priv.split("|");
+    const s = byId(C("socios"), sid);
+    const n = Object.assign({}, s, {priv: Object.assign({}, s.priv || {}, {[campo]: v})});
+    delete n.id;
+    try {
+      await guardar("socios", sid, n);
+      if (esYo(sid)) await SESION.refrescar();
+      toast(v === "privado" ? "Ese dato deja de compartirse"
+          : v === "socios"  ? "Ese dato lo ven los socios del club"
+          :                   "Ese dato es público");
+    } catch(e){ toast(e.message || "No se ha podido cambiar"); }
+    render();
+    return;
+  }
   if(ev.target.id === "sheet-x" || ev.target.id === "sheet-c" || ev.target.id === "scrim") cerrarForm();
   if(ev.target.id === "sheet-ok" && formActual){ const f = formActual; try { await f(leerForm()); cerrarForm(); } catch(e){} }
   if(ev.target.id === "tema"){

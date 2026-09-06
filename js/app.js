@@ -47,6 +47,7 @@ const TITULOS_VISTA = {
   socio:    ["Perfil", "Ficha de socio"],
   perros:   ["Ejemplares", "Buscador de pastores belgas registrados"],
   perro:    ["Ficha del ejemplar", ""],
+  certificado: ["Certificado del ejemplar", "Documento oficial del club con lo validado"],
   aptos:    ["Aptos de cría", "Las cinco figuras del Capítulo 2, ejemplar por ejemplar"],
   cruce:    ["Simulador de cruce", "Comprueba una alianza contra el reglamento antes de solicitarla"],
   intervar: ["Cruces intervariedades", "Expedientes de autorización previa — Capítulo 8"],

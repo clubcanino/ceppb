@@ -16,7 +16,7 @@ const ARCHIVOS = [
   "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js", "js/media.js",
   "js/formularios.js", "js/formularios-def.js",
   "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
-  "js/vistas/perros.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
+  "js/vistas/perros.js", "js/vistas/certificado.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
   "js/vistas/mi-area.js", "js/vistas/junta.js", "js/vistas/club.js",
   "js/app.js",
 ];
@@ -242,4 +242,102 @@ test("el afijo se escribe a mano y no depende de elegir criador", () => {
   const campoAfijo = bloque.match(/\{k:"afijo"[^}]*\}/)[0];
   assert.doesNotMatch(campoAfijo, /tipo:"select"/, "el afijo es texto libre");
   assert.doesNotMatch(campoAfijo, /Se rellena solo/, "ya no depende del desplegable de criador");
+});
+
+/* ============================================================
+   La ficha del ejemplar, pestaña por pestaña
+   ============================================================ */
+test("las siete pestañas de la ficha se dibujan sin reventar", () => {
+  vm.runInContext(`
+    SESION.rol = "socio"; SESION.esAdmin = false;
+    SESION.usuario = {id:"u1", email:"socio@ejemplo.test"};
+    SESION.socio = {id:"s1", numero:896, nombre:"Ana", apellidos:"Ruiz", nombreCompleto:"Ana Ruiz"};
+    S.listo = true; S.error = null;
+    S.data.perros = [{id:"p1", nombre:"Uma", variedad:"Malinois", sexo:"H",
+                      fechaNacimiento:"2022-03-01", propietarioId:"s1",
+                      visibilidad:"socios", salud:{validacion:{estado:"pendiente"}}}];
+    S.data.media = [];
+    S.data.resultados = [];
+  `, ctx);
+
+  const fallos = [];
+  for (const pestana of ["resumen","salud","aptos","resultados","pedigri","progenie","galeria"]){
+    try {
+      vm.runInContext(`tabPerro = ${JSON.stringify(pestana)}`, ctx);
+      const html = vm.runInContext('String(V.perro("p1"))', ctx);
+      assert.equal(typeof html, "string");
+      if (!html.length) fallos.push(pestana + ": vacía");
+    } catch(e){ fallos.push(pestana + ": " + e.message); }
+  }
+  assert.equal(fallos.length, 0, "pestañas que fallan:\n  " + fallos.join("\n  "));
+});
+
+test("el propietario ve el botón de subir foto y el de añadir vídeo", () => {
+  vm.runInContext(`tabPerro = "galeria"`, ctx);
+  const html = vm.runInContext('String(V.perro("p1"))', ctx);
+  assert.match(html, /Subir foto/, "su dueño tiene que poder subir fotos");
+  assert.match(html, /data-form="video\|/, "y enlazar vídeos");
+});
+
+test("quien no es el dueño no ve esos botones", () => {
+  vm.runInContext(`SESION.socio = {id:"s9", numero:1, nombre:"Otro", apellidos:"Socio",
+                                   nombreCompleto:"Otro Socio"};`, ctx);
+  const html = vm.runInContext('String(V.perro("p1"))', ctx);
+  assert.doesNotMatch(html, /Subir foto/, "las fotos de un perro las pone su dueño");
+});
+
+/* ============================================================
+   Sugerencias del buscador
+   ============================================================ */
+test("las sugerencias no salen hasta la tercera letra", () => {
+  const f = readFileSync(new URL("../js/formularios.js", import.meta.url), "utf8");
+  assert.match(f, /LETRAS_MINIMAS\s*=\s*3/,
+    "con 347 socios, una lista que se abre entera estorba más que ayuda");
+  assert.match(f, /if \(escrito\.length < LETRAS_MINIMAS\)\{ lista\.innerHTML = ""/,
+    "por debajo de tres letras, la lista se queda vacía");
+  assert.match(f, /<datalist id="\$\{id\}"><\/datalist>/,
+    "el desplegable nace vacío: se llena al escribir");
+});
+
+/* ============================================================
+   Certificado
+   ============================================================ */
+test("el certificado lo saca el propietario, no cualquiera", () => {
+  vm.runInContext(`
+    SESION.rol = "socio"; SESION.esAdmin = false;
+    SESION.usuario = {id:"u1", email:"otro@ejemplo.test"};
+    SESION.socio = {id:"s9", numero:1, nombre:"Otro", apellidos:"Socio", nombreCompleto:"Otro Socio"};
+    S.listo = true; S.error = null;
+    S.data.perros = [{id:"p1", nombre:"Uma", variedad:"Malinois", sexo:"H",
+                      propietarioId:"s1", visibilidad:"socios",
+                      salud:{validacion:{estado:"validado"}}}];
+    S.data.resultados = []; S.data.media = []; S.data.socios = [];
+  `, ctx);
+  const ajeno = vm.runInContext('String(V.certificado("p1"))', ctx);
+  assert.match(ajeno, /lo expide su propietario/,
+    "un socio no puede certificar el perro de otro");
+
+  vm.runInContext(`SESION.socio = {id:"s1", numero:896, nombre:"Ana", apellidos:"Ruiz",
+                                   nombreCompleto:"Ana Ruiz"};`, ctx);
+  const propio = vm.runInContext('String(V.certificado("p1"))', ctx);
+  assert.match(propio, /Certificado del ejemplar/);
+  assert.match(propio, /Presidente del Club Español del Perro Pastor Belga/);
+});
+
+test("el certificado solo recoge lo validado", () => {
+  vm.runInContext(`
+    S.data.perros = [{id:"p2", nombre:"Sin validar", variedad:"Malinois", sexo:"M",
+                      propietarioId:"s1", salud:{hd:"A", validacion:{estado:"pendiente"}}}];
+    S.data.resultados = [{id:"r1", perroId:"p2", tipo:"trabajo", titulo:"IGP3", validado:"pendiente"}];
+  `, ctx);
+  const html = vm.runInContext('String(V.certificado("p2"))', ctx);
+  assert.doesNotMatch(html, /IGP3/,
+    "un título sin validar no puede salir en un documento firmado por el presidente");
+  assert.match(html, /no ha sido validado por la junta/);
+});
+
+test("el certificado lleva un código para comprobar que es auténtico", () => {
+  const html = vm.runInContext('String(V.certificado("p2"))', ctx);
+  assert.match(html, /CEPPB-/, "sin código, un PDF con una firma lo falsifica cualquiera");
+  assert.match(html, /Código de verificación/);
 });
