@@ -108,6 +108,8 @@ const COLUMNAS = {
     "lugar",
     "juez",
     "organizado_ceppb",
+    "directo_url",
+    "directo_titulo",
     "creado"
   ],
   resultados: [

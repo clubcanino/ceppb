@@ -105,6 +105,9 @@ const AJUSTES = {
   },
 };
 
+/* Los eventos llevan el mismo campo y con el mismo nombre raro */
+AJUSTES.eventos = AJUSTES.resultados;
+
 /* ---------- arranque ---------- */
 async function abrirDB(){
   if (!CONFIG.configurado){

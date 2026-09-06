@@ -342,3 +342,18 @@ img.avatar{display:block}
 }
 .cert-rubrica-svg{display:block;margin:0 auto 2px;color:var(--ink-2);opacity:.9}
 @media print{ .cert-rubrica-svg{color:#141311} }
+
+/* ---------- retransmisión en directo ---------- */
+.directo{border:1px solid var(--brand);border-radius:var(--r);overflow:hidden;
+  background:var(--surface);box-shadow:var(--sh-2);margin-bottom:16px}
+.directo-cab{display:flex;align-items:center;gap:9px;padding:10px 14px;
+  background:var(--brand);color:var(--on-brand);font-size:13px}
+.directo-cab b{font-family:var(--mono);font-size:11px;letter-spacing:.12em}
+.directo-cab .mini{color:var(--on-brand);opacity:.85}
+.directo-cab .btn{background:transparent;border-color:currentColor;color:inherit}
+.directo-punto{width:9px;height:9px;border-radius:50%;background:currentColor;
+  animation:latido 1.6s ease-in-out infinite}
+@keyframes latido{0%,100%{opacity:1}50%{opacity:.25}}
+.directo-marco{position:relative;padding-top:56.25%;background:#000}
+.directo-marco iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+@media (prefers-reduced-motion:reduce){ .directo-punto{animation:none} }

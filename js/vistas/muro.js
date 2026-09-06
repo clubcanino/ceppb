@@ -92,7 +92,11 @@ V.muro = function(){
   const conAfijo = socios.filter(s => s.afijo).length;
   const conApto  = perros.filter(p => R.aptosDe(p, res).length).length;
 
+  /* Si el club está retransmitiendo, eso va lo primero de todo */
+  const directos = eventosEnDirecto();
+
   return `
+  ${directos.map(reproductorDirecto).join("")}
   <div class="masthead">
     <div class="flag"><i></i><i></i><i></i></div>
     <div class="mast-top">

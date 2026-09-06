@@ -34,7 +34,13 @@ V.eventos = function(){
   const tarjeta = e => {
     const ins = C("inscripciones").filter(i=>i.eventoId===e.id);
     const yoIns = ins.filter(i=>i.socioId===miSocioId());
-    return `<div class="card"><div class="card-h"><h3>${esc(e.nombre)}</h3><span class="hint">${fmtF(e.fecha)}</span></div>
+    return `<div class="card"><div class="card-h"><h3>${esc(e.nombre)}</h3>
+        ${eventoEnDirecto(e) ? `<span class="chip block" style="margin-left:8px">EN DIRECTO</span>` : ""}
+        <span class="hint">${fmtF(e.fecha)}</span>
+        ${SESION.esAdmin ? `<span class="spacer"></span><button class="btn sm" data-form="evento|${esc(e.id)}">Editar</button>` : ""}</div>
+      ${eventoEnDirecto(e) ? `<div class="card-b" style="padding:14px 16px 0">${reproductorDirecto(e)}</div>` : ""}
+      ${!eventoEnDirecto(e) && e.directoUrl ? `<div class="card-b" style="padding:14px 16px 0">
+        <a class="btn sm" href="${esc(e.directoUrl)}" target="_blank" rel="noopener noreferrer">Ver la grabación</a></div>` : ""}
       <div class="card-b"><dl class="kv">
         <dt>Tipo</dt><dd><span class="chip">${esc(e.tipo||"—")}</span>${e.organizadoCEPPB?` <span class="chip ok">Organiza CEPPB</span>`:""}</dd>
         <dt>Lugar</dt><dd>${esc(e.lugar||"—")}</dd>

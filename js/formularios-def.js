@@ -208,16 +208,32 @@ const FORMS = {
       toast("Camada declarada");
     });
   },
-  evento(){
-    abrirForm("Convocar evento", [
+  evento(id){
+    const e = byId(C("eventos"), id) || {};
+    abrirForm(id ? "Editar evento" : "Convocar evento", [
       {t:"Evento", f:[
-        {k:"nombre", l:"Nombre", v:"", wide:true},
-        {k:"tipo", l:"Tipo", tipo:"select", op:TIPOS_EVENTO, wide:true},
-        {k:"fecha", l:"Fecha", tipo:"date", v:hoy()}, {k:"cierre", l:"Cierre de inscripción", tipo:"date", v:""},
-        {k:"lugar", l:"Lugar", v:"", wide:true}, {k:"juez", l:"Juez", v:"", wide:true},
-        {k:"organizadoCEPPB", l:"Organizado por el CEPPB", tipo:"check", v:true, wide:true},
+        {k:"nombre", l:"Nombre", v:e.nombre, wide:true},
+        {k:"tipo", l:"Tipo", tipo:"select", op:TIPOS_EVENTO, v:e.tipo, wide:true},
+        {k:"fecha", l:"Fecha", tipo:"date", v:e.fecha || hoy()},
+        {k:"cierre", l:"Cierre de inscripción", tipo:"date", v:e.cierre},
+        {k:"lugar", l:"Lugar", v:e.lugar, wide:true}, {k:"juez", l:"Juez", v:e.juez, wide:true},
+        {k:"organizadoCEPPB", l:"Organizado por el CEPPB", tipo:"check",
+         v: e.id ? e.organizadoCEPPB : true, wide:true},
       ]},
-    ], async d => { await guardar("eventos", null, d); toast("Evento convocado"); });
+      {t:"Retransmisión en directo", d:"El club retransmite por su canal de YouTube y aquí se ve dentro de la plataforma. Pega la dirección del directo tal como sale en el navegador; al terminar, la grabación se queda enlazada.", f:[
+        {k:"directoUrl", l:"Enlace del directo", v:e.directoUrl, wide:true,
+         ph:"https://www.youtube.com/live/…"},
+        {k:"directoTitulo", l:"Qué se retransmite", v:e.directoTitulo, wide:true,
+         ph:"Final de Mondioring · Pista central"},
+      ]},
+    ], async d => {
+      const n = Object.assign({}, e, d);
+      n.organizadoCEPPB = !!d.organizadoCEPPB;
+      delete n.id;
+      await guardar("eventos", id || null, n);
+      toast(id ? "Evento actualizado" : "Evento convocado");
+      render();
+    });
   },
   inscripcion(eventoId){
     const mios = C("perros").filter(p => p.propietarioId === miSocioId());

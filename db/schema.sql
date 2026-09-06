@@ -138,6 +138,8 @@ create table if not exists eventos (
   id uuid primary key default gen_random_uuid(),
   nombre text not null, tipo text, fecha date, cierre date,
   lugar text, juez text, organizado_ceppb boolean default true,
+  -- retransmisión en directo: se enlaza, no se aloja
+  directo_url text, directo_titulo text,
   creado timestamptz default now()
 );
 
