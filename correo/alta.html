@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f3f1ed;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#141311">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f3f1ed;padding:28px 12px">
+    <tr><td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border:1px solid #e6dfd5;border-radius:8px;overflow:hidden">
+
+        <tr><td style="height:4px;padding:0;font-size:0;line-height:0">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+            <td width="25%" style="background:#FF000E;height:4px;font-size:0;line-height:0">&nbsp;</td>
+            <td width="50%" style="background:#FFCF00;height:4px;font-size:0;line-height:0">&nbsp;</td>
+            <td width="25%" style="background:#FF000E;height:4px;font-size:0;line-height:0">&nbsp;</td>
+          </tr></table>
+        </td></tr>
+
+        <tr><td style="padding:26px 30px 8px">
+          <div style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#a79d90">Club Español del Perro Pastor Belga</div>
+          <div style="font-size:23px;font-weight:800;letter-spacing:-.02em;margin-top:6px">Libro de Cría</div>
+        </td></tr>
+
+        <tr><td style="padding:8px 30px 4px;font-size:15px;line-height:1.55">
+          <p>Hola,</p>
+          <p>Confirma este correo para terminar de crear tu cuenta en el <b>Libro de Cría</b>
+          del Club Español del Perro Pastor Belga.</p>
+        </td></tr>
+
+        <tr><td style="padding:22px 30px 6px">
+          <a href="{{ .ConfirmationURL }}" style="display:inline-block;background:#d3040f;color:#fffaf8;text-decoration:none;padding:12px 22px;border-radius:5px;font-weight:600;font-size:15px">Confirmar mi correo</a>
+        </td></tr>
+
+        <tr><td style="padding:14px 30px 26px;font-size:12.5px;line-height:1.5;color:#797166">
+          Si el botón no funciona, copia esta dirección en tu navegador:<br>
+          <span style="word-break:break-all;color:#494339">{{ .ConfirmationURL }}</span>
+        </td></tr>
+
+        <tr><td style="padding:16px 30px;border-top:1px solid #e6dfd5;font-size:12px;line-height:1.5;color:#a79d90">
+          Si no esperabas este correo, ignóralo.
+        </td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body></html>
