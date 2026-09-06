@@ -58,15 +58,26 @@ test("un perro sin expediente aparece como pendiente, no como validado", () => {
   assert.equal(p.salud.validacion.estado, "pendiente");
 });
 
-test("al guardar no se envía nunca la validación: la firma la junta", () => {
+test("la validación viaja en sus columnas, no dentro del JSON de salud", () => {
   const f = aFila({
     id:"p1",
-    salud:{hd:"A", validacion:{estado:"validado", por:"yo mismo"}},
-    saludValidacion:"validado",
+    salud:{hd:"A", validacion:{estado:"validado", por:"Comisión de Cría", fecha:"2026-09-06"}},
   }, "perros");
-  assert.equal(f.salud.validacion, undefined, "la validación no puede viajar en el JSON de salud");
-  assert.equal("salud_validacion" in f, false, "ni como columna suelta");
-  assert.equal(f.salud.hd, "A", "los datos clínicos sí se guardan");
+  assert.equal(f.salud.validacion, undefined, "no puede viajar dentro del JSON de salud");
+  assert.equal(f.salud_validacion, "validado", "va en su columna");
+  assert.equal(f.salud_validada_por, "Comisión de Cría");
+  assert.equal(f.salud_validada_fecha, "2026-09-06");
+  assert.equal(f.salud.hd, "A", "los datos clínicos también");
+});
+
+test("quien no es junta no puede validar, pero eso lo decide la base de datos", () => {
+  /* La pantalla no hace de portera: manda lo que le pidan y el trigger
+     proteger_validacion_salud rechaza a quien no sea junta directiva.
+     Aquí solo se comprueba que el dato llega en la forma que el trigger
+     sabe mirar. */
+  const f = aFila({salud:{hd:"A", validacion:{estado:"validado"}}}, "perros");
+  assert.equal("salud_validacion" in f, true,
+    "si no llegara esta columna, la junta no podría validar nunca");
 });
 
 test("guardar la salud no destruye el objeto que tenía la pantalla", () => {

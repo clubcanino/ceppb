@@ -76,11 +76,18 @@ const AJUSTES = {
       return o;
     },
     escribir(o){
-      /* La validación no se envía nunca desde aquí: la firma la junta
-         y la protege un trigger. Solo viajan los datos clínicos. */
-      if (o.salud) { o.salud = Object.assign({}, o.salud); delete o.salud.validacion; }
-      delete o.saludValidacion; delete o.saludValidadaPor;
-      delete o.saludValidadaFecha; delete o.saludValidacionNota;
+      /* La validación viaja desmontada en sus cuatro columnas, que es
+         donde vive de verdad. Quién puede firmarla no se decide aquí:
+         lo decide el trigger de la base de datos, que rechaza a quien
+         no sea junta directiva. */
+      if (o.salud && o.salud.validacion){
+        const v = o.salud.validacion;
+        o.saludValidacion      = v.estado || "pendiente";
+        o.saludValidadaPor     = v.por   || null;
+        o.saludValidadaFecha   = v.fecha || null;
+        o.saludValidacionNota  = v.nota  || null;
+      }
+      if (o.salud){ o.salud = Object.assign({}, o.salud); delete o.salud.validacion; }
       return o;
     },
   },
