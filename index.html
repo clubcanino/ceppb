@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="css/estilo.css?v=25">
+<link rel="stylesheet" href="css/estilo.css?v=26">
 </head>
 <body>
 
@@ -32,6 +32,12 @@
 
   <main class="main">
     <header class="topbar">
+      <button class="abrir-menu" id="abrir-menu" aria-label="Abrir el menú" aria-expanded="false">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+             stroke-width="1.8" stroke-linecap="round">
+          <path d="M3 5.5h14M3 10h14M3 14.5h14"/>
+        </svg>
+      </button>
       <div>
         <h1 id="tt">Novedades</h1>
         <div class="sub" id="ts"></div>
@@ -47,6 +53,7 @@
   </main>
 </div>
 
+<div class="tapa-menu" id="tapa-menu"></div>
 <div class="scrim" id="scrim"></div>
 <aside class="sheet" id="sheet" role="dialog" aria-modal="true">
   <div class="sheet-h">
@@ -63,38 +70,38 @@
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="js/config.js?v=25"></script>
-<script src="js/util.js?v=25"></script>
-<script src="js/idiomas.js?v=25"></script>
-<script src="idiomas/en.js?v=25"></script>
-<script src="idiomas/fr.js?v=25"></script>
-<script src="idiomas/de.js?v=25"></script>
-<script src="js/reglamento.js?v=25"></script>
-<script src="js/genealogia.js?v=25"></script>
-<script src="js/privacidad.js?v=25"></script>
-<script src="js/componentes.js?v=25"></script>
-<script src="js/media.js?v=25"></script>
-<script src="js/exportar.js?v=25"></script>
-<script src="js/directo.js?v=25"></script>
-<script src="js/sesion.js?v=25"></script>
-<script src="js/columnas.js?v=25"></script>
-<script src="js/datos.js?v=25"></script>
-<script src="js/formularios.js?v=25"></script>
-<script src="js/formularios-def.js?v=25"></script>
-<script src="js/vistas/entrar.js?v=25"></script>
-<script src="js/vistas/muro.js?v=25"></script>
-<script src="js/vistas/ajustes.js?v=25"></script>
-<script src="js/vistas/diagnostico.js?v=25"></script>
-<script src="js/vistas/socios.js?v=25"></script>
-<script src="js/vistas/perros.js?v=25"></script>
-<script src="js/vistas/certificado.js?v=25"></script>
-<script src="js/vistas/cria.js?v=25"></script>
-<script src="js/vistas/camadas-eventos.js?v=25"></script>
-<script src="js/vistas/mi-area.js?v=25"></script>
-<script src="js/vistas/junta.js?v=25"></script>
-<script src="js/vistas/videos.js?v=25"></script>
-<script src="js/vistas/club.js?v=25"></script>
-<script src="js/app.js?v=25"></script>
-<script src="js/eventos.js?v=25"></script>
+<script src="js/config.js?v=26"></script>
+<script src="js/util.js?v=26"></script>
+<script src="js/idiomas.js?v=26"></script>
+<script src="idiomas/en.js?v=26"></script>
+<script src="idiomas/fr.js?v=26"></script>
+<script src="idiomas/de.js?v=26"></script>
+<script src="js/reglamento.js?v=26"></script>
+<script src="js/genealogia.js?v=26"></script>
+<script src="js/privacidad.js?v=26"></script>
+<script src="js/componentes.js?v=26"></script>
+<script src="js/media.js?v=26"></script>
+<script src="js/exportar.js?v=26"></script>
+<script src="js/directo.js?v=26"></script>
+<script src="js/sesion.js?v=26"></script>
+<script src="js/columnas.js?v=26"></script>
+<script src="js/datos.js?v=26"></script>
+<script src="js/formularios.js?v=26"></script>
+<script src="js/formularios-def.js?v=26"></script>
+<script src="js/vistas/entrar.js?v=26"></script>
+<script src="js/vistas/muro.js?v=26"></script>
+<script src="js/vistas/ajustes.js?v=26"></script>
+<script src="js/vistas/diagnostico.js?v=26"></script>
+<script src="js/vistas/socios.js?v=26"></script>
+<script src="js/vistas/perros.js?v=26"></script>
+<script src="js/vistas/certificado.js?v=26"></script>
+<script src="js/vistas/cria.js?v=26"></script>
+<script src="js/vistas/camadas-eventos.js?v=26"></script>
+<script src="js/vistas/mi-area.js?v=26"></script>
+<script src="js/vistas/junta.js?v=26"></script>
+<script src="js/vistas/videos.js?v=26"></script>
+<script src="js/vistas/club.js?v=26"></script>
+<script src="js/app.js?v=26"></script>
+<script src="js/eventos.js?v=26"></script>
 </body>
 </html>

@@ -285,18 +285,74 @@ img.avatar{display:block}
 .feed-row:last-child{border-bottom:0}
 .feed-row .when{font-family:var(--mono);font-size:10.5px;color:var(--faint);flex:none;width:64px;padding-top:2px;text-align:right}
 
+/* ============================================================
+   Pantallas estrechas
+
+   La mayoría de los socios entran desde el teléfono. Con veinte
+   secciones, un menú desplegado en horizontal se come la pantalla
+   entera y el contenido queda debajo: hay que recogerlo.
+   ============================================================ */
 @media (max-width:960px){
   .shell{grid-template-columns:1fr}
-  .side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
-  .nav{flex-direction:row;flex-wrap:wrap;gap:4px}
-  .nav-h{display:none}
-  .nav a.on::before{display:none}
-  .nav a.on{box-shadow:inset 0 -2px 0 var(--brand)}
-  .page,.topbar{padding-left:16px;padding-right:16px}
+
+  /* El menú se guarda y sale por la izquierda al pulsar el botón */
+  .side{position:fixed;top:0;left:0;bottom:0;width:min(280px,84vw);z-index:60;
+    transform:translateX(-102%);transition:transform .22s ease;
+    box-shadow:0 0 40px -8px rgba(0,0,0,.35);height:100dvh}
+  :root[data-menu="abierto"] .side{transform:none}
+  .nav{flex-direction:column}
+
+  /* La cortina que apaga el fondo mientras el menú está abierto */
+  .tapa-menu{position:fixed;inset:0;z-index:55;background:rgba(20,19,17,.45);
+    opacity:0;pointer-events:none;transition:opacity .22s ease}
+  :root[data-menu="abierto"] .tapa-menu{opacity:1;pointer-events:auto}
+
+  .abrir-menu{display:inline-flex}
+  .topbar{padding:10px 14px;gap:10px}
+  .topbar h1{font-size:17px}
+  .topbar .sub{display:none}
+  .search{display:none}
+  .page{padding:14px 14px 80px}
   .cols2,.cols23{grid-template-columns:1fr}
-  .mast-top h2{font-size:22px}
+  .mast-top{padding:16px 18px;gap:14px}
+  .mast-top h2{font-size:21px}
+  .mast-top img{width:56px;height:56px}
+  .mast-stats{grid-template-columns:1fr 1fr}
   .feed-row .when{width:auto}
+  .filters{gap:6px}
+  .filters .inp{flex:1 1 45%;min-width:0}
+  .card-b{padding:13px}
+  .fgrid{grid-template-columns:1fr}
+  .cert-firma{grid-template-columns:1fr;gap:14px;text-align:center}
+  .cert-codigo{text-align:center}
+
+  /* Cada fila de tabla pasa a ser una ficha: nueve columnas no caben
+     en un teléfono, y en horizontal no se leen. */
+  .tabla-movil table, .tabla-movil thead, .tabla-movil tbody,
+  .tabla-movil tr, .tabla-movil td{display:block;width:auto}
+  .tabla-movil thead{display:none}
+  .tabla-movil tr{border:1px solid var(--line);border-radius:var(--r);
+    margin-bottom:8px;padding:10px 12px;background:var(--surface)}
+  .tabla-movil td{border:0;padding:3px 0;display:flex;gap:10px;align-items:baseline}
+  .tabla-movil td::before{content:attr(data-col);flex:none;width:38%;
+    font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .tabla-movil td:first-child{padding-bottom:7px;margin-bottom:5px;
+    border-bottom:1px solid var(--line);font-weight:600}
+  .tabla-movil td:first-child::before{display:none}
+  .tabla-movil td:first-child .celda-nm{font-size:14px}
+
+  /* Los botones, alcanzables con el pulgar */
+  .btn{min-height:38px}
+  .btn.sm{min-height:32px}
+  .seg button{min-height:34px}
 }
+
+/* El botón del menú solo existe en pantallas estrechas */
+.abrir-menu{display:none;align-items:center;justify-content:center;
+  width:38px;height:38px;flex:none;border:1px solid var(--line-2);border-radius:var(--r-sm);
+  background:var(--surface);cursor:pointer;padding:0}
+.tapa-menu{display:none}
+@media (max-width:960px){ .tapa-menu{display:block} }
 
 /* ---------- certificado del ejemplar ---------- */
 .certificado{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);

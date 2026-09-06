@@ -15,7 +15,7 @@ V.aptos = function(){
         return `<span class="chip block" title="${esc(a.bloqueos.map(b=>b.t+": "+b.d).join(" · "))}">✕ ${esc(a.bloqueos[0].t)}</span>`;
       /* Qué falta, no cuántas cosas faltan: «2» no le dice nada a nadie */
       const faltan = a.items.filter(i => i.e === "falta").map(i => i.t);
-      return `<span class="chip warn" title="Falta: ${esc(faltan.join(" · "))}">Falta ${esc(faltan.slice(0,2).join(", "))}${faltan.length>2?` +${faltan.length-2}`:""}</span>`;
+      return `<span class="chip warn" title="Falta: ${esc(faltan.join(" · "))}">${faltan.length}</span>`;
     }},
     ...FIGURAS.map(f => ({t:f.c, via:f.via, s:x=>{const g=x.figs.find(y=>y.fig.c===f.c);return g.cumple?2:g.excluido?0:1;},
       r:x=>{const g=x.figs.find(y=>y.fig.c===f.c);

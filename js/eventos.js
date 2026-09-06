@@ -433,3 +433,24 @@ document.addEventListener("click", ev => {
     return exportarCenso(C("socios"), true);
   }
 });
+
+/* ============================================================
+   El menú en pantallas estrechas
+   ============================================================ */
+function menuAbierto(){ return document.documentElement.getAttribute("data-menu") === "abierto"; }
+
+function abrirMenu(si){
+  document.documentElement.setAttribute("data-menu", si ? "abierto" : "cerrado");
+  const b = $("#abrir-menu");
+  if (b) b.setAttribute("aria-expanded", si ? "true" : "false");
+}
+
+document.addEventListener("click", ev => {
+  if (ev.target.closest("#abrir-menu")) return abrirMenu(!menuAbierto());
+  if (ev.target.closest("#tapa-menu"))  return abrirMenu(false);
+  /* al elegir una sección, el menú se aparta solo */
+  if (ev.target.closest(".side a") && menuAbierto()) abrirMenu(false);
+});
+
+addEventListener("keydown", e => { if (e.key === "Escape" && menuAbierto()) abrirMenu(false); });
+addEventListener("hashchange", () => abrirMenu(false));

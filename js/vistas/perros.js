@@ -29,8 +29,11 @@ V.perros = function(){
       const a = R.anexoA(p);
       if (a.ok) return `<span class="chip ok">Completo</span>`;
       if (a.bloqueos.length) return `<span class="chip block">Excluido</span>`;
+      /* Antes salía «Falta Expediente de salud validado por el club +8»
+         y descuadraba la tabla entera. El detalle va en el título
+         emergente, que es donde no estorba. */
       const faltan = a.items.filter(i => i.e === "falta").map(i => i.t);
-      return `<span class="chip warn" title="Falta: ${esc(faltan.join(" · "))}">Falta ${esc(faltan.slice(0,1).join(""))}${faltan.length>1?` +${faltan.length-1}`:""}</span>`;
+      return `<span class="chip warn" title="Falta: ${esc(faltan.join(" · "))}">${faltan.length} sin cumplir</span>`;
     }},
     {t:"Aptos de cría", s:p=>R.aptosDe(p,res).length, r:p=>chipApto(R.aptosDe(p,res))},
     {t:"Sin validar", s:p=>R.pendientes(p,res).total, r:p=>{const n=R.pendientes(p,res).total; return n?`<span class="chip warn">${n}</span>`:`<span class="dim">—</span>`;}},

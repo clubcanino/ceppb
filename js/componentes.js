@@ -49,10 +49,13 @@ function tabla(key, cols, filas, onClick){
     });
   }
   if(!filas.length) return `<div class="tw"><div class="empty"><b>Sin resultados</b>Ajusta los filtros o añade el primer registro.</div></div>`;
-  return `<div class="tw"><table><thead><tr>` +
+  /* Cada celda lleva el nombre de su columna: en el móvil la tabla se
+     convierte en fichas y ese nombre es lo que dice qué es cada dato. */
+  return `<div class="tw tabla-movil"><table><thead><tr>` +
     cols.map((c,i) => `<th class="${c.s?"":"nos"}" ${c.s?`data-ord="${key}|${i}"`:""} ${c.via?`style="color:${VIA_COLOR[c.via]}"`:""}>${esc(c.t)}${o.c===i?` <span class="ar">${o.d?"▼":"▲"}</span>`:""}</th>`).join("") +
     `</tr></thead><tbody>` +
-    filas.map(f => `<tr class="${onClick?"clic":""}" ${onClick?`data-go="${esc(onClick(f))}"`:""}>` + cols.map(c => `<td>${c.r(f)}</td>`).join("") + `</tr>`).join("") +
+    filas.map(f => `<tr class="${onClick?"clic":""}" ${onClick?`data-go="${esc(onClick(f))}"`:""}>` +
+      cols.map(c => `<td data-col="${esc(c.t)}">${c.r(f)}</td>`).join("") + `</tr>`).join("") +
     `</tbody></table></div>`;
 }
 
