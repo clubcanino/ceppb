@@ -7,7 +7,7 @@
    ============================================================ */
 "use strict";
 
-const VERSION_APP = "9";
+const VERSION_APP = "10";
 
 V.diagnostico = function(){
   const u = SESION.usuario;
@@ -15,7 +15,7 @@ V.diagnostico = function(){
 
   const filas = [
     ["Versión de los archivos", VERSION_APP,
-      "Si aquí no pone 8, el navegador tiene guardada una versión vieja: pulsa Cmd+Shift+R"],
+      "Si aquí no pone " + VERSION_APP + ", el navegador tiene guardada una versión vieja: pulsa Cmd+Shift+R"],
     ["Base de datos", S.error === "sin-configurar" ? "SIN CONFIGURAR" : "conectada", ""],
     ["Datos cargados", S.listo ? "sí" : "todavía no", ""],
     ["Sesión", u ? "iniciada" : "NO has entrado",

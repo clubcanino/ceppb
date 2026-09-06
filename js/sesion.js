@@ -22,8 +22,11 @@ const LLAVE_INVITACION = "ceppb.invitacion";
 SESION.iniciar = async function(sb){
   SESION.sb = sb;
 
+  /* Supabase lee de la dirección la respuesta del correo al conectarse.
+     Solo cuando ya la ha leído se puede apartar. */
   const { data } = await sb.auth.getSession();
   SESION.usuario = data.session ? data.session.user : null;
+  if (window.limpiarRespuestaDelCorreo) window.limpiarRespuestaDelCorreo();
 
   /* Al volver del correo, la sesión llega unos instantes después de
      que la página se haya dibujado. Se actualiza en su sitio: recargar

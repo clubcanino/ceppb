@@ -185,9 +185,14 @@ aplicarTema();
 
 /* Al volver del correo, Supabase deja su respuesta pegada en la
    dirección (#access_token=... o #error=...). Eso no es una ruta de la
-   plataforma: se aparta antes de dibujar nada, y si vino un error se
-   le dice al socio en lugar de dejarlo mirando una pantalla vacía. */
-function limpiarRespuestaDelCorreo(){
+   plataforma y hay que apartarlo.
+
+   PERO NO ANTES DE TIEMPO: esa respuesta es la llave con la que el
+   socio entra, y Supabase la lee de la dirección cuando se conecta.
+   Si se borra antes, el socio abre el enlace del correo y no entra.
+   Por eso esta función NO se llama aquí, sino desde sesion.js, una vez
+   que Supabase ya la ha leído. */
+window.limpiarRespuestaDelCorreo = function(){
   const h = location.hash || "";
   if (!/(access_token|refresh_token|error|error_description)=/.test(h)) return;
 
@@ -195,8 +200,7 @@ function limpiarRespuestaDelCorreo(){
   const error = p.get("error_description") || p.get("error");
   history.replaceState(null, "", location.pathname + location.search + "#/muro");
   if (error) setTimeout(() => toast(decodeURIComponent(error.replace(/\+/g, " "))), 400);
-}
-limpiarRespuestaDelCorreo();
+};
 
 const [rInicial, argInicial] = rutaActual();
 if (rInicial === "alta" && argInicial) SESION.guardarInvitacion(argInicial);
