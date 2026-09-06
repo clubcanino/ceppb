@@ -23,7 +23,7 @@ function perro(extra = {}){
     id: "p1", nombre: "Prueba", variedad: "Malinois", sexo: "M",
     fechaNacimiento: "2020-01-01",
     salud: structuredClone(saludPerfecta),
-    adnProgenitores: true,
+    adnEjemplar: true,
   }, extra);
 }
 
@@ -96,8 +96,8 @@ test("Anexo A.4: portador no excluye por sí solo", () => {
   assert.equal(R.anexoA(p).ok, true, "un portador sí puede tener el Anexo A completo");
 });
 
-test("Anexo A: sin ADN de progenitores no está completo", () => {
-  const p = perro({adnProgenitores:false});
+test("Anexo A: sin ADN del ejemplar no está completo", () => {
+  const p = perro({adnEjemplar:false});
   assert.equal(R.anexoA(p).ok, false);
 });
 

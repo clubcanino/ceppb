@@ -118,10 +118,10 @@ test("sí se envían las columnas que existen de verdad", () => {
   const f = aFila({
     nombre: "Uma", variedad: "Tervueren", sexo: "H",
     fechaNacimiento: "2021-03-01", propietarioId: "s1", loe: "LOE 123",
-    adnProgenitores: true, visibilidad: "socios",
+    adnEjemplar: true, visibilidad: "socios",
   }, "perros");
   for (const c of ["nombre","variedad","sexo","fecha_nacimiento","propietario_id",
-                   "loe","adn_progenitores","visibilidad"]){
+                   "loe","adn_ejemplar","visibilidad"]){
     assert.equal(c in f, true, "falta la columna " + c);
   }
 });

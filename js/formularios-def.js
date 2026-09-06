@@ -86,11 +86,11 @@ const FORMS = {
       ]},
       {t:"Visibilidad", f:[
         {k:"visibilidad", l:"Quién ve esta ficha", tipo:"select", op:NIVELES, v:p.visibilidad||"socios", wide:true},
-        {k:"adnProgenitores", l:"ADN de progenitores verificado (RSCE)", tipo:"check", v:p.adnProgenitores, wide:true},
+        {k:"adnEjemplar", l:"Perfil de ADN del ejemplar depositado en la RSCE", tipo:"check", v:p.adnEjemplar, wide:true, h:"El del propio perro, no el de sus padres"},
       ]},
     ], async d => {
       const n = Object.assign({}, p, d);
-      n.adnProgenitores = !!d.adnProgenitores;
+      n.adnEjemplar = !!d.adnEjemplar;
       n.afijo = limpiarAfijo(d.afijo);
 
       /* El criador se escribe con el buscador. Si el nombre es de un
@@ -123,12 +123,12 @@ const FORMS = {
       ]},
       {t:"Enfermedades hereditarias", d:"Portador: sólo puede cruzarse con ejemplares libres. Afectado: excluido de la cría.",
         f:GENES.map(x => ({k:"g_"+x.k, l:x.k, tipo:"select", op:[["","Sin analizar"],["libre","Libre"],["portador","Portador"],["afectado","Afectado"]], v:g[x.k], h:x.n}))},
-      {t:"Genealogía", f:[{k:"adnProgenitores", l:"ADN de progenitores verificado (RSCE)", tipo:"check", v:p.adnProgenitores, wide:true}]},
+      {t:"Genealogía", f:[{k:"adnEjemplar", l:"ADN del ejemplar verificado (RSCE)", tipo:"check", v:p.adnEjemplar, wide:true}]},
     ], async d => {
       const genes = {}; GENES.forEach(x => { if(d["g_"+x.k]) genes[x.k] = d["g_"+x.k]; });
       const n = Object.assign({}, p, {salud:{hd:d.hd, hdEntidad:d.hdEntidad, ed:d.ed, edEntidad:d.edEntidad, lvt:d.lvt, genes,
         validacion: SESION.esAdmin ? {estado:"validado", fecha:hoy(), por:"Comisión de Cría"} : {estado:"pendiente"}},
-        adnProgenitores: !!d.adnProgenitores});
+        adnEjemplar: !!d.adnEjemplar});
       delete n.id;
       await guardar("perros", id, n); toast("Pruebas registradas");
     });

@@ -115,7 +115,7 @@ create table if not exists perros (
   criador_id        uuid references socios(id) on delete set null,
   padre_id          uuid references perros(id) on delete set null,
   madre_id          uuid references perros(id) on delete set null,
-  adn_progenitores  boolean default false,
+  adn_ejemplar  boolean default false,
   -- Anexo A. hd: A..E · ed: 0..3 · lvt: libre|afectado · genes: {CACA,CJM,SDCA1,SDCA2}
   salud             jsonb default '{}'::jsonb,
   salud_validacion  text default 'pendiente' check (salud_validacion in ('pendiente','validado','rechazado')),
@@ -270,7 +270,7 @@ begin
     raise exception 'Las pruebas de salud sólo las valida la Junta Directiva';
   end if;
   -- si el propietario toca los datos, el expediente vuelve a pendiente
-  if new.salud is distinct from old.salud or new.adn_progenitores is distinct from old.adn_progenitores then
+  if new.salud is distinct from old.salud or new.adn_ejemplar is distinct from old.adn_ejemplar then
     new.salud_validacion := 'pendiente';
     new.salud_validada_por := null; new.salud_validada_fecha := null;
   end if;

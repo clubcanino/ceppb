@@ -86,7 +86,7 @@ const COLUMNAS = {
     "criador_id",
     "padre_id",
     "madre_id",
-    "adn_progenitores",
+    "adn_ejemplar",
     "salud",
     "salud_validacion",
     "salud_validada_por",
