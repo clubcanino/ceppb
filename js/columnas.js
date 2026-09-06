@@ -97,6 +97,7 @@ const COLUMNAS = {
     "workingdog_url",
     "pedigri_pegado",
     "historial_titularidad",
+    "origen",
     "creado"
   ],
   eventos: [

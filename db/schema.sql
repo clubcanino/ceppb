@@ -127,6 +127,7 @@ create table if not exists perros (
   workingdog_url    text,
   pedigri_pegado    text,
   historial_titularidad jsonb default '[]'::jsonb,
+  origen            text,          -- de dónde salió la ficha (working-dog, etc.)
   creado            timestamptz default now()
 );
 create index if not exists perros_prop_idx on perros(propietario_id);
@@ -193,7 +194,7 @@ create table if not exists camadas (
 -- ---------- expedientes que resuelve la junta ----------
 create table if not exists solicitudes (
   id uuid primary key default gen_random_uuid(),
-  tipo text not null check (tipo in ('intervariedad','traspaso')),
+  tipo text not null check (tipo in ('intervariedad','traspaso','reclamacion')),
   estado text default 'pendiente' check (estado in ('pendiente','autorizada','denegada')),
   fecha date default current_date,
   -- cruce intervariedades (Cap. 8)
@@ -277,7 +278,8 @@ begin
     raise exception 'Las pruebas de salud sólo las valida la Junta Directiva';
   end if;
   -- si el propietario toca los datos, el expediente vuelve a pendiente
-  if new.salud is distinct from old.salud or new.adn_ejemplar is distinct from old.adn_ejemplar then
+  if new.salud is distinct from old.salud
+     or new.adn_ejemplar is distinct from old.adn_ejemplar then
     new.salud_validacion := 'pendiente';
     new.salud_validada_por := null; new.salud_validada_fecha := null;
   end if;
