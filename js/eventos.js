@@ -210,13 +210,18 @@ document.addEventListener("click", async ev => {
 
   /* --- contraseña --- */
   if (t.id === "guardar-clave"){
-    const a = $("#clave1").value || "", b = $("#clave2").value || "";
+    const c1 = $("#clave1"), c2 = $("#clave2");
+    if (!c1 || !c2) return toast("No encuentro el formulario; recarga la página");
+    const a = c1.value || "", b = c2.value || "";
+    if (!a) return toast("Escribe la contraseña nueva");
+    if (a.length < 8) return toast("La contraseña necesita ocho caracteres como mínimo");
     if (a !== b) return toast("Las dos contraseñas no coinciden");
     t.disabled = true;
     try {
       await SESION.ponerContrasena(a);
-      toast("Contraseña guardada");
-      $("#clave1").value = ""; $("#clave2").value = "";
+      c1.value = ""; c2.value = "";
+      toast("Contraseña guardada. A partir de ahora entras con ella.");
+      render();
     } catch(e){ toast(e.message || "No se ha podido guardar"); }
     t.disabled = false;
     return;

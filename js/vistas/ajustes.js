@@ -22,12 +22,12 @@ V.ajustes = function(){
 
       ${!s ? tarjetaVincular() : ""}
 
-      <div class="card"><div class="card-h"><h3>Contraseña</h3>
+      <div class="card lift" id="tarjeta-clave"><div class="card-h"><h3>Contraseña</h3>
         ${!SESION.tieneContrasena() ? `<span class="chip warn" style="margin-left:auto">Sin poner</span>` : ""}</div>
         <div class="card-b">
           ${!SESION.tieneContrasena() ? `<div class="note warn" style="margin-bottom:12px">
-            Has entrado con el enlace del correo y todavía no tienes contraseña. Elige una
-            ahora: será la que uses a partir de hoy.</div>` : ""}
+            <b>Elige tu contraseña.</b> Has entrado con el enlace del correo; a partir de
+            ahora entrarás con tu correo y esta contraseña.</div>` : ""}
           <p class="dim">Solo la sabes tú. Ni la junta ni secretaría pueden verla.</p>
           <div class="f wide" style="margin:12px 0 8px">
             <label for="clave1">Contraseña nueva</label>

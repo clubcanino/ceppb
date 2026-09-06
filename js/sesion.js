@@ -38,12 +38,7 @@ SESION.iniciar = async function(sb){
       await SESION.reclamarPendiente();
       await SESION.refrescar();
       await recargar();
-      /* Ha entrado por el enlace del correo y todavía no tiene
-         contraseña: lo primero es que se ponga una. */
-      if (!SESION.tieneContrasena()){
-        location.hash = "#/ajustes";
-        setTimeout(() => toast("Elige una contraseña para entrar a partir de ahora"), 500);
-      }
+      SESION.avisarSiFaltaContrasena();
     } else {
       SESION.socio = null; SESION.esAdmin = false; SESION.rol = "visitante";
     }
@@ -53,7 +48,19 @@ SESION.iniciar = async function(sb){
   if (SESION.usuario){
     await SESION.reclamarPendiente();
     await SESION.refrescar();
+    SESION.avisarSiFaltaContrasena();
   }
+};
+
+/* Quien entró por el enlace del correo y no tiene contraseña propia se
+   encuentra la pantalla para ponerla. Antes esto solo pasaba en el
+   instante justo de entrar: si recargaba, se quedaba sin saberlo. */
+SESION.avisarSiFaltaContrasena = function(){
+  if (!SESION.usuario || SESION.tieneContrasena()) return;
+  const r = (location.hash || "").slice(2).split("/")[0];
+  if (r === "ajustes") return;
+  location.hash = "#/ajustes";
+  setTimeout(() => toast("Elige una contraseña para entrar a partir de ahora"), 600);
 };
 
 /* Si la tabla `admins` devuelve algo, es que eres de la junta: su
@@ -108,7 +115,18 @@ SESION.ponerContrasena = async function(contrasena){
     password: contrasena,
     data: { tiene_clave: true },
   });
-  if (error) throw error;
+  if (error){
+    /* Los mensajes de Supabase vienen en inglés: se traducen los que
+       de verdad se encuentra un socio. */
+    const m = error.message || "";
+    if (/reauthentication|recent/i.test(m))
+      throw new Error("Por seguridad hay que volver a entrar antes de cambiar la contraseña. Cierra sesión, entra otra vez con el enlace del correo y vuelve aquí.");
+    if (/same as the old|different from the old/i.test(m))
+      throw new Error("Esa es la contraseña que ya tenías: elige otra distinta");
+    if (/at least|should be/i.test(m))
+      throw new Error("La contraseña es demasiado corta: ocho caracteres como mínimo");
+    throw new Error(m || "No se ha podido guardar la contraseña");
+  }
   if (data && data.user) SESION.usuario = data.user;
 };
 
