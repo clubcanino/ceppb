@@ -1,81 +1,100 @@
 /* ============================================================
-   Entrar — acceso por enlace mágico al correo.
+   Entrar y darse de alta.
 
-   No hay contraseñas. El socio escribe el correo que consta en
-   secretaría, recibe un enlace y con eso entra. Si viene de una
-   invitación, ese mismo paso ata su cuenta a su número de socio.
+   El día a día es correo y contraseña. El enlace al correo aparece
+   dos veces: cuando secretaría invita a un socio (y ahí elige su
+   contraseña) y cuando alguien la ha olvidado.
    ============================================================ */
 "use strict";
 
-let estadoEntrar = { enviado: false, correo: "" };
+let modoEntrar = { paso: "contrasena", correo: "", enviado: false };
 
 V.entrar = function(){
   if (SESION.usuario) return panelCuenta();
 
-  const invitacion = pendienteDeInvitacion();
-
-  if (estadoEntrar.enviado){
-    return `<div class="card" style="max-width:520px">
-      <div class="card-b">
-        <div class="note ok" style="margin-bottom:14px">Enlace enviado</div>
-        <h3>Mira tu correo</h3>
-        <p>Hemos enviado un enlace a <b>${esc(estadoEntrar.correo)}</b>.
-        Ábrelo desde este mismo dispositivo y entrarás sin escribir ninguna contraseña.</p>
-        <p class="dim">Si no aparece en unos minutos, revisa la carpeta de correo no deseado.
-        El enlace caduca; si expira, pide otro.</p>
-        <button class="btn" id="otro-enlace">Usar otro correo</button>
-      </div>
-    </div>`;
-  }
-
-  return `<div class="card" style="max-width:520px">
-    <div class="card-b">
-      ${invitacion ? `<div class="note ok" style="margin-bottom:14px">
-        Tienes una invitación de secretaría preparada. Entra con el correo al que la recibiste
-        y tu cuenta quedará vinculada a tu ficha de socio.</div>` : ""}
-      <h3>Acceso de socios</h3>
-      <p>Escribe el correo que consta en la secretaría del club. Te llegará un enlace
-      para entrar: no hay contraseña que recordar.</p>
-      <div class="f wide" style="margin:14px 0">
-        <label for="correo">Correo electrónico</label>
-        <input class="inp" id="correo" type="email" autocomplete="email"
-               placeholder="nombre@ejemplo.com" value="${esc(estadoEntrar.correo)}">
-      </div>
-      <button class="btn brand" id="pedir-enlace">Enviarme el enlace</button>
-      <p class="dim" style="margin-top:14px">¿No recibes nada porque tu correo no está en
-      secretaría? Escribe al club: hay 18 socios sin correo registrado que reclaman su
-      ficha a mano con número de socio, DNI y teléfono.</p>
-    </div>
-  </div>`;
+  if (modoEntrar.enviado) return avisoCorreoEnviado();
+  if (modoEntrar.paso === "olvidada") return formOlvidada();
+  return formContrasena();
 };
 
-/* Cuando ya has entrado */
-function panelCuenta(){
-  const s = SESION.socio;
-  return `<div class="card" style="max-width:560px">
-    <div class="card-b">
-      <h3>Tu cuenta</h3>
-      <dl class="kv" style="margin-top:12px">
-        <dt>Correo</dt><dd>${esc(SESION.usuario.email)}</dd>
-        <dt>Perfil</dt><dd>${SESION.esAdmin ? "Junta directiva" : s ? "Socio" : "Sin vincular"}</dd>
-        ${s ? `<dt>Nº de socio</dt><dd class="nm">${esc(s.numero)}</dd>
-               <dt>Nombre</dt><dd>${esc(s.nombreCompleto || (s.nombre + " " + s.apellidos))}</dd>` : ""}
-      </dl>
-      ${!s && !SESION.esAdmin ? `<div class="note warn" style="margin-top:14px">
-        Esta cuenta todavía no está atada a ninguna ficha de socio. Necesitas el enlace de
-        invitación que envía secretaría al correo que consta en el club.</div>` : ""}
-      <div style="margin-top:16px"><button class="btn" id="salir">Cerrar sesión</button></div>
+function formContrasena(){
+  const invitacion = hayInvitacionGuardada();
+  return `<div class="card" style="max-width:460px"><div class="card-b">
+    ${invitacion ? `<div class="note ok" style="margin-bottom:14px">
+      Tienes una invitación de secretaría preparada. Entra por
+      <b>«Es mi primera vez»</b> para vincular tu cuenta y elegir contraseña.</div>` : ""}
+    <h3>Acceso de socios</h3>
+    <div class="f wide" style="margin:14px 0 10px">
+      <label for="correo">Correo</label>
+      <input class="inp" id="correo" type="email" autocomplete="username"
+             placeholder="nombre@ejemplo.com" value="${esc(modoEntrar.correo)}">
     </div>
-  </div>`;
+    <div class="f wide" style="margin-bottom:16px">
+      <label for="clave">Contraseña</label>
+      <input class="inp" id="clave" type="password" autocomplete="current-password">
+    </div>
+    <button class="btn brand" id="entrar-clave">Entrar</button>
+    <div style="margin-top:18px;display:flex;gap:16px;flex-wrap:wrap">
+      <a class="linkish" id="ir-olvidada">He olvidado la contraseña</a>
+      <a class="linkish" id="ir-primera">Es mi primera vez</a>
+    </div>
+  </div></div>`;
 }
 
-/* La ruta #/alta/TOKEN guarda el enlace y manda a entrar */
+function formOlvidada(){
+  return `<div class="card" style="max-width:460px"><div class="card-b">
+    <h3>Entrar con un enlace al correo</h3>
+    <p>Escribe el correo que consta en secretaría. Te llega un enlace, entras con él y
+    eliges una contraseña nueva.</p>
+    <div class="f wide" style="margin:14px 0 16px">
+      <label for="correo">Correo</label>
+      <input class="inp" id="correo" type="email" autocomplete="email"
+             placeholder="nombre@ejemplo.com" value="${esc(modoEntrar.correo)}">
+    </div>
+    <button class="btn brand" id="pedir-enlace">Enviarme el enlace</button>
+    <div style="margin-top:18px"><a class="linkish" id="ir-clave">Volver</a></div>
+    <p class="dim" style="margin-top:16px">Si el club no tiene tu correo —hay 18 socios en ese
+    caso— escribe a secretaría: reclamarás tu ficha a mano con tu número de socio, DNI y teléfono.</p>
+  </div></div>`;
+}
+
+function avisoCorreoEnviado(){
+  return `<div class="card" style="max-width:460px"><div class="card-b">
+    <div class="note ok" style="margin-bottom:14px">Enlace enviado</div>
+    <h3>Mira tu correo</h3>
+    <p>Hemos enviado un enlace a <b>${esc(modoEntrar.correo)}</b>. Ábrelo desde este mismo
+    dispositivo. Revisa el correo no deseado si tarda.</p>
+    <button class="btn" id="ir-clave">Volver</button>
+  </div></div>`;
+}
+
+/* ---------- ya dentro ---------- */
+function panelCuenta(){
+  const s = SESION.socio;
+  return `<div class="card" style="max-width:560px"><div class="card-b">
+    <h3>Tu cuenta</h3>
+    <dl class="kv" style="margin-top:12px">
+      <dt>Correo</dt><dd>${esc(SESION.usuario.email)}</dd>
+      <dt>Perfil</dt><dd>${SESION.esAdmin ? "Junta directiva" : s ? "Socio" : "Sin vincular"}</dd>
+      ${s ? `<dt>Nº de socio</dt><dd class="nm">${esc(s.numero)}</dd>
+             <dt>Nombre</dt><dd>${esc(s.nombreCompleto || "")}</dd>` : ""}
+    </dl>
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button class="btn" data-ir="ajustes">Mi cuenta</button>
+      <button class="btn" id="salir">Cerrar sesión</button>
+    </div>
+  </div></div>`;
+}
+
+/* La ruta #/alta/TOKEN guarda la invitación y lleva al alta */
 V.alta = function(token){
   if (token) SESION.guardarInvitacion(token);
+  if (SESION.usuario) return V.ajustes();
+  modoEntrar.paso = "olvidada";
   return V.entrar();
 };
 
-function pendienteDeInvitacion(){
+function hayInvitacionGuardada(){
   try { return !!localStorage.getItem("ceppb.invitacion"); } catch(e){ return false; }
 }
 
@@ -83,18 +102,36 @@ function pendienteDeInvitacion(){
 document.addEventListener("click", async ev => {
   const t = ev.target;
 
-  if (t.id === "otro-enlace"){
-    estadoEntrar = { enviado:false, correo:estadoEntrar.correo };
-    return render();
+  if (t.id === "ir-olvidada" || t.id === "ir-primera"){
+    modoEntrar.paso = "olvidada"; modoEntrar.enviado = false; return render();
+  }
+  if (t.id === "ir-clave"){
+    modoEntrar.paso = "contrasena"; modoEntrar.enviado = false; return render();
+  }
+
+  if (t.id === "entrar-clave"){
+    const correo = ($("#correo").value || "").trim();
+    const clave  = $("#clave").value || "";
+    if (!correo.includes("@")) return toast("Escribe un correo válido");
+    if (!clave) return toast("Escribe tu contraseña");
+    t.disabled = true;
+    try { await SESION.entrarConContrasena(correo, clave); }
+    catch(e){
+      t.disabled = false;
+      toast(/Invalid login/i.test(e.message)
+        ? "Ese correo y esa contraseña no coinciden"
+        : (e.message || "No se ha podido entrar"));
+    }
+    return;
   }
 
   if (t.id === "pedir-enlace"){
     const correo = ($("#correo").value || "").trim();
-    if (!correo || !correo.includes("@")) return toast("Escribe un correo válido");
+    if (!correo.includes("@")) return toast("Escribe un correo válido");
     t.disabled = true;
     try {
       await SESION.pedirEnlace(correo);
-      estadoEntrar = { enviado:true, correo };
+      modoEntrar.correo = correo; modoEntrar.enviado = true;
       render();
     } catch(e){
       t.disabled = false;

@@ -20,6 +20,7 @@ const VISTAS = [
   {h:"mio", t:"Mi área"},
   {r:"entrar",   n:"Entrar",           v:["visitante"]},
   {r:"yo",       n:"Mi perfil",        v:["socio","admin"]},
+  {r:"ajustes",  n:"Mi cuenta",        v:["socio","admin"]},
   {r:"cuenta",   n:"Cuota y pagos",    v:["socio","admin"]},
 
   {h:"adm", t:"Administración"},
@@ -48,6 +49,7 @@ const TITULOS_VISTA = {
   eventos:  ["Eventos", "Convocatorias e inscripciones"],
   cargos:   ["Cargos y jueces", "Listados oficiales del club"],
   yo:       ["Mi perfil", "Tus datos, tus perros y qué comparte cada uno"],
+  ajustes:  ["Mi cuenta", "Tu contraseña, tu foto y quién te ve"],
   cuenta:   ["Cuota y pagos", "Tu situación con la tesorería del club"],
   admin:    ["Panel de la junta", "Estado del censo y de la cría"],
   validar:  ["Validaciones", "Nada cuenta hasta que la junta lo coteja con el certificado original"],

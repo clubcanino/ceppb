@@ -4,7 +4,7 @@
 /* --- Mi perfil --- */
 V.yo = function(){
   const s = SESION.socio;
-  if(!s) return `<div class="empty"><b>Entra como socio</b>Usa el selector «Ver como» de la cabecera.</div>`;
+  if(!s) return sinFichaVinculada();
   const mios = C("perros").filter(p => p.propietarioId === s.id);
   return `<div class="ficha-h">${avatar(s, 72)}<div style="flex:1;min-width:230px"><h2>${esc(s.nombreCompleto)}</h2>
       <div class="meta"><span class="chip mono">Socio nº ${esc(s.numero)}</span><span class="chip">${esc(s.cuota||"")}</span>
@@ -39,7 +39,7 @@ V.yo = function(){
 /* --- Cuota y pagos del socio --- */
 V.cuenta = function(){
   const s = SESION.socio;
-  if(!s) return `<div class="empty"><b>Entra como socio</b>Usa el selector «Ver como».</div>`;
+  if(!s) return sinFichaVinculada();
   const p = C("pagos").filter(x => x.socioId === s.id).sort((a,b)=>String(b.anio).localeCompare(String(a.anio)));
   const pend = p.filter(x => x.estado !== "pagado");
   return `${pend.length?`<div class="note warn" style="margin-bottom:14px"><b>${pend.length} recibo(s) pendientes.</b> El reglamento exige estar al día en las obligaciones sociales para solicitar cruces y optar a títulos del club.</div>`
@@ -61,3 +61,38 @@ V.cuenta = function(){
 };
 
 /* --- Panel de la junta --- */
+
+
+/* Una cuenta puede existir sin estar atada a ninguna ficha del censo:
+   pasa con las cuentas de la junta y con quien entra por primera vez
+   sin invitación. Aquí se le dice qué le falta, en vez de dejarlo
+   mirando una pantalla vacía. */
+function sinFichaVinculada(){
+  const correo = SESION.usuario ? SESION.usuario.email : "";
+  const suyas = C("socios").filter(x => (x.email || "").toLowerCase() === correo.toLowerCase());
+
+  return `<div class="card" style="max-width:620px"><div class="card-b">
+    <h3>Tu cuenta todavía no está atada a una ficha de socio</h3>
+    <p>Has entrado con <b>${esc(correo)}</b>, pero esa cuenta no está unida a ningún número
+    de socio del censo. Hasta que lo esté, no hay perfil que enseñarte.</p>
+
+    ${suyas.length ? `
+      <div class="note ok" style="margin:14px 0">
+        En el censo hay ${suyas.length === 1 ? "una ficha" : suyas.length + " fichas"} con ese correo.
+      </div>
+      <table><thead><tr><th>Nº</th><th>Socio</th><th></th></tr></thead><tbody>
+      ${suyas.map(x => `<tr>
+        <td class="num">${esc(x.numero)}</td>
+        <td>${esc(x.nombreCompleto)}</td>
+        <td style="text-align:right"><button class="btn sm brand" data-vincular="${esc(x.id)}">Es la mía</button></td>
+      </tr>`).join("")}
+      </tbody></table>
+      ${suyas.length > 1 ? `<p class="dim" style="margin-top:10px">Hay más de una ficha con este
+        correo: son socios de cuota familiar que comparten buzón. Elige la tuya.</p>` : ""}
+    ` : `
+      <div class="note warn" style="margin:14px 0">
+        No hay ninguna ficha en el censo con ese correo. Si eres socio, secretaría tiene otro
+        correo tuyo: escribe al club para que lo actualicen, o entra con el correo que consta.
+      </div>`}
+  </div></div>`;
+}

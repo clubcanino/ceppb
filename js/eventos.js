@@ -181,3 +181,112 @@ document.addEventListener("input", ev => {
 });
 addEventListener("hashchange", () => { tabPerro = "resumen"; render(); });
 addEventListener("keydown", e => { if(e.key === "Escape") cerrarForm(); });
+
+/* ============================================================
+   Mi cuenta: contraseña, foto, privacidad y vinculación.
+   ============================================================ */
+
+document.addEventListener("click", async ev => {
+  const t = ev.target.closest("button, [data-vincular]");
+  if (!t) return;
+
+  /* --- atar la cuenta a una ficha del censo --- */
+  if (t.dataset && t.dataset.vincular){
+    const socio = byId(C("socios"), t.dataset.vincular);
+    if (!socio) return;
+    t.disabled = true;
+    try {
+      await guardar("socios", socio.id, {authUserId: SESION.usuario.id});
+      await SESION.refrescar();
+      await recargar();
+      toast("Cuenta vinculada al socio nº " + socio.numero);
+      render();
+    } catch(e){
+      t.disabled = false;
+      toast(e.message || "No se ha podido vincular");
+    }
+    return;
+  }
+
+  /* --- contraseña --- */
+  if (t.id === "guardar-clave"){
+    const a = $("#clave1").value || "", b = $("#clave2").value || "";
+    if (a !== b) return toast("Las dos contraseñas no coinciden");
+    t.disabled = true;
+    try {
+      await SESION.ponerContrasena(a);
+      toast("Contraseña guardada");
+      $("#clave1").value = ""; $("#clave2").value = "";
+    } catch(e){ toast(e.message || "No se ha podido guardar"); }
+    t.disabled = false;
+    return;
+  }
+
+  /* --- quitar la foto --- */
+  if (t.id === "quitar-avatar"){
+    const s = SESION.socio; if (!s) return;
+    try {
+      await guardar("socios", s.id, {avatarUrl: null});
+      await SESION.refrescar();
+      toast("Foto quitada"); render();
+    } catch(e){ toast(e.message || "No se ha podido quitar"); }
+  }
+});
+
+/* --- subir la foto --- */
+document.addEventListener("change", async ev => {
+  if (ev.target.id !== "subir-avatar") return;
+  const file = ev.target.files && ev.target.files[0];
+  const s = SESION.socio;
+  if (!file || !s) return;
+
+  if (!/^image\//.test(file.type)) return toast("Eso no es una imagen");
+  if (file.size > 5 * 1024 * 1024) return toast("La imagen pasa de 5 MB");
+
+  toast("Subiendo la foto…");
+  try {
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+    const ruta = `socios/${s.id}/avatar-${Date.now()}.${ext}`;
+
+    const { error } = await S.sb.storage.from("media")
+      .upload(ruta, file, {upsert: true, contentType: file.type});
+    if (error) throw error;
+
+    const { data } = S.sb.storage.from("media").getPublicUrl(ruta);
+    await guardar("socios", s.id, {avatarUrl: data.publicUrl});
+    await SESION.refrescar();
+    toast("Foto actualizada");
+    render();
+  } catch(e){
+    toast(e.message || "No se ha podido subir la foto");
+  }
+});
+
+/* --- privacidad --- */
+document.addEventListener("change", async ev => {
+  const t = ev.target;
+  const s = SESION.socio;
+  if (!s) return;
+
+  if (t.id === "priv-perfil"){
+    try {
+      await guardar("socios", s.id, {perfilPublico: t.value});
+      await SESION.refrescar();
+      toast(t.value === "oculto" ? "Tu perfil vuelve a estar oculto"
+          : t.value === "socios" ? "Ahora te ven los socios del club"
+          : "Tu perfil es público");
+      render();
+    } catch(e){ toast(e.message || "No se ha podido guardar"); }
+    return;
+  }
+
+  if (t.dataset && t.dataset.priv){
+    const priv = Object.assign({}, s.priv || {});
+    priv[t.dataset.priv] = t.value;
+    try {
+      await guardar("socios", s.id, {priv});
+      await SESION.refrescar();
+      toast("Guardado");
+    } catch(e){ toast(e.message || "No se ha podido guardar"); }
+  }
+});

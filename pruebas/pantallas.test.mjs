@@ -15,7 +15,7 @@ const ARCHIVOS = [
   "js/config.js", "js/util.js", "js/reglamento.js", "js/privacidad.js",
   "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js",
   "js/formularios.js", "js/formularios-def.js",
-  "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/socios.js",
+  "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/socios.js",
   "js/vistas/perros.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
   "js/vistas/mi-area.js", "js/vistas/junta.js", "js/vistas/club.js",
   "js/app.js",
@@ -98,4 +98,42 @@ test("los formularios están todos definidos", () => {
   for (const f of ["socio","perro","salud","resultado","camada","evento","traspaso","solicitud"]){
     assert.equal(forms.includes(f), true, "falta el formulario: " + f);
   }
+});
+
+/* ============================================================
+   Mi cuenta
+   ============================================================ */
+test("Mi cuenta funciona aunque la cuenta no esté atada a un socio", () => {
+  vm.runInContext(`
+    SESION.rol = "admin"; SESION.esAdmin = true;
+    SESION.usuario = {id:"u1", email:"junta@ejemplo.test"};
+    SESION.socio = null;
+    S.listo = true; S.error = null;
+  `, ctx);
+  const html = vm.runInContext('String(V.ajustes(""))', ctx);
+  assert.match(html, /no está atada a ningún|Contraseña/,
+    "debe explicar qué falta, no quedarse en blanco");
+});
+
+test("Mi perfil explica qué falta en vez de hablar de un selector que ya no existe", () => {
+  const html = vm.runInContext('String(V.yo(""))', ctx);
+  assert.doesNotMatch(html, /Ver como/,
+    "el selector «Ver como» era del prototipo: la sesión ahora es real");
+});
+
+test("el número de cuenta no aparece entre las opciones de privacidad", () => {
+  vm.runInContext(`
+    SESION.socio = {id:"s1", numero:896, nombre:"Ana", apellidos:"Ruiz",
+                    nombreCompleto:"Ana Ruiz", perfilPublico:"oculto", priv:{}};
+  `, ctx);
+  const html = vm.runInContext('String(V.ajustes(""))', ctx);
+  assert.doesNotMatch(html, /data-priv="iban"/,
+    "el IBAN no es compartible en ningún nivel");
+  assert.match(html, /no se comparte en ningún nivel/,
+    "y conviene que el socio lo lea");
+});
+
+test("el perfil nace oculto y esa es la opción marcada", () => {
+  const html = vm.runInContext('String(V.ajustes(""))', ctx);
+  assert.match(html, /value="oculto" selected/);
 });

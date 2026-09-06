@@ -66,13 +66,44 @@ SESION.refrescar = async function(){
   SESION.rol = SESION.esAdmin ? "admin" : "socio";
 };
 
-/* ---------- entrar ---------- */
+/* ---------- entrar ----------
+
+   El día a día es correo y contraseña. El enlace al correo se usa
+   dos veces: cuando secretaría invita a un socio por primera vez (y
+   ahí es donde elige su contraseña), y cuando alguien la olvida.
+   ------------------------------------------------------------ */
+
+SESION.entrarConContrasena = async function(email, contrasena){
+  const { error } = await SESION.sb.auth.signInWithPassword({
+    email: String(email).trim().toLowerCase(),
+    password: contrasena,
+  });
+  if (error) throw error;
+};
+
+/* Enlace al correo: para el alta con invitación y para recuperar */
 SESION.pedirEnlace = async function(email){
   const { error } = await SESION.sb.auth.signInWithOtp({
     email: String(email).trim().toLowerCase(),
     options: { emailRedirectTo: location.origin + location.pathname },
   });
   if (error) throw error;
+};
+
+/* La contraseña se la pone el socio; nadie más la ve, tampoco la junta */
+SESION.ponerContrasena = async function(contrasena){
+  if (!contrasena || contrasena.length < 8)
+    throw new Error("La contraseña necesita ocho caracteres como mínimo");
+  const { error } = await SESION.sb.auth.updateUser({ password: contrasena });
+  if (error) throw error;
+};
+
+/* ¿Tiene ya contraseña puesta, o entró solo por el enlace? */
+SESION.tieneContrasena = function(){
+  const u = SESION.usuario;
+  if (!u) return false;
+  const ident = u.identities || [];
+  return ident.some(i => i.provider === "email") && !!u.confirmed_at;
 };
 
 SESION.salir = async function(){
