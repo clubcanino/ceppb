@@ -80,6 +80,9 @@ SESION.refrescar = async function(){
   SESION.socio = socio ? deFila(socio, "socios") : null;
 
   SESION.rol = SESION.esAdmin ? "admin" : "socio";
+
+  /* Cada socio ve la plataforma en su idioma, esté donde esté */
+  if (typeof ponerIdioma === "function") ponerIdioma(idiomaDe(SESION.socio));
 };
 
 /* ---------- entrar ----------

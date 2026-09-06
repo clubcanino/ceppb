@@ -52,6 +52,7 @@ const COLUMNAS = {
     "perfil_publico",
     "priv",
     "avatar_url",
+    "idioma",
     "notas",
     "creado"
   ],

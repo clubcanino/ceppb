@@ -71,6 +71,7 @@ create table if not exists socios (
   perfil_publico  text default 'oculto' check (perfil_publico in ('oculto','socios','publico')),
   priv            jsonb default '{}'::jsonb,
   avatar_url      text,
+  idioma          text default 'es' check (idioma in ('es','en','fr','de')),
   notas           text,          -- notas internas de secretaría
   creado          timestamptz default now()
 );

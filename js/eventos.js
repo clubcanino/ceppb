@@ -383,3 +383,31 @@ document.addEventListener("click", async ev => {
   } catch(e){ toast(e.message || "No se ha podido"); }
   render();
 });
+
+
+/* --- cuántas generaciones enseña el pedigrí --- */
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-gen]");
+  if (!b) return;
+  genPedigri = +b.dataset.gen;
+  render();
+});
+
+/* --- idioma de la plataforma --- */
+document.addEventListener("change", async ev => {
+  if (ev.target.id !== "elegir-idioma") return;
+  const codigo = ev.target.value;
+  ponerIdioma(codigo);
+
+  /* Se guarda en la ficha del socio para que le siga a cualquier
+     dispositivo, no solo a este navegador. */
+  const s = SESION.socio;
+  if (s){
+    try {
+      await guardar("socios", s.id, {idioma: codigo});
+      await SESION.refrescar();
+    } catch(e){ /* si no se puede guardar, queda al menos en este navegador */ }
+  }
+  toast(nombreIdioma(codigo));
+  render();
+});

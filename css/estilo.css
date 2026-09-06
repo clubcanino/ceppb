@@ -357,3 +357,46 @@ img.avatar{display:block}
 .directo-marco{position:relative;padding-top:56.25%;background:#000}
 .directo-marco iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 @media (prefers-reduced-motion:reduce){ .directo-punto{animation:none} }
+
+/* ---------- pedigrí desplegado ---------- */
+.ped.g3{grid-template-columns:repeat(3,1fr);min-width:560px}
+.ped.g4{grid-template-columns:repeat(4,1fr);min-width:820px}
+.ped.g5{grid-template-columns:repeat(5,1fr);min-width:1120px}
+.ped.g4 .ped-n, .ped.g5 .ped-n{padding:4px 7px}
+.ped.g4 .ped-n b{font-size:11.5px}
+.ped.g5 .ped-n b{font-size:10.5px;line-height:1.2}
+.ped.g5 .ped-n small{display:none}
+.ped-n.clic{cursor:pointer}
+.ped-n.clic:hover{border-color:var(--brand);background:var(--surface-2)}
+.ped-n.vacio{min-height:26px}
+
+/* Los ancestros que salen por varias ramas son los que meten la
+   consanguinidad. Cada uno lleva SU color de fondo, el mismo en todas
+   las casillas donde aparece: así se sigue el rastro de un vistazo,
+   sin ir leyendo nombre por nombre.
+
+   El fondo se mezcla con el de la tarjeta, así que funciona igual en
+   claro que en oscuro. */
+.ped-n{position:relative}
+.ped-n.rep, .chip.rep{border-left-width:4px;border-left-style:solid}
+.chip.rep{text-decoration:none}
+
+.rep.r1{--c:#d3040f} .rep.r2{--c:#b58500} .rep.r3{--c:#1f7a4d} .rep.r4{--c:#5a4ac7}
+.rep.r5{--c:#0b7285} .rep.r6{--c:#c2410c} .rep.r7{--c:#a21caf} .rep.r8{--c:#4d7c0f}
+
+.rep{border-left-color:var(--c);
+  background:color-mix(in srgb, var(--c) 13%, var(--surface))}
+.ped-n.rep:hover{background:color-mix(in srgb, var(--c) 22%, var(--surface))}
+.chip.rep{background:color-mix(in srgb, var(--c) 15%, var(--surface));
+  border-color:color-mix(in srgb, var(--c) 35%, var(--line))}
+
+/* en oscuro basta con subir un poco la mezcla */
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) .rep{background:color-mix(in srgb, var(--c) 24%, var(--surface))}
+}
+:root[data-theme="dark"] .rep{background:color-mix(in srgb, var(--c) 24%, var(--surface))}
+
+/* por si el navegador no entiende color-mix, que se vea el borde igual */
+@supports not (background: color-mix(in srgb, red 10%, white)){
+  .rep{background:var(--surface-2)}
+}

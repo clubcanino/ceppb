@@ -205,20 +205,7 @@ V.perro = function(id){
       </div></div></div>`;
   }
   if(tabPerro === "pedigri"){
-    const n = (pid, gen) => { const d = pid ? byId(C("perros"), pid) : null;
-      if(!d) return `<div class="ped-n vacio">Sin registrar</div>`;
-      return `<div class="ped-n ${d.sexo==="M"?"m":"h"} clic" data-go="perro/${esc(d.id)}"><b>${esc(d.nombre)}</b><small>${esc(d.loe||d.variedad||"")}</small></div>`; };
-    const pa = p.padreId?byId(C("perros"),p.padreId):null, ma = p.madreId?byId(C("perros"),p.madreId):null;
-    cuerpo = `<div class="card"><div class="card-h"><h3>Pedigrí — tres generaciones</h3>
-      <span class="spacer"></span>
-      ${p.workingdogUrl ? `<a class="btn sm" href="${esc(p.workingdogUrl)}" target="_blank" rel="noopener noreferrer">Ver pedigrí en working-dog</a>` : ""}
-      ${p.loe ? `<a class="btn sm" href="https://www.working-dog.com/search?q=${encodeURIComponent(p.loe)}" target="_blank" rel="noopener noreferrer">Buscar por LOE</a>` : ""}
-      ${puedo?`<button class="btn sm" data-form="pedigri|${esc(p.id)}">Vincular progenitores / importar</button>`:""}</div>
-      <div class="card-b" style="overflow-x:auto"><div class="ped">
-        <div class="ped-col">${n(p.padreId)}${n(p.madreId)}</div>
-        <div class="ped-col">${n(pa?.padreId)}${n(pa?.madreId)}${n(ma?.padreId)}${n(ma?.madreId)}</div>
-        <div class="ped-col">${[pa?.padreId,pa?.madreId,ma?.padreId,ma?.madreId].map(x=>{const d=x?byId(C("perros"),x):null; return n(d?.padreId)+n(d?.madreId);}).join("")}</div>
-      </div></div></div>`;
+    cuerpo = pedigriDe(p, puedo);
   }
   if(tabPerro === "progenie"){
     const hijos = C("perros").filter(x => x.padreId === id || x.madreId === id);
@@ -253,3 +240,98 @@ V.perro = function(id){
     <div class="tabs">${tabs.map(([k,n])=>`<button data-tab="${k}" class="${tabPerro===k?"on":""}">${esc(n)}</button>`).join("")}</div>
     ${cuerpo}`;
 };
+
+
+/* ============================================================
+   Pedigrí desplegado
+
+   Hasta cinco generaciones. Los ancestros que aparecen por más de
+   una rama van marcados: son los que meten la consanguinidad, y un
+   criador quiere verlos de un vistazo, no deducirlos.
+   ============================================================ */
+
+let genPedigri = 4;
+
+function pedigriDe(p, puedo){
+  ponerCenso(C("perros"));
+
+  const n = genPedigri;
+  const columnas = [];
+
+  /* Cada generación, en su columna. La primera son padre y madre. */
+  let nivel = [p.id];
+  for (let g = 1; g <= n; g++){
+    const siguiente = [];
+    for (const id of nivel){
+      const d = id ? byId(C("perros"), id) : null;
+      siguiente.push(d ? d.padreId || null : null);
+      siguiente.push(d ? d.madreId || null : null);
+    }
+    columnas.push(siguiente);
+    nivel = siguiente;
+  }
+
+  /* Quién sale más de una vez en todo el árbol */
+  const veces = new Map();
+  for (const col of columnas)
+    for (const id of col) if (id) veces.set(id, (veces.get(id) || 0) + 1);
+  const repetidos = [...veces.entries()].filter(([, c]) => c > 1).map(([id]) => id);
+    /* A cada repetido, su color. Los que más veces salen primero, que
+     son los que más pesan en la consanguinidad. */
+  const porPeso = repetidos.slice().sort((a, b) => veces.get(b) - veces.get(a));
+  const marca = new Map(porPeso.map((id, i) => [id, (i % 8) + 1]));
+
+  const casilla = id => {
+    const d = id ? byId(C("perros"), id) : null;
+    if (!d) return `<div class="ped-n vacio">—</div>`;
+    const m = marca.get(id);
+    return `<div class="ped-n ${d.sexo === "M" ? "m" : d.sexo === "H" ? "h" : ""} ${m ? "rep r" + m : ""} clic"
+      data-go="perro/${esc(d.id)}" title="${esc(d.nombre)}${m ? ` · aparece ${veces.get(id)} veces en este pedigrí` : ""}">
+      <b>${esc(d.nombre)}</b><small>${esc(d.loe || d.variedad || "")}</small></div>`;
+  };
+
+  const f    = consanguinidad(p.id);
+  const j    = juzgarConsanguinidad(f);
+  const prof = profundidadPedigri(p.id);
+  const comp = completitudPedigri(p.id, n);
+  const pct  = x => (x * 100).toFixed(2).replace(".", ",") + " %";
+
+  return `<div class="card">
+    <div class="card-h"><h3>Pedigrí</h3>
+      <div class="seg" style="margin-left:10px">
+        ${[3,4,5].map(g => `<button data-gen="${g}" class="${genPedigri===g?"on":""}">${g} gen.</button>`).join("")}
+      </div>
+      <span class="spacer"></span>
+      ${p.workingdogUrl ? `<a class="btn sm" href="${esc(p.workingdogUrl)}" target="_blank" rel="noopener noreferrer">En working-dog</a>` : ""}
+      ${puedo ? `<button class="btn sm" data-form="perro|${esc(p.id)}">Editar padres</button>` : ""}
+    </div>
+
+    <div class="card-b" style="padding:12px 16px 0">
+      <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:baseline">
+        <div><span class="mini">Consanguinidad</span>
+          <b style="margin-left:6px;color:var(--${j.nivel === "block" ? "block" : j.nivel === "warn" ? "warn" : "ok"})">${pct(f)}</b></div>
+        <div><span class="mini">Generaciones conocidas</span> <b style="margin-left:6px">${prof}</b></div>
+        <div><span class="mini">Pedigrí completo</span> <b style="margin-left:6px">${pct(comp)}</b></div>
+        ${repetidos.length ? `<div><span class="mini">Ancestros repetidos</span>
+          <b style="margin-left:6px">${repetidos.length}</b></div>` : ""}
+      </div>
+    </div>
+
+    <div class="card-b" style="overflow-x:auto">
+      <div class="ped g${n}">
+        ${columnas.map(col => `<div class="ped-col">${col.map(casilla).join("")}</div>`).join("")}
+      </div>
+    </div>
+
+    ${repetidos.length ? `<div class="card-b" style="border-top:1px solid var(--line)">
+      <div class="mini" style="margin-bottom:8px">Aparecen por las dos ramas y son los que meten la consanguinidad:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${repetidos.slice(0, 12).map(id => {
+          const d = byId(C("perros"), id);
+          return `<a class="chip rep r${marca.get(id)}" href="#/perro/${esc(id)}">${esc(d ? d.nombre : "")}
+            <b style="margin-left:5px">×${veces.get(id)}</b></a>`;
+        }).join("")}
+      </div>
+    </div>` : ""}
+  </div>`;
+}

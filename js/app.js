@@ -82,16 +82,16 @@ function pintarNav(){
     if (v.si && !v.si()) return;
     const ct = v.ct ? v.ct() : null;
     secc[secc.length-1].items.push(
-      `<a href="#/${v.r}" class="${r===v.r?"on":""}">${esc(v.n)}` +
+      `<a href="#/${v.r}" class="${r===v.r?"on":""}">${esc(t(v.n))}` +
       (ct != null ? `<span class="ct">${ct}</span>` : "") + `</a>`);
   });
   $("#nav").innerHTML = secc.filter(s => s.items.length)
-    .map(s => `<div class="nav-h">${esc(s.t)}</div>` + s.items.join("")).join("");
+    .map(s => `<div class="nav-h">${esc(t(s.t))}</div>` + s.items.join("")).join("");
 
   $("#rol-badge").textContent =
-    SESION.esAdmin ? "Junta directiva" :
-    SESION.socio   ? "Socio nº " + (SESION.socio.numero ?? "") :
-    SESION.usuario ? "Cuenta sin vincular" : "Visitante";
+    SESION.esAdmin ? t("Junta directiva") :
+    SESION.socio   ? t("Socio") + " nº " + (SESION.socio.numero ?? "") :
+    SESION.usuario ? t("Cuenta sin vincular") : t("Visitante");
 }
 
 function pintarAcciones(){
@@ -117,9 +117,9 @@ function render(){
     return;
   }
 
-  const [t, s] = TITULOS_VISTA[vista] || [vista, ""];
-  $("#tt").textContent = t;
-  $("#ts").textContent = s;
+  const [tit, sub] = TITULOS_VISTA[vista] || [vista, ""];
+  $("#tt").textContent = t(tit);
+  $("#ts").textContent = t(sub);
 
   pintarNav();
   pintarAcciones();
@@ -185,6 +185,7 @@ addEventListener("hashchange", () => {
 
 /* ---------- arranque ---------- */
 aplicarTema();
+ponerIdioma(idiomaDe(null));
 
 /* Al volver del correo, Supabase deja su respuesta pegada en la
    dirección (#access_token=... o #error=...). Eso no es una ruta de la

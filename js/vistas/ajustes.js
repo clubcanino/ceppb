@@ -60,6 +60,20 @@ V.ajustes = function(){
         </div>
       </div>
 
+      <div class="card"><div class="card-h"><h3>Idioma</h3></div>
+        <div class="card-b">
+          <p class="dim">En qué idioma ves la plataforma. Los nombres de los perros, los
+          afijos y los términos del reglamento —ACE, ACES, Anexo A, Malinois— no se
+          traducen: son los mismos en toda la FCI.</p>
+          <div class="f wide" style="margin-top:12px">
+            <select class="inp" id="elegir-idioma">
+              ${IDIOMAS.map(i => `<option value="${i.c}" ${idiomaActual===i.c?"selected":""}>
+                ${esc(i.propio)}${i.c!=="es" ? " · " + esc(i.n) : ""}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div class="card"><div class="card-h"><h3>Acceso</h3></div>
         <div class="card-b">
           <dl class="kv">

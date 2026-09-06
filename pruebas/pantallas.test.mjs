@@ -12,7 +12,7 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
 const ARCHIVOS = [
-  "js/config.js", "js/util.js", "js/reglamento.js", "js/genealogia.js", "js/privacidad.js",
+  "js/config.js", "js/util.js", "js/idiomas.js", "idiomas/en.js", "idiomas/fr.js", "idiomas/de.js", "js/reglamento.js", "js/genealogia.js", "js/privacidad.js",
   "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js", "js/media.js", "js/directo.js",
   "js/formularios.js", "js/formularios-def.js",
   "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
@@ -466,4 +466,62 @@ test("la web trae todos los perros, no solo los mil primeros", () => {
   assert.match(d, /\.range\(desde, desde \+ TANDA - 1\)/,
     "Supabase corta en mil filas y el libro ya pasa de mil");
   assert.match(d, /if \(!data \|\| data\.length < TANDA\) break/);
+});
+
+/* ============================================================
+   Idiomas
+   ============================================================ */
+test("cuatro idiomas: castellano, inglés, francés y alemán", () => {
+  const cs = JSON.parse(vm.runInContext('JSON.stringify(IDIOMAS.map(i => i.c))', ctx));
+  assert.equal(cs.join(","), "es,en,fr,de");
+});
+
+test("lo que no está traducido sale en castellano, nunca en blanco", () => {
+  vm.runInContext('ponerIdioma("en")', ctx);
+  assert.equal(vm.runInContext('t("Novedades")', ctx), "News");
+  assert.equal(vm.runInContext('t("Una frase que nadie ha traducido")', ctx),
+    "Una frase que nadie ha traducido",
+    "sin traducción, el castellano; nunca una cadena vacía ni un código");
+  vm.runInContext('ponerIdioma("es")', ctx);
+});
+
+test("los términos del reglamento no se traducen", () => {
+  for (const idioma of ["en", "fr", "de"]){
+    const tabla = JSON.parse(vm.runInContext(`JSON.stringify(TEXTOS.${idioma})`, ctx));
+    const traducidos = Object.keys(tabla);
+    for (const termino of ["ACE", "ACES", "ACU", "ACUS", "ACSS", "Anexo A",
+                           "Malinois", "Tervueren", "Groenendael", "Laekenois"]){
+      assert.equal(traducidos.includes(termino), false,
+        `${termino} no debe traducirse: es igual en toda la FCI (${idioma})`);
+    }
+  }
+});
+
+test("las tres lenguas traducen lo mismo, sin huecos entre ellas", () => {
+  const en = Object.keys(JSON.parse(vm.runInContext('JSON.stringify(TEXTOS.en)', ctx)));
+  for (const idioma of ["fr", "de"]){
+    const otro = Object.keys(JSON.parse(vm.runInContext(`JSON.stringify(TEXTOS.${idioma})`, ctx)));
+    const faltan = en.filter(k => !otro.includes(k));
+    assert.equal(faltan.length, 0,
+      `a ${idioma} le faltan ${faltan.length} textos que sí están en inglés: ${faltan.slice(0,3).join(", ")}`);
+  }
+});
+
+test("ninguna traducción se ha quedado igual que el castellano por descuido", () => {
+  const sonIguales = {
+    en: ["Pedigrí", "Público", "Privado", "Foto", "Invitaciones", "Administración"],
+    fr: ["Pedigree", "Public", "Privé", "Photo", "Invitations", "Administration",
+         "La plateforme", "Actualités"],
+    de: ["Foto", "Privat"],
+  };
+  for (const idioma of ["en", "fr", "de"]){
+    const tabla = JSON.parse(vm.runInContext(`JSON.stringify(TEXTOS.${idioma})`, ctx));
+    const sospechosos = Object.entries(tabla)
+      .filter(([es, tr]) => es === tr)
+      .map(([es]) => es)
+      .filter(es => !(sonIguales[idioma] || []).includes(es) &&
+                    !(sonIguales[idioma] || []).includes(tabla[es]));
+    assert.equal(sospechosos.length, 0,
+      `en ${idioma} hay textos sin traducir: ${sospechosos.join(", ")}`);
+  }
 });
