@@ -25,6 +25,7 @@ const VISTAS = [
      foto las tiene todo el mundo. */
   {r:"yo",       n:"Mi perfil",        v:["socio","admin"], si:()=>!!SESION.socio},
   {r:"ajustes",  n:"Mi cuenta",        v:["socio","admin"]},
+  {r:"diagnostico", n:"Diagnóstico",   v:["admin","socio","visitante"]},
   {r:"cuenta",   n:"Cuota y pagos",    v:["socio","admin"], si:()=>!!SESION.socio},
 
   {h:"adm", t:"Administración"},
@@ -54,6 +55,7 @@ const TITULOS_VISTA = {
   cargos:   ["Cargos y jueces", "Listados oficiales del club"],
   yo:       ["Mi perfil", "Tus datos, tus perros y qué comparte cada uno"],
   ajustes:  ["Mi cuenta", "Tu contraseña, tu foto y quién te ve"],
+  diagnostico: ["Diagnóstico", "Qué está pasando por dentro"],
   cuenta:   ["Cuota y pagos", "Tu situación con la tesorería del club"],
   admin:    ["Panel de la junta", "Estado del censo y de la cría"],
   validar:  ["Validaciones", "Nada cuenta hasta que la junta lo coteja con el certificado original"],

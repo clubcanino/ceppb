@@ -15,7 +15,7 @@ const ARCHIVOS = [
   "js/config.js", "js/util.js", "js/reglamento.js", "js/privacidad.js",
   "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js",
   "js/formularios.js", "js/formularios-def.js",
-  "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/socios.js",
+  "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
   "js/vistas/perros.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
   "js/vistas/mi-area.js", "js/vistas/junta.js", "js/vistas/club.js",
   "js/app.js",
