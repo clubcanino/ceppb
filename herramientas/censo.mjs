@@ -49,15 +49,42 @@ export function limpiar(v){
 const oNulo = v => { const s = limpiar(v); return s === "" ? null : s; };
 const siNo  = v => /^(true|sí|si|s|1|x)$/i.test(limpiar(v));
 
-/* Acepta 2020-01-31 y 31/01/2020; cualquier otra cosa se descarta
-   antes que inventar una fecha. */
+/* ¿Existe de verdad ese día? El 31 de febrero pasa cualquier
+   comprobación de formato y ninguna de calendario. */
+function existe(a, m, d){
+  if (m < 1 || m > 12 || d < 1 || d > 31) return false;
+  const f = new Date(Date.UTC(a, m - 1, d));
+  return f.getUTCFullYear() === a && f.getUTCMonth() === m - 1 && f.getUTCDate() === d;
+}
+const iso = (a, m, d) =>
+  `${a}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+/* Acepta 2020-01-31 y 31/01/2020.
+
+   En el censo hay fechas con el día y el mes cambiados (2022-30-06).
+   Cuando el supuesto mes pasa de 12 y el día no, el cambio es seguro
+   y se corrige. Lo que no se puede deducir sin inventar —el 31 de
+   febrero— se descarta y queda sin fecha. */
 export function fecha(v){
   const s = limpiar(v);
   if (!s) return null;
-  let m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (m){
+    const a = +m[1], mes = +m[2], dia = +m[3];
+    if (existe(a, mes, dia)) return iso(a, mes, dia);
+    if (existe(a, dia, mes)) return iso(a, dia, mes);   // venían cambiados
+    return null;
+  }
+
   m = s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
-  if (m) return `${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`;
+  if (m){
+    const dia = +m[1], mes = +m[2], a = +m[3];
+    if (existe(a, mes, dia)) return iso(a, mes, dia);
+    if (existe(a, dia, mes)) return iso(a, dia, mes);
+    return null;
+  }
+
   return null;
 }
 

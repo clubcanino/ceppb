@@ -58,6 +58,32 @@ test("una fecha ilegible se descarta, no se inventa", () => {
   assert.equal(fecha(""), null);
 });
 
+test("el 31 de febrero no pasa: no existe en el calendario", () => {
+  assert.equal(fecha("2025-02-31"), null, "no se puede adivinar qué día quiso decir secretaría");
+  assert.equal(fecha("2023-02-29"), null, "2023 no fue bisiesto");
+  assert.equal(fecha("2024-02-29"), "2024-02-29", "2024 sí lo fue");
+});
+
+test("una fecha con el día y el mes cambiados se endereza", () => {
+  // En el censo consta 2022-30-06: no hay mes 30, así que el 30 es el día.
+  assert.equal(fecha("2022-30-06"), "2022-06-30");
+});
+
+test("el censo real no deja ninguna fecha imposible", () => {
+  const filas = leerCSV(readFileSync(new URL("../datos/socios.csv", import.meta.url), "utf8"))
+    .map(convertir);
+  for (const f of filas){
+    for (const campo of ["fecha_alta", "fecha_baja"]){
+      const v = f.socio[campo];
+      if (v === null) continue;
+      const [a, m, d] = v.split("-").map(Number);
+      const real = new Date(Date.UTC(a, m - 1, d));
+      assert.equal(real.getUTCDate(), d,
+        `socio nº ${f.socio.numero}: ${campo} = ${v} no existe en el calendario`);
+    }
+  }
+});
+
 test("las disciplinas se convierten en lista", () => {
   assert.deepEqual(lista("IGP; Mondioring"), ["IGP","Mondioring"]);
   assert.deepEqual(lista(""), []);
