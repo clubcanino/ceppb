@@ -10,7 +10,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { cargar } from "./cargar.mjs";
 
-const { deFila, aFila } = cargar(["js/datos.js"], ["deFila", "aFila"]);
+const { deFila, aFila } = cargar(["js/columnas.js", "js/datos.js"], ["deFila", "aFila"]);
 
 test("snake_case de la base de datos pasa a camelCase", () => {
   const o = deFila({id:"1", fecha_nacimiento:"2020-01-01", propietario_id:"s1"}, "perros");
@@ -74,4 +74,80 @@ test("guardar la salud no destruye el objeto que tenía la pantalla", () => {
   aFila(original, "perros");
   assert.equal(original.salud.validacion.estado, "validado",
     "aFila no debe modificar lo que recibe");
+});
+
+/* ============================================================
+   Lo que las pantallas manejan pero la base de datos no admite.
+   ============================================================ */
+test("no se envían las columnas que calcula Postgres solo", () => {
+  const f = aFila({
+    nombre: "Ana", apellidos: "García",
+    nombreCompleto: "Ana García",   // generated always as
+    activo: true,                   // generated always as
+    esCriador: true,                // generated always as
+  }, "socios");
+  assert.equal(f.nombre, "Ana");
+  for (const c of ["nombre_completo", "activo", "es_criador"]){
+    assert.equal(c in f, false, c + " lo calcula Postgres: mandarlo hace fallar el guardado");
+  }
+});
+
+test("no se envían los campos de adorno de las pantallas", () => {
+  const f = aFila({
+    nombre: "Uma", variedad: "Malinois",
+    propietarioNombre: "Ana García",   // solo sirve para pintar
+    criadorNombre: "Otro",
+  }, "perros");
+  assert.equal(f.nombre, "Uma");
+  assert.equal("propietario_nombre" in f, false);
+  assert.equal("criador_nombre" in f, false);
+});
+
+test("sí se envían las columnas que existen de verdad", () => {
+  const f = aFila({
+    nombre: "Uma", variedad: "Tervueren", sexo: "H",
+    fechaNacimiento: "2021-03-01", propietarioId: "s1", loe: "LOE 123",
+    adnProgenitores: true, visibilidad: "socios",
+  }, "perros");
+  for (const c of ["nombre","variedad","sexo","fecha_nacimiento","propietario_id",
+                   "loe","adn_progenitores","visibilidad"]){
+    assert.equal(c in f, true, "falta la columna " + c);
+  }
+});
+
+test("las columnas salen del esquema, no de una lista escrita a mano", async () => {
+  const { readFileSync } = await import("node:fs");
+  const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
+  const { COLUMNAS } = cargar(["js/columnas.js"], ["COLUMNAS"]);
+  for (const tabla of Object.keys(COLUMNAS)){
+    assert.match(sql, new RegExp("create table if not exists " + tabla + "\\b"),
+      "columnas.js habla de una tabla que no está en el esquema: " + tabla);
+  }
+});
+
+test("ninguna columna del esquema se queda fuera de columnas.js", async () => {
+  const { readFileSync } = await import("node:fs");
+  const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
+  const { COLUMNAS } = cargar(["js/columnas.js"], ["COLUMNAS"]);
+
+  /* Se cuentan las columnas del esquema tabla por tabla y se comparan.
+     Un comentario con comas dentro llegó a comerse la columna `salud`
+     entera, y el guardado de las pruebas de salud se habría perdido
+     en silencio. */
+  for (const m of sql.matchAll(/create table if not exists (\w+) \(([\s\S]*?)\n\);/g)){
+    const [, tabla, cuerpo] = m;
+    const enEsquema = [];
+    for (const linea of cuerpo.split("\n")){
+      const l = linea.replace(/--.*$/, "").trim();
+      const c = l.match(/^([a-z_0-9]+)\s+[a-z]/);
+      if (!c) continue;
+      if (["primary","unique","check","foreign","constraint"].includes(c[1])) continue;
+      if (/generated always as/.test(l)) continue;
+      enEsquema.push(c[1]);
+    }
+    for (const col of enEsquema){
+      assert.equal(COLUMNAS[tabla].includes(col), true,
+        `falta la columna ${tabla}.${col} en columnas.js`);
+    }
+  }
 });

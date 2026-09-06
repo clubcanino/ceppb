@@ -1,0 +1,326 @@
+/* ============================================================
+   Definición de cada formulario. Portado del prototipo,
+   adaptado a la sesión real (SESION en lugar de SES).
+   ============================================================ */
+const FORMS = {
+  socio(id){
+    const s = byId(C("socios"), id) || {};
+    abrirForm("Editar perfil de socio", [
+      {t:"Identidad", f:[
+        {k:"nombre", l:"Nombre", v:s.nombre}, {k:"apellidos", l:"Apellidos", v:s.apellidos},
+        {k:"fechaNacimiento", l:"Fecha de nacimiento", tipo:"date", v:s.fechaNacimiento},
+        {k:"profesion", l:"Profesión o dedicación", v:s.profesion},
+        {k:"bio", l:"Presentación", tipo:"textarea", v:s.bio, ph:"Cuéntale al club a qué te dedicas con la raza…"},
+      ]},
+      {t:"Contacto", f:[
+        {k:"email", l:"Correo", tipo:"email", v:s.email}, {k:"telefono", l:"Teléfono", v:s.telefono},
+        {k:"poblacion", l:"Población", v:s.poblacion}, {k:"provincia", l:"Provincia", v:s.provincia},
+        {k:"cp", l:"Código postal", v:s.cp}, {k:"pais", l:"País", v:s.pais || "España"},
+        {k:"web", l:"Web", v:s.web, ph:"https://"},
+        {k:"facebook", l:"Facebook", v:s.facebook},
+        {k:"instagram", l:"Instagram", v:s.instagram, ph:"@usuario"},
+        {k:"workingdogPerfil", l:"Perfil en working-dog", v:s.workingdogPerfil, ph:"https://"},
+      ]},
+      {t:"Cinofilia", f:[
+        {k:"rsceSocio", l:"Socio de la Real Sociedad Canina de España", tipo:"check", v:s.rsceSocio, wide:true},
+        {k:"rsceNumero", l:"Nº de socio RSCE", v:s.rsceNumero},
+        {k:"rsceDesde", l:"Socio RSCE desde", tipo:"date", v:s.rsceDesde},
+        {k:"afijo", l:"Afijo de criador (FCI/RSCE)", v:s.afijo, h:"Necesario para el cruce intervariedades (Cap. 8.3.2)"},
+        {k:"afijoFecha", l:"Concesión del afijo", tipo:"date", v:s.afijoFecha},
+        {k:"grupoTrabajo", l:"Grupo o club de trabajo", v:s.grupoTrabajo, wide:true, h:"Grupo colaborador del CEPPB en el que entrenas (Cap. 5.5)"},
+        {k:"disciplinas", l:"Disciplinas que practica", tipo:"checks", op:DISCIPLINAS, v:s.disciplinas},
+        {k:"variedades", l:"Variedades que tiene o cría", tipo:"checks", op:VARIEDADES, v:s.variedades},
+      ]},
+      ...(SESION.esAdmin ? [{t:"Cargos y titulaciones del club",
+        d:"Los nombra la Junta Directiva (Cap. 5). El socio no puede asignárselos.", f:[
+        {k:"roles", l:"Condición dentro del CEPPB", tipo:"checks", op:ROLES_CLUB, v:s.roles},
+      ]},
+      {t:"Sólo secretaría", d:"Estos campos no los edita el socio.", f:[
+        {k:"numero", l:"Nº de socio", tipo:"number", v:s.numero},
+        {k:"cuota", l:"Cuota", tipo:"select", op:["Individual","Familiar","Familiar principal","Familiar secundaria","Honorífica","Sin asignar"], v:s.cuota},
+        {k:"fechaAlta", l:"Fecha de alta", tipo:"date", v:s.fechaAlta},
+        {k:"fechaBaja", l:"Fecha de baja", tipo:"date", v:s.fechaBaja},
+        {k:"notas", l:"Notas internas", tipo:"textarea", v:s.notas},
+      ]}] : []),
+    ], async d => {
+      const n = Object.assign({}, s, d);
+      n.nombreCompleto = `${n.nombre||""} ${n.apellidos||""}`.trim();
+      n.esCriador = !!n.afijo; n.activo = !n.fechaBaja;
+      n.rsceSocio = !!d.rsceSocio;
+      if(!SESION.esAdmin) n.roles = s.roles || [];   // los cargos sólo los toca la junta
+      if(d.numero) n.numero = Number(d.numero);
+      delete n.id;
+      await guardar("socios", id, n); toast("Perfil actualizado");
+    });
+  },
+  perro(id){
+    const p = byId(C("perros"), id) || {};
+    abrirForm(id ? "Editar ejemplar" : "Dar de alta un ejemplar", [
+      {t:"Identificación", f:[
+        {k:"nombre", l:"Nombre", v:p.nombre, wide:true},
+        {k:"afijo", l:"Afijo del criadero", v:p.afijo, h:"Se rellena solo con el afijo del criador; edítalo si el criador no es socio"},
+        {k:"variedad", l:"Variedad", tipo:"select", op:[""].concat(VARIEDADES), v:p.variedad},
+        {k:"sexo", l:"Sexo", tipo:"select", op:[["M","Macho"],["H","Hembra"]], v:p.sexo||"M"},
+        {k:"fechaNacimiento", l:"Fecha de nacimiento", tipo:"date", v:p.fechaNacimiento},
+        {k:"loe", l:"LOE", v:p.loe, h:"Libro de Orígenes Español"}, {k:"chip", l:"Microchip", v:p.chip},
+        {k:"tatuaje", l:"Tatuaje", v:p.tatuaje}, {k:"color", l:"Color / capa", v:p.color},
+      ]},
+      {t:"Vínculos", f:[
+        {k:"propietarioId", l:"Propietario", tipo:"select", op:optSocios(), v:p.propietarioId ?? (miSocioId()||""), wide:true},
+        {k:"criadorId", l:"Criador", tipo:"select", op:optSociosAfijo(), v:p.criadorId, wide:true, h:"El afijo forma parte del nombre registrado del ejemplar y pertenece al criador"},
+        {k:"padreId", l:"Padre", tipo:"select", op:optPerros("M"), v:p.padreId},
+        {k:"madreId", l:"Madre", tipo:"select", op:optPerros("H"), v:p.madreId},
+      ]},
+      {t:"Importar pedigrí", d:"Pega el enlace de la ficha en working-dog y los datos que quieras traer. La plataforma no puede descargarlos por sí sola: working-dog no ofrece acceso automatizado libre.", f:[
+        {k:"workingdogUrl", l:"Enlace working-dog", v:p.workingdogUrl, wide:true, ph:"https://www.working-dog.com/dogs-details/…"},
+        {k:"pedigriPegado", l:"Pedigrí pegado", tipo:"textarea", v:p.pedigriPegado, ph:"Padre: … / Madre: … / Abuelos: …", h:"Se guarda como texto de referencia hasta que vincules los progenitores arriba"},
+      ]},
+      {t:"Visibilidad", f:[
+        {k:"visibilidad", l:"Quién ve esta ficha", tipo:"select", op:NIVELES, v:p.visibilidad||"socios", wide:true},
+        {k:"adnProgenitores", l:"ADN de progenitores verificado (RSCE)", tipo:"check", v:p.adnProgenitores, wide:true},
+      ]},
+    ], async d => {
+      const n = Object.assign({}, p, d);
+      n.adnProgenitores = !!d.adnProgenitores;
+      const cri = byId(C("socios"), n.criadorId);
+      n.propietarioNombre = byId(C("socios"), n.propietarioId)?.nombreCompleto || "";
+      n.criadorNombre = cri?.nombreCompleto || "";
+      if(cri && cri.afijo && !d.afijo) n.afijo = cri.afijo;          // el afijo lo pone el criador
+      n.afijoSocioId = (cri && cri.afijo && n.afijo === cri.afijo) ? cri.id : "";
+      if(!n.fechaAlta) n.fechaAlta = hoy();
+      delete n.id;
+      const nid = await guardar("perros", id, n);
+      toast(id ? "Ficha actualizada" : "Ejemplar dado de alta");
+      if(!id) ir("perro/" + nid);
+    });
+  },
+  salud(id){
+    const p = byId(C("perros"), id) || {}, s = p.salud || {}, g = s.genes || {};
+    abrirForm("Pruebas de salud — Anexo A", [
+      {t:"Radiología", d:"Diagnóstico de la RSCE o de una asociación reconocida por ella (SETOV, AMVAC o AVEPA).", f:[
+        {k:"hd", l:"Displasia de cadera", tipo:"select", op:[""].concat(HD_TODOS), v:s.hd, h:"Aptos: A y B"},
+        {k:"hdEntidad", l:"Entidad", v:s.hdEntidad, ph:"RSCE / SETOV / AMVAC / AVEPA"},
+        {k:"ed", l:"Displasia de codo", tipo:"select", op:[""].concat(ED_TODOS), v:s.ed, h:"Aptos: 0 y 1"},
+        {k:"edEntidad", l:"Entidad", v:s.edEntidad},
+        {k:"lvt", l:"Vértebra de transición (LVT)", tipo:"select", op:[["","Sin tramitar"],["libre","Libre de LVT"],["afectado","Con vértebra de transición"]], v:s.lvt, wide:true, h:"Diagnóstico emitido por el CEPPB"},
+      ]},
+      {t:"Enfermedades hereditarias", d:"Portador: sólo puede cruzarse con ejemplares libres. Afectado: excluido de la cría.",
+        f:GENES.map(x => ({k:"g_"+x.k, l:x.k, tipo:"select", op:[["","Sin analizar"],["libre","Libre"],["portador","Portador"],["afectado","Afectado"]], v:g[x.k], h:x.n}))},
+      {t:"Genealogía", f:[{k:"adnProgenitores", l:"ADN de progenitores verificado (RSCE)", tipo:"check", v:p.adnProgenitores, wide:true}]},
+    ], async d => {
+      const genes = {}; GENES.forEach(x => { if(d["g_"+x.k]) genes[x.k] = d["g_"+x.k]; });
+      const n = Object.assign({}, p, {salud:{hd:d.hd, hdEntidad:d.hdEntidad, ed:d.ed, edEntidad:d.edEntidad, lvt:d.lvt, genes,
+        validacion: SESION.esAdmin ? {estado:"validado", fecha:hoy(), por:"Comisión de Cría"} : {estado:"pendiente"}},
+        adnProgenitores: !!d.adnProgenitores});
+      delete n.id;
+      await guardar("perros", id, n); toast("Pruebas registradas");
+    });
+  },
+  pedigri(id){ FORMS.perro(id); },
+  resultado(perroId){
+    abrirForm("Registrar resultado", [
+      {t:"Tipo de resultado", f:[
+        {k:"tipo", l:"Tipo", tipo:"select", op:[["estructura","Estructura / belleza"],["caracter","Prueba de carácter"],["trabajo","Prueba de trabajo"],["confirmacion","Prueba de confirmación"]], v:"estructura", wide:true},
+      ]},
+      {t:"Evento", f:[
+        {k:"fecha", l:"Fecha", tipo:"date", v:hoy()},
+        {k:"tipoEvento", l:"Tipo de evento", tipo:"select", op:[""].concat(TIPOS_EVENTO)},
+        {k:"evento", l:"Nombre del evento", v:"", wide:true},
+        {k:"juez", l:"Juez", v:"", wide:true},
+        {k:"organizadoCEPPB", l:"Organizado por el CEPPB", tipo:"check", v:false, wide:true, h:"Necesario para las figuras ACE, ACES y ACSS"},
+      ]},
+      {t:"Resultado — estructura", f:[
+        {k:"calificacion", l:"Calificación", tipo:"select", op:[""].concat(CALIF)},
+        {k:"puesto", l:"Puesto", tipo:"number", v:""},
+        {k:"distincion", l:"Distinción", tipo:"select", op:DISTINCIONES, wide:true},
+      ]},
+      {t:"Resultado — carácter / trabajo", f:[
+        {k:"modalidad", l:"Prueba de carácter", tipo:"select", op:[["","—"],["TS","Test simple (sociabilidad + estrés acústico)"],["TC","Test completo (+ coraje)"]], wide:true},
+        {k:"resultado", l:"Calificación", tipo:"select", op:[["","—"],["APTO","APTO"],["NO APTO","NO APTO"]]},
+        {k:"titulo", l:"Título de trabajo", tipo:"select", op:TIT_TRABAJO},
+      ]},
+    ], async d => {
+      const n = {perroId, tipo:d.tipo, fecha:d.fecha, evento:d.evento, tipoEvento:d.tipoEvento, juez:d.juez,
+        organizadoCEPPB: !!d.organizadoCEPPB,
+        validado: SESION.esAdmin ? "validado" : "",
+        validadoFecha: SESION.esAdmin ? hoy() : ""};
+      if(d.tipo === "estructura") Object.assign(n, {calificacion:d.calificacion, puesto:Number(d.puesto)||null, distincion:d.distincion});
+      if(d.tipo === "caracter") Object.assign(n, {modalidad:d.modalidad, resultado:d.resultado});
+      if(d.tipo === "trabajo") Object.assign(n, {titulo:d.titulo, calificacion:d.calificacion});
+      if(d.tipo === "confirmacion") Object.assign(n, {resultado:d.resultado});
+      await guardar("resultados", null, n); toast("Resultado registrado");
+    });
+  },
+  camada(){
+    abrirForm("Declarar camada", [
+      {t:"Progenitores", d:"Se comprobará el cruce contra el reglamento antes de guardar.", f:[
+        {k:"padreId", l:"Padre", tipo:"select", op:optPerros("M"), wide:true},
+        {k:"madreId", l:"Madre", tipo:"select", op:optPerros("H"), wide:true},
+      ]},
+      {t:"Camada", f:[
+        {k:"fechaNacimiento", l:"Fecha de nacimiento", tipo:"date", v:hoy()},
+        {k:"afijo", l:"Afijo", v:SESION.socio?.afijo || ""},
+        {k:"nMachos", l:"Machos", tipo:"number", v:0}, {k:"nHembras", l:"Hembras", tipo:"number", v:0},
+        {k:"loeCamada", l:"Nº de camada en LOE", v:""},
+        {k:"fechaComunicacion", l:"Fecha de comunicación al club", tipo:"date", v:hoy(), h:"Debe estar dentro de los 30 días siguientes al nacimiento"},
+        {k:"criadorId", l:"Criador", tipo:"select", op:optSocios(), v:miSocioId()||"", wide:true},
+      ]},
+    ], async d => {
+      const m = byId(C("perros"), d.padreId), h = byId(C("perros"), d.madreId);
+      if(m && h){
+        const v = R.cruceVeredicto(R.cruce(m, h, C("perros"), C("resultados"), d.fechaNacimiento));
+        if(v === "bloqueo" && !confirm("Este cruce incumple el reglamento (revísalo en el simulador). ¿Registrar la camada de todas formas?")) return;
+        if(R.esInter(m, h)){
+          const sol = solicitudDe(m.id, h.id);
+          if(!sol || sol.estado !== "autorizada"){
+            if(!confirm("Es un cruce intervariedades " + (!sol ? "sin expediente de autorización" : "cuyo expediente no está autorizado") +
+              ".\n\nLa camada se registrará, pero quedará retenida: no aparecerá en las novedades ni podrá difundirse hasta que la Junta Directiva resuelva.\n\n¿Registrarla igualmente?")) return;
+          }
+        }
+      }
+      await guardar("camadas", null, {padreId:d.padreId, madreId:d.madreId, fechaNacimiento:d.fechaNacimiento,
+        afijo:d.afijo, nMachos:Number(d.nMachos)||0, nHembras:Number(d.nHembras)||0, loeCamada:d.loeCamada,
+        fechaComunicacion:d.fechaComunicacion, criadorId:d.criadorId, recomendada:false});
+      toast("Camada declarada");
+    });
+  },
+  evento(){
+    abrirForm("Convocar evento", [
+      {t:"Evento", f:[
+        {k:"nombre", l:"Nombre", v:"", wide:true},
+        {k:"tipo", l:"Tipo", tipo:"select", op:TIPOS_EVENTO, wide:true},
+        {k:"fecha", l:"Fecha", tipo:"date", v:hoy()}, {k:"cierre", l:"Cierre de inscripción", tipo:"date", v:""},
+        {k:"lugar", l:"Lugar", v:"", wide:true}, {k:"juez", l:"Juez", v:"", wide:true},
+        {k:"organizadoCEPPB", l:"Organizado por el CEPPB", tipo:"check", v:true, wide:true},
+      ]},
+    ], async d => { await guardar("eventos", null, d); toast("Evento convocado"); });
+  },
+  inscripcion(eventoId){
+    const mios = C("perros").filter(p => p.propietarioId === miSocioId());
+    abrirForm("Inscribir ejemplar", [
+      {t:"Inscripción", f:[
+        {k:"perroId", l:"Ejemplar", tipo:"select", op:[["","— elegir —"]].concat(mios.map(p=>[p.id,p.nombre])), wide:true},
+        {k:"clase", l:"Clase / modalidad", tipo:"select", op:["Cachorros","Jóvenes","Intermedia","Abierta","Trabajo","Utilidad","Campeones","Veteranos","Test simple","Test completo","Confirmación"], wide:true},
+      ]},
+    ], async d => {
+      if(!d.perroId) return toast("Elige un ejemplar");
+      await guardar("inscripciones", null, {eventoId, perroId:d.perroId, socioId:miSocioId(), clase:d.clase, estado:"pendiente", fecha:hoy()});
+      toast("Inscripción enviada");
+    });
+  },
+  invitacion(id){
+    const s = byId(C("socios"), id); if(!s) return;
+    const token = (s.invitacion||{}).token || tokenNuevo();
+    const {asunto, cuerpo, enlace} = textoInvitacion(s, token);
+    const enviada = (s.invitacion||{}).estado === "enviada" || (s.invitacion||{}).estado === "aceptada";
+    abrirForm(`Invitación a ${s.nombreCompleto}`, [
+      {t:"Destinatario", d:`<b>${esc(s.email)}</b> · socio nº ${esc(s.numero)}${enviada?` · ya enviada el ${fmtF((s.invitacion||{}).fecha)}`:""}`, f:[
+        {k:"asunto", l:"Asunto", v:asunto, wide:true},
+        {k:"cuerpo", l:"Mensaje", tipo:"textarea", v:cuerpo, h:"Cópialo y envíalo desde el correo del club. El enlace ya lleva su token."},
+        {k:"enlace", l:"Enlace personal de un solo uso", v:enlace, wide:true},
+      ]},
+    ], async d => {
+      const n = Object.assign({}, s, {invitacion:{estado:"enviada", fecha:hoy(), token,
+        asunto:d.asunto, enviadaPor:"junta"}}); delete n.id;
+      await guardar("socios", id, n);
+      toast("Invitación registrada como enviada");
+    });
+    const b = $("#sheet-ok"); if(b) b.textContent = enviada ? "Guardar" : "Marcar como enviada";
+  },
+  admins(){
+    const cfg = byId(C("config"), "admins") || {};
+    abrirForm("Cuentas con permiso de junta", [
+      {t:"Correos autorizados", d:"Uno por línea. Son las cuentas que validan datos, autorizan cruces y traspasos y asignan los cargos del club.", f:[
+        {k:"emails", l:"Cuentas", tipo:"textarea", v:(cfg.emails||[]).join("\n"),
+         h:"En la versión desplegada, entrar con uno de estos correos otorga el rol de junta directiva"},
+      ]},
+    ], async d => {
+      const emails = d.emails.split(/[\n,;]+/).map(x=>x.trim().toLowerCase())
+        .filter(x => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x));
+      if(!emails.length) return toast("Escribe al menos un correo válido");
+      await guardar("config", "admins", {emails, actualizado:hoy()});
+      toast("Lista de administradores actualizada");
+    });
+  },
+  traspaso(perroId){
+    const p = byId(C("perros"), perroId); if(!p) return;
+    const actual = byId(C("socios"), p.propietarioId);
+    if(C("solicitudes").some(x => x.tipo === "traspaso" && x.perroId === perroId && x.estado === "pendiente"))
+      return toast("Ya hay un cambio de titularidad pendiente para este ejemplar");
+    abrirForm("Cambio de titularidad", [
+      {t:"Traspaso", d:`Titular actual: <b>${esc(actual?.nombreCompleto || "sin asignar")}</b>. El cambio no surte efecto hasta que lo autorice la junta: hasta entonces la ficha sigue a nombre del titular actual.`, f:[
+        {k:"aSocioId", l:"Nuevo titular", tipo:"select", op:optSocios(), wide:true},
+        {k:"fechaEfecto", l:"Fecha de la cesión o venta", tipo:"date", v:hoy()},
+        {k:"documento", l:"Documento que lo acredita", tipo:"select", wide:true,
+         op:["Contrato de compraventa","Contrato de cesión","Documento de traspaso RSCE","Herencia o cambio familiar","Otro"]},
+        {k:"motivo", l:"Observaciones para la junta", tipo:"textarea", ph:"Datos del contrato, fecha de entrega, cambio de microchip en la RSCE…"},
+      ]},
+    ], async d => {
+      if(!d.aSocioId) return toast("Elige el nuevo titular");
+      if(d.aSocioId === p.propietarioId) return toast("El nuevo titular coincide con el actual");
+      await guardar("solicitudes", null, {tipo:"traspaso", perroId,
+        deSocioId:p.propietarioId || "", aSocioId:d.aSocioId, fechaEfecto:d.fechaEfecto,
+        documento:d.documento, motivo:d.motivo, estado:"pendiente", fecha:hoy(),
+        solicitanteId:miSocioId() || "junta"});
+      toast("Solicitud de cambio de titularidad enviada a la junta");
+      render();
+    });
+  },
+  solicitud(par){
+    const [machoId, hembraId] = String(par).split("~");
+    const m = byId(C("perros"), machoId), h = byId(C("perros"), hembraId);
+    if(!m || !h) return toast("Elige antes los dos reproductores");
+    const cr = byId(C("socios"), miSocioId()) || byId(C("socios"), m.criadorId);
+    abrirForm("Solicitud de cruce intervariedades", [
+      {t:"Cruce", d:`<b>${esc(m.nombre)}</b> (${esc(m.variedad)}) × <b>${esc(h.nombre)}</b> (${esc(h.variedad)}). La Comisión de Cría informa y la Junta Directiva resuelve en 30 días hábiles.`, f:[
+        {k:"criadorId", l:"Criador solicitante", tipo:"select", op:optSocios(), v:cr?cr.id:"", wide:true},
+        {k:"linea", l:"Línea para la que se solicita", tipo:"select", wide:true,
+         op:["Estándar / belleza","Trabajo / utilidad","Ambas líneas"]},
+        {k:"motivo", l:"Escrito motivado", tipo:"textarea",
+         ph:"Aportación de una variedad sobre la otra, complementariedad morfológica o funcional, huida de la endogamia…",
+         h:"Cap. 8.4.2.1 — hay que razonar el motivo y los resultados esperados en cada variedad"},
+      ]},
+      {t:"Documentación que se adjunta", d:"Marca lo que acompañas a la solicitud. Lo que la plataforma ya puede acreditar de las fichas aparecerá comprobado en el expediente.", f:[
+        {k:"docPedigri", l:"Pedigrís de cuatro generaciones de ambos", tipo:"check", wide:true},
+        {k:"docRadio", l:"Informes de radiografías de cadera y codos", tipo:"check", wide:true},
+        {k:"docAdn", l:"Identificación genética (ADN)", tipo:"check", wide:true},
+        {k:"docAtaxia", l:"Analíticas de SDCA1 y SDCA2", tipo:"check", wide:true},
+        {k:"docCarcinoma", l:"Analítica de carcinoma gástrico", tipo:"check", wide:true},
+        {k:"docComplementaria", l:"Documentación complementaria (resultados, camadas anteriores)", tipo:"check", wide:true},
+      ]},
+    ], async d => {
+      if(!d.motivo || d.motivo.length < 20) return toast("El escrito motivado es obligatorio (Cap. 8.4.2.1)");
+      if(solicitudDe(machoId, hembraId)) return toast("Ya existe un expediente para este cruce");
+      await guardar("solicitudes", null, {tipo:"intervariedad", machoId, hembraId,
+        criadorId:d.criadorId, linea:d.linea, motivo:d.motivo, estado:"pendiente", fecha:hoy(),
+        docs:{pedigri:!!d.docPedigri, radio:!!d.docRadio, adn:!!d.docAdn, ataxia:!!d.docAtaxia,
+              carcinoma:!!d.docCarcinoma, complementaria:!!d.docComplementaria}});
+      toast("Solicitud presentada a la Comisión de Cría");
+      ir("intervar");
+    });
+  },
+  video(perroId){
+    abrirForm("Añadir vídeo al ejemplar", [
+      {t:"Enlace del vídeo", d:"Pega la dirección del vídeo en YouTube, Vimeo, Instagram, Facebook o working-dog. Se guarda el enlace: la plataforma no aloja el archivo.", f:[
+        {k:"url", l:"Dirección del vídeo", v:"", wide:true, ph:"https://www.youtube.com/watch?v=…"},
+        {k:"titulo", l:"Título", v:"", wide:true, ph:"Manga larga, CNI 2026"},
+      ]},
+    ], async d => {
+      if(!/^https?:\/\//i.test(d.url)) return toast("El enlace debe empezar por https://");
+      await guardar("media", null, {tipo:"video", sujeto:"perro", sujetoId:perroId, url:d.url,
+        titulo:d.titulo || "Vídeo", proveedor:proveedorDe(d.url), fecha:hoy(), subidoPor:miSocioId() || "junta"});
+      olvidarMedia(perroId); toast("Vídeo añadido"); render();
+    });
+  },
+  bancario(id){
+    const pr = byId(C("socios_privado"), id) || {};
+    abrirForm("Domiciliación bancaria", [
+      {t:"Cuenta", d:"Sólo la ven la junta directiva y tú. No aparece nunca en el directorio.", f:[
+        {k:"iban", l:"IBAN", v:pr.iban, wide:true, ph:"ES00 0000 0000 0000 0000 0000"},
+      ]},
+    ], async d => {
+      await guardar("socios_privado", id, Object.assign({}, pr, {iban:d.iban.replace(/[\s-]/g,"").toUpperCase()}, {id:undefined}));
+      toast("Domiciliación actualizada");
+    });
+  },
+};

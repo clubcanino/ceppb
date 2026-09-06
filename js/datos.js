@@ -37,10 +37,17 @@ function deFila(fila, col){
 }
 function aFila(obj, col){
   const fuente = AJUSTES[col] ? AJUSTES[col].escribir(Object.assign({}, obj)) : obj;
+  const permitidas = COLUMNAS[col];
   const o = {};
   for (const k in fuente){
     if (k === "id" && PK[col]) { o[PK[col]] = fuente[k]; continue; }
-    o[aSnake(k)] = fuente[k];
+    const columna = aSnake(k);
+    /* Las pantallas manejan campos de adorno (el nombre del propietario
+       para pintarlo) y campos que Postgres calcula solo (nombre_completo,
+       activo, es_criador). Ni unos ni otros son columnas: mandarlos haría
+       fallar el guardado entero. */
+    if (permitidas && !permitidas.includes(columna)) continue;
+    o[columna] = fuente[k];
   }
   return o;
 }
