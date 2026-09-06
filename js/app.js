@@ -35,6 +35,7 @@ const VISTAS = [
     const sal = C("perros").filter(p => R.pendientes(p, C("resultados")).salud).length;
     const tr  = C("solicitudes").filter(x => x.tipo === "traspaso" && x.estado === "pendiente").length;
     return (res + sal + tr) || null; }},
+  {r:"videos",   n:"Vídeos por publicar", v:["admin"], ct:()=>videosPendientes().length || null},
   {r:"invitaciones", n:"Invitaciones", v:["admin"]},
   {r:"altas",    n:"Vinculación de altas", v:["admin"]},
   {r:"cobros",   n:"Cuotas y cobros",  v:["admin"]},
@@ -60,6 +61,7 @@ const TITULOS_VISTA = {
   cuenta:   ["Cuota y pagos", "Tu situación con la tesorería del club"],
   admin:    ["Panel de la junta", "Estado del censo y de la cría"],
   validar:  ["Validaciones", "Nada cuenta hasta que la junta lo coteja con el certificado original"],
+  videos:   ["Vídeos por publicar", "Lo que suben los socios, antes de que lleve el nombre del club"],
   invitaciones: ["Invitaciones", "Enviar a cada socio su enlace personal de alta"],
   altas:    ["Vinculación de altas", "Cómo cada socio accede a su propio perfil"],
   cobros:   ["Cuotas y cobros", "Domiciliaciones y recibos"],

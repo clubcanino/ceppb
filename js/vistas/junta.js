@@ -244,13 +244,20 @@ function galeria(perro, puedo){
         </div></div>
 
       <div class="card"><div class="card-h"><h3>Vídeos</h3><span class="hint">${videos.length}</span>
-        ${puedo ? `<span class="spacer"></span><button class="btn sm" data-form="video|${esc(perro.id)}">Añadir vídeo</button>` : ""}</div>
+        ${puedo ? `<span class="spacer"></span>
+          <label class="btn sm" for="up-video-${esc(perro.id)}" style="cursor:pointer">Subir vídeo</label>
+          <input type="file" id="up-video-${esc(perro.id)}" accept="video/*"
+                 data-video="${esc(perro.id)}" style="display:none">
+          <button class="btn sm" data-form="video|${esc(perro.id)}">Enlazar uno</button>` : ""}</div>
         <div class="card-b">
           ${videos.length ? `<div class="gal">${videos.map(m => `<figure>
               <a class="vid" href="${esc(m.url)}" target="_blank" rel="noopener noreferrer">
                 <span><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9.2"/><path d="M10 8.4l6 3.6-6 3.6z" fill="currentColor" stroke="none"/></svg></span>
               </a>
-              ${puedo ? `<span class="acts"><button class="btn sm danger" data-media="borrar|${esc(perro.id)}|${esc(m.id)}">Borrar</button></span>` : ""}
+              ${puedo ? `<span class="acts">
+                ${m.validado === "pendiente" ? `<span class="chip warn">Esperando a la junta</span>` : ""}
+                ${m.validado === "rechazado" ? `<span class="chip block" title="${esc(m.nota||"")}">No publicado</span>` : ""}
+                <button class="btn sm danger" data-media="borrar|${esc(perro.id)}|${esc(m.id)}">Borrar</button></span>` : ""}
               <figcaption><b style="font-weight:600;color:var(--ink)">${esc(m.titulo || "Vídeo")}</b><span class="spacer"></span><span class="chip">${esc(m.proveedor || "Enlace")}</span></figcaption>
             </figure>`).join("")}</div>`
             : `<div class="drop">${puedo ? "Pega el enlace de un vídeo de YouTube, Vimeo, Instagram o working-dog y quedará asociado a la ficha."

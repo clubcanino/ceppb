@@ -234,7 +234,12 @@ create table if not exists media (
   url text,              -- enlace externo (vídeos)
   proveedor text, titulo text,
   subido_por uuid references socios(id) on delete set null,
-  fecha date default current_date
+  fecha date default current_date,
+  -- los vídeos que sube un socio pasan por la junta antes de publicarse
+  validado text default 'validado' check (validado in ('pendiente','validado','rechazado')),
+  duracion integer,
+  nota text,
+  youtube_url text
 );
 create index if not exists media_perro_idx on media(perro_id);
 

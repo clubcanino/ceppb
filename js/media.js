@@ -108,3 +108,89 @@ function traducirAlmacen(m){
     return "La foto pesa demasiado incluso reducida";
   return m || "No se ha podido subir la foto";
 }
+
+/* ============================================================
+   Vídeos que suben los socios
+
+   El socio sube el vídeo de su perro, la junta lo revisa y decide.
+   Hasta entonces solo lo ven él y la junta: lo que lleva el nombre
+   del club sale cuando el club dice que sale.
+   ============================================================ */
+
+const VIDEO_MAX_SEGUNDOS = 300;              // cinco minutos
+const VIDEO_MAX_BYTES    = 300 * 1024 * 1024; // trescientos megas
+
+/* Cuánto dura, preguntándoselo al navegador antes de subir nada */
+function duracionDeVideo(file){
+  return new Promise((res, rej) => {
+    const v = document.createElement("video");
+    v.preload = "metadata";
+    v.onloadedmetadata = () => {
+      URL.revokeObjectURL(v.src);
+      res(Math.round(v.duration));
+    };
+    v.onerror = () => {
+      URL.revokeObjectURL(v.src);
+      rej(new Error("No se ha podido leer ese vídeo. Prueba con un MP4."));
+    };
+    v.src = URL.createObjectURL(file);
+  });
+}
+
+function minutos(seg){
+  const m = Math.floor(seg / 60), s = seg % 60;
+  return m + " min " + String(s).padStart(2, "0") + " s";
+}
+
+async function subirVideoPerro(file, perroId, titulo){
+  const perro = byId(C("perros"), perroId);
+  if (!perro) throw new Error("No encuentro ese ejemplar");
+  if (!/^video\//.test(file.type))
+    throw new Error("Eso no es un vídeo. Admitimos MP4, MOV y WEBM.");
+  if (file.size > VIDEO_MAX_BYTES)
+    throw new Error(`El vídeo pesa ${(file.size/1024/1024).toFixed(0)} MB y el máximo son 300 MB. ` +
+                    `Recórtalo o bájale la calidad en el móvil antes de subirlo.`);
+
+  const seg = await duracionDeVideo(file);
+  if (seg > VIDEO_MAX_SEGUNDOS)
+    throw new Error(`El vídeo dura ${minutos(seg)} y el máximo son cinco minutos. Recorta lo que sobre.`);
+
+  const ext  = (file.name.split(".").pop() || "mp4").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const ruta = `perros/${perroId}/video-${Date.now()}.${ext}`;
+
+  const { error } = await S.sb.storage.from("media")
+    .upload(ruta, file, {contentType: file.type, upsert: false});
+  if (error) throw new Error(traducirAlmacen(error.message));
+
+  const { data } = S.sb.storage.from("media").getPublicUrl(ruta);
+
+  await guardar("media", null, {
+    tipo: "video",
+    sujeto: "perro",
+    perroId,
+    storagePath: ruta,
+    url: data.publicUrl,
+    titulo: titulo || file.name.replace(/\.[^.]+$/, ""),
+    proveedor: "CEPPB",
+    duracion: seg,
+    subidoPor: miSocioId(),
+    fecha: hoy(),
+  });
+
+  return {duracion: seg, bytes: file.size};
+}
+
+/* Los que esperan a que la junta los mire */
+function videosPendientes(){
+  return C("media")
+    .filter(m => m.tipo === "video" && m.validado === "pendiente")
+    .sort((a, b) => String(a.fecha || "").localeCompare(String(b.fecha || "")));
+}
+
+async function resolverVideo(id, decision, nota){
+  const m = byId(C("media"), id);
+  if (!m) return;
+  const n = Object.assign({}, m, {validado: decision, nota: nota || null});
+  delete n.id;
+  await guardar("media", id, n);
+}

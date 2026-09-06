@@ -17,7 +17,7 @@ const ARCHIVOS = [
   "js/formularios.js", "js/formularios-def.js",
   "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
   "js/vistas/perros.js", "js/vistas/certificado.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
-  "js/vistas/mi-area.js", "js/vistas/junta.js", "js/vistas/club.js",
+  "js/vistas/mi-area.js", "js/vistas/junta.js", "js/vistas/videos.js", "js/vistas/club.js",
   "js/app.js",
 ];
 
@@ -386,4 +386,48 @@ test("sin nada registrado sí dice que está en blanco, y ofrece empezar", () =>
   const html = vm.runInContext('String(V.muro(""))', ctx);
   assert.match(html, /El libro está en blanco/);
   assert.match(html, /Dar de alta un ejemplar/);
+});
+
+/* ============================================================
+   Vídeos de los socios
+   ============================================================ */
+test("un vídeo sin validar no lo ve el resto del club", () => {
+  const j = readFileSync(new URL("../js/vistas/junta.js", import.meta.url), "utf8");
+  assert.match(j, /Esperando a la junta/,
+    "su dueño tiene que saber que está esperando");
+});
+
+test("solo la junta ve la pantalla de vídeos por publicar", () => {
+  vm.runInContext(`
+    SESION.rol = "socio"; SESION.esAdmin = false;
+    SESION.usuario = {id:"u1", email:"socio@ejemplo.test"};
+    SESION.socio = {id:"s1", numero:896, nombre:"Ana", apellidos:"Ruiz", nombreCompleto:"Ana Ruiz"};
+    S.listo = true; S.error = null; S.data.media = [];
+  `, ctx);
+  assert.match(vm.runInContext('String(V.videos(""))', ctx), /Solo la junta directiva/);
+
+  vm.runInContext(`SESION.rol = "admin"; SESION.esAdmin = true;`, ctx);
+  assert.match(vm.runInContext('String(V.videos(""))', ctx), /Nada pendiente/);
+});
+
+test("con vídeos esperando, salen con su botón de publicar", () => {
+  vm.runInContext(`
+    S.data.perros = [{id:"p1", nombre:"Uma", propietarioId:"s1", visibilidad:"socios"}];
+    S.data.socios = [{id:"s1", numero:896, nombreCompleto:"Ana Ruiz"}];
+    S.data.media = [{id:"m1", tipo:"video", perroId:"p1", subidoPor:"s1",
+                     titulo:"Manga larga", duracion:95, validado:"pendiente",
+                     url:"https://ejemplo.test/v.mp4", fecha:"2026-09-07"}];
+  `, ctx);
+  const html = vm.runInContext('String(V.videos(""))', ctx);
+  assert.match(html, /Manga larga/);
+  assert.match(html, /1 min 35 s/, "la duración, en cristiano");
+  assert.match(html, /data-video-val="validado\|m1"/);
+  assert.match(html, /data-video-val="rechazado\|m1"/);
+});
+
+test("el límite es de cinco minutos y trescientos megas", () => {
+  const m = readFileSync(new URL("../js/media.js", import.meta.url), "utf8");
+  assert.match(m, /VIDEO_MAX_SEGUNDOS\s*=\s*300/);
+  assert.match(m, /VIDEO_MAX_BYTES\s*=\s*300 \* 1024 \* 1024/);
+  assert.match(m, /duracionDeVideo/, "se comprueba la duración ANTES de subir nada");
 });

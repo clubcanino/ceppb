@@ -343,3 +343,43 @@ document.addEventListener("change", async ev => {
     } catch(e){ toast(e.message || "No se ha podido guardar"); }
   }
 });
+
+/* --- subir un vídeo del ejemplar --- */
+document.addEventListener("change", async ev => {
+  const inp = ev.target;
+  if (!inp.dataset || !inp.dataset.video) return;
+  const file = inp.files && inp.files[0];
+  const perroId = inp.dataset.video;
+  inp.value = "";
+  if (!file) return;
+
+  toast("Comprobando el vídeo…");
+  try {
+    const r = await subirVideoPerro(file, perroId);
+    toast(`Vídeo subido (${minutos(r.duracion)}). La junta lo revisará antes de publicarlo.`);
+    render();
+  } catch(e){
+    toast(e.message || "No se ha podido subir el vídeo");
+  }
+});
+
+/* --- la junta publica o rechaza --- */
+document.addEventListener("click", async ev => {
+  const b = ev.target.closest("[data-video-val]");
+  if (!b) return;
+  ev.stopPropagation();
+  if (!SESION.esAdmin) return toast("Los vídeos los publica la junta directiva");
+
+  const [decision, id] = b.dataset.videoVal.split("|");
+  let nota = "";
+  if (decision === "rechazado"){
+    nota = prompt("¿Por qué no se publica? Lo verá quien lo subió:", "");
+    if (nota === null) return;
+  }
+  b.disabled = true;
+  try {
+    await resolverVideo(id, decision, nota);
+    toast(decision === "validado" ? "Vídeo publicado" : "Vídeo rechazado");
+  } catch(e){ toast(e.message || "No se ha podido"); }
+  render();
+});

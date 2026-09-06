@@ -202,6 +202,10 @@ const COLUMNAS = {
     "proveedor",
     "titulo",
     "subido_por",
-    "fecha"
+    "fecha",
+    "validado",
+    "duracion",
+    "nota",
+    "youtube_url"
   ]
 };
