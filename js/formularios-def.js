@@ -289,18 +289,29 @@ const FORMS = {
     const b = $("#sheet-ok"); if(b) b.textContent = enviada ? "Guardar" : "Marcar como enviada";
   },
   admins(){
-    const cfg = byId(C("config"), "admins") || {};
-    abrirForm("Cuentas con permiso de junta", [
-      {t:"Correos autorizados", d:"Uno por línea. Son las cuentas que validan datos, autorizan cruces y traspasos y asignan los cargos del club.", f:[
-        {k:"emails", l:"Cuentas", tipo:"textarea", v:(cfg.emails||[]).join("\n"),
-         h:"En la versión desplegada, entrar con uno de estos correos otorga el rol de junta directiva"},
+    const emails = C("admins").map(a => a.email).sort();
+    abrirForm("Cuentas con permiso de junta directiva", [
+      {t:"Quién manda", d:"Un correo por línea. Estas cuentas validan pruebas de salud y resultados, resuelven expedientes y asignan los cargos del club. La base de datos comprueba contra esta lista en cada operación: quitar a alguien de aquí le retira el permiso al instante.", f:[
+        {k:"lista", l:"Correos", tipo:"textarea", v:emails.join("\n"), wide:true,
+         ph:"presidencia@ejemplo.com\ntesoreria@ejemplo.com"},
       ]},
     ], async d => {
-      const emails = d.emails.split(/[\n,;]+/).map(x=>x.trim().toLowerCase())
+      const nuevos = String(d.lista || "").split(/[\n,;]+/)
+        .map(x => x.trim().toLowerCase())
         .filter(x => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x));
-      if(!emails.length) return toast("Escribe al menos un correo válido");
-      await guardar("config", "admins", {emails, actualizado:hoy()});
-      toast("Lista de administradores actualizada");
+
+      if (!nuevos.length) return toast("Deja al menos un correo: sin junta, nadie puede validar nada");
+      const mio = (SESION.usuario && SESION.usuario.email || "").toLowerCase();
+      if (mio && !nuevos.includes(mio))
+        return toast("No puedes quitarte a ti mismo de la lista: te quedarías sin poder volver a entrar");
+
+      const antes = emails.map(e => e.toLowerCase());
+      try {
+        for (const e of nuevos) if (!antes.includes(e)) await guardar("admins", e, {email: e});
+        for (const e of antes) if (!nuevos.includes(e)) await borrar("admins", e);
+        toast("Lista de la junta actualizada");
+        render();
+      } catch(err){ toast(err.message || "No se ha podido cambiar la lista"); }
     });
   },
   traspaso(perroId){

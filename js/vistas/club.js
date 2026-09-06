@@ -34,8 +34,10 @@ V.cargos = function(){
 
 /* --- Cuentas con permiso de junta directiva --- */
 V.admins = function(){
-  const cfg = byId(C("config"), "admins") || {};
-  const emails = cfg.emails || [];
+  /* La lista sale de la tabla admins, que es la que consulta la base
+     de datos para decidir quién manda. Antes se leía de una colección
+     del prototipo que ya no existe, y por eso salía siempre vacía. */
+  const emails = C("admins").map(a => a.email).filter(Boolean).sort();
   const socioDe = e => C("socios").find(s => (s.email||"").toLowerCase() === String(e).toLowerCase());
   return `<div class="note" style="margin-bottom:16px">Estas son las cuentas con permiso de junta directiva: validan pruebas de salud y resultados, autorizan cruces intervariedades y cambios de titularidad, asignan los cargos del club y son las únicas que ven los datos reservados.</div>
     <div class="cols23">
@@ -51,7 +53,7 @@ V.admins = function(){
       <div class="card"><div class="card-h"><h3>Qué manda de verdad</h3></div><div class="card-b">
         <div class="reqs">
           <div class="req">${marca("ok")}<div class="tx"><b>Los datos reservados los protege el servidor</b><small>El DNI, la dirección y el número de cuenta viven en un espacio que sólo se deja leer a quien tiene permiso de edición sobre la plataforma. No es una pantalla que los esconda.</small></div></div>
-          <div class="req">${marca("falta")}<div class="tx"><b>La identificación por correo llega con el login</b><small>Aquí la lista queda registrada como configuración del club, pero quien manda hoy es el permiso de la plataforma. En la versión desplegada, entrar con uno de estos correos es lo que otorga el rol de junta.</small></div></div>
+          <div class="req">${marca("ok")}<div class="tx"><b>La comprobación la hace la base de datos</b><small>Cada vez que alguien intenta validar algo, la base de datos comprueba su correo contra esta lista. No es una anotación: es la regla.</small></div></div>
           <div class="req">${marca("ok")}<div class="tx"><b>Sólo estas cuentas nombran cargos</b><small>Jueces de trabajo, jueces confirmadores, figurantes y veterinarios registrados. Un socio no puede asignárselos.</small></div></div>
         </div>
       </div></div>

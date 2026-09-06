@@ -12,10 +12,12 @@
 
 /* ---------- colecciones que la aplicación mantiene en memoria ---------- */
 const COLS = ["socios","socios_privado","perros","camadas","eventos",
-              "resultados","inscripciones","pagos","solicitudes","media"];
+              "resultados","inscripciones","pagos","solicitudes","media",
+              /* solo las ve la junta: a un socio le llegan vacías y ya está */
+              "admins","invitaciones"];
 
 /* La clave primaria de socios_privado es socio_id, no id */
-const PK = { socios_privado: "socio_id" };
+const PK = { socios_privado: "socio_id", admins: "email", invitaciones: "token" };
 
 const S = {
   sb: null,                 // cliente de Supabase

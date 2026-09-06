@@ -187,3 +187,32 @@ test("el cero y el falso no se confunden con vacío", () => {
   assert.equal(f.n_machos, 0, "cero cachorros macho es un dato, no un hueco");
   assert.equal(f.recomendada, false);
 });
+
+/* ============================================================
+   Tablas con clave que no es «id»
+   ============================================================ */
+test("la lista de la junta se guarda por correo, no por id", () => {
+  const f = aFila({id: "presi@ejemplo.test", email: "presi@ejemplo.test"}, "admins");
+  assert.equal(f.email, "presi@ejemplo.test");
+  assert.equal("id" in f, false, "admins no tiene columna id: su clave es el correo");
+
+  const o = deFila({email: "presi@ejemplo.test", nota: "Presidencia"}, "admins");
+  assert.equal(o.id, "presi@ejemplo.test", "para las pantallas, el id es el correo");
+});
+
+test("las invitaciones se guardan por su token", () => {
+  const o = deFila({token: "abc123", socio_id: "s1", estado: "enviada"}, "invitaciones");
+  assert.equal(o.id, "abc123");
+  assert.equal(o.socioId, "s1");
+});
+
+test("la web pide todas las tablas del esquema", async () => {
+  const { readFileSync } = await import("node:fs");
+  const datos = readFileSync(new URL("../js/datos.js", import.meta.url), "utf8");
+  const { COLUMNAS } = cargar(["js/columnas.js"], ["COLUMNAS"]);
+  const pedidas = datos.slice(datos.indexOf("const COLS ="), datos.indexOf("];", datos.indexOf("const COLS =")));
+  for (const tabla of Object.keys(COLUMNAS)){
+    assert.match(pedidas, new RegExp(`"${tabla}"`),
+      `la web no pide nunca la tabla ${tabla}: sus pantallas saldrían vacías`);
+  }
+});
