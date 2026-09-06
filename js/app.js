@@ -19,9 +19,13 @@ const VISTAS = [
 
   {h:"mio", t:"Mi área"},
   {r:"entrar",   n:"Entrar",           v:["visitante"]},
-  {r:"yo",       n:"Mi perfil",        v:["socio","admin"]},
+  /* «Mi perfil» y «Cuota y pagos» son de socio: una cuenta de junta sin
+     ficha en el censo —la del club, por ejemplo— no tiene qué enseñar
+     ahí, así que no se le ofrece. «Mi cuenta» sí: la contraseña y la
+     foto las tiene todo el mundo. */
+  {r:"yo",       n:"Mi perfil",        v:["socio","admin"], si:()=>!!SESION.socio},
   {r:"ajustes",  n:"Mi cuenta",        v:["socio","admin"]},
-  {r:"cuenta",   n:"Cuota y pagos",    v:["socio","admin"]},
+  {r:"cuenta",   n:"Cuota y pagos",    v:["socio","admin"], si:()=>!!SESION.socio},
 
   {h:"adm", t:"Administración"},
   {r:"admin",    n:"Panel de la junta", v:["admin"]},
@@ -70,6 +74,7 @@ function pintarNav(){
   VISTAS.forEach(v => {
     if (v.h !== undefined){ secc.push({t:v.t, items:[]}); return; }
     if (!v.v.includes(SESION.rol)) return;
+    if (v.si && !v.si()) return;
     const ct = v.ct ? v.ct() : null;
     secc[secc.length-1].items.push(
       `<a href="#/${v.r}" class="${r===v.r?"on":""}">${esc(v.n)}` +

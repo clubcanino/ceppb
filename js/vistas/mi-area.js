@@ -71,6 +71,22 @@ function sinFichaVinculada(){
   const correo = SESION.usuario ? SESION.usuario.email : "";
   const suyas = C("socios").filter(x => (x.email || "").toLowerCase() === correo.toLowerCase());
 
+  /* Una cuenta de la junta sin ficha no es un error: es la cuenta
+     institucional del club, que manda pero no es socia de nadie. */
+  if (SESION.esAdmin && !suyas.length){
+    return `<div class="card" style="max-width:620px"><div class="card-b">
+      <h3>Esta es una cuenta de la junta directiva</h3>
+      <p><b>${esc(correo)}</b> gobierna la plataforma: valida pruebas de salud, resuelve
+      expedientes y gestiona el censo. Pero no es la ficha de ningún socio, así que aquí
+      no hay perfil personal que enseñar.</p>
+      <p class="dim">Si eres socio del club además de junta, entra con el correo que consta
+      a tu nombre en secretaría y ahí sí tendrás tu perfil, tus perros y tu cuota.</p>
+      <div style="margin-top:14px">
+        <button class="btn brand" data-ir="admin">Ir al panel de la junta</button>
+      </div>
+    </div></div>`;
+  }
+
   return `<div class="card" style="max-width:620px"><div class="card-b">
     <h3>Tu cuenta todavía no está atada a una ficha de socio</h3>
     <p>Has entrado con <b>${esc(correo)}</b>, pero esa cuenta no está unida a ningún número

@@ -137,3 +137,43 @@ test("el perfil nace oculto y esa es la opción marcada", () => {
   const html = vm.runInContext('String(V.ajustes(""))', ctx);
   assert.match(html, /value="oculto" selected/);
 });
+
+/* ============================================================
+   Cuenta de junta sin ficha de socio (la del club)
+   ============================================================ */
+test("una cuenta de junta sin ficha no ve un error, ve una explicación", () => {
+  vm.runInContext(`
+    SESION.rol = "admin"; SESION.esAdmin = true;
+    SESION.usuario = {id:"u1", email:"pres.ceppb@ejemplo.test"};
+    SESION.socio = null;
+    S.listo = true; S.error = null;
+    S.data.socios = [];
+  `, ctx);
+  const html = vm.runInContext('String(V.yo(""))', ctx);
+  assert.match(html, /cuenta de la junta directiva/,
+    "debe decirle que es cuenta institucional, no que le falta algo");
+  assert.doesNotMatch(html, /Ver como/);
+});
+
+test("el menú no ofrece área de socio a quien no tiene ficha", () => {
+  const ofrecidas = vm.runInContext(`
+    JSON.stringify(VISTAS.filter(v => v.r && v.v.includes(SESION.rol) && (!v.si || v.si()))
+                         .map(v => v.r))
+  `, ctx);
+  const rutas = JSON.parse(ofrecidas);
+  assert.equal(rutas.includes("yo"), false, "Mi perfil no aplica sin ficha de socio");
+  assert.equal(rutas.includes("cuenta"), false, "Cuota y pagos tampoco");
+  assert.equal(rutas.includes("ajustes"), true, "Mi cuenta sí: la contraseña la tiene todo el mundo");
+  assert.equal(rutas.includes("admin"), true, "y el panel de la junta, claro");
+});
+
+test("con ficha de socio, el área de socio vuelve a aparecer", () => {
+  vm.runInContext(`SESION.socio = {id:"s1", numero:896, nombre:"Santiago",
+                                   apellidos:"Díaz", nombreCompleto:"Santiago Díaz"};`, ctx);
+  const rutas = JSON.parse(vm.runInContext(`
+    JSON.stringify(VISTAS.filter(v => v.r && v.v.includes(SESION.rol) && (!v.si || v.si()))
+                         .map(v => v.r))
+  `, ctx));
+  assert.equal(rutas.includes("yo"), true);
+  assert.equal(rutas.includes("cuenta"), true);
+});
