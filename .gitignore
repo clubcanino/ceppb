@@ -1,0 +1,22 @@
+# ============================================================
+#  NUNCA al repositorio
+# ============================================================
+
+# El censo real: contiene DNI, direcciones e IBAN de 347 personas.
+# Vive solo en el ordenador de secretaría. Se usa para importar y punto.
+datos/
+*.csv
+
+# Claves de servicio de Supabase (service_role) y cualquier secreto.
+# La anon key es pública por diseño y sí va en js/config.js.
+.env
+.env.*
+*.key
+
+# Copias de seguridad del censo
+copias/
+*.bak
+
+# Ruido del sistema
+.DS_Store
+node_modules/

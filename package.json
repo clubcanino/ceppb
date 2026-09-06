@@ -1,0 +1,9 @@
+{
+  "name": "ceppb-libro-de-cria",
+  "private": true,
+  "description": "Libro de Cría del Club Español del Perro Pastor Belga",
+  "scripts": {
+    "test": "node --test \"pruebas/*.test.mjs\"",
+    "servir": "python3 -m http.server 8777"
+  }
+}
