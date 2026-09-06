@@ -40,6 +40,10 @@ V.socios = function(){
       <select class="inp" id="f-soc-rol"><option value="">Cualquier condición</option>${ROLES_CLUB.map(r=>`<option ${fSoc.rol===r?"selected":""}>${esc(r)}</option>`).join("")}</select>
       <label class="chip" style="cursor:pointer"><input type="checkbox" id="f-soc-cri" ${fSoc.criador?"checked":""}> Sólo criadores</label>
       <span class="spacer"></span><span class="mini">${l.length} socio(s)</span>
+      ${SESION.esAdmin ? `
+        <button class="btn brand" data-form="socio|">Dar de alta un socio</button>
+        <button class="btn" data-exportar="censo">Exportar a Excel</button>
+        <button class="btn sm" data-exportar="censo-completo" title="Incluye DNI, dirección e IBAN">Con datos reservados</button>` : ""}
     </div>
     ${ocultos ? `<div class="note" style="margin-bottom:14px">${SESION.esAdmin
       ? `<b>${ocultos} de ${censo.length} socios no han hecho visible su perfil.</b> Como junta los ves aquí igualmente, pero para el resto del club no aparecen en el directorio.`

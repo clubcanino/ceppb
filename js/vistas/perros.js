@@ -47,6 +47,7 @@ V.perros = function(){
       <select class="inp" id="f-per-salud"><option value="">Salud: cualquiera</option><option value="completa" ${fPer.salud==="completa"?"selected":""}>Anexo A completo</option><option value="pendiente" ${fPer.salud==="pendiente"?"selected":""}>Anexo A pendiente</option></select>
       <span class="spacer"></span><span class="mini">${l.length} ejemplares</span>
       ${puedeDarDeAlta() ? `<button class="btn brand" data-form="perro|">Dar de alta un ejemplar</button>` : ""}
+      ${SESION.esAdmin ? `<button class="btn" data-exportar="ejemplares">Exportar a Excel</button>` : ""}
     </div>
     ${l.length
       ? tabla("per", cols, l, p => "perro/" + p.id)

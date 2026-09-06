@@ -5,7 +5,8 @@
 const FORMS = {
   socio(id){
     const s = byId(C("socios"), id) || {};
-    abrirForm("Editar perfil de socio", [
+    const nuevo = !id;
+    abrirForm(nuevo ? "Dar de alta un socio" : "Editar perfil de socio", [
       {t:"Identidad", f:[
         {k:"nombre", l:"Nombre", v:s.nombre}, {k:"apellidos", l:"Apellidos", v:s.apellidos},
         {k:"fechaNacimiento", l:"Fecha de nacimiento", tipo:"date", v:s.fechaNacimiento},
@@ -36,7 +37,8 @@ const FORMS = {
         {k:"roles", l:"Condición dentro del CEPPB", tipo:"checks", op:ROLES_CLUB, v:s.roles},
       ]},
       {t:"Sólo secretaría", d:"Estos campos no los edita el socio.", f:[
-        {k:"numero", l:"Nº de socio", tipo:"number", v:s.numero},
+        {k:"numero", l:"Nº de socio", tipo:"number", v:s.numero ?? siguienteNumeroSocio(),
+         h: nuevo ? "Se propone el siguiente libre; cámbialo si secretaría usa otro" : ""},
         {k:"cuota", l:"Cuota", tipo:"select", op:["Individual","Familiar","Familiar principal","Familiar secundaria","Honorífica","Sin asignar"], v:s.cuota},
         {k:"fechaAlta", l:"Fecha de alta", tipo:"date", v:s.fechaAlta},
         {k:"fechaBaja", l:"Fecha de baja", tipo:"date", v:s.fechaBaja},
@@ -44,13 +46,28 @@ const FORMS = {
       ]}] : []),
     ], async d => {
       const n = Object.assign({}, s, d);
-      n.nombreCompleto = `${n.nombre||""} ${n.apellidos||""}`.trim();
-      n.esCriador = !!n.afijo; n.activo = !n.fechaBaja;
       n.rsceSocio = !!d.rsceSocio;
       if(!SESION.esAdmin) n.roles = s.roles || [];   // los cargos sólo los toca la junta
       if(d.numero) n.numero = Number(d.numero);
+
+      if (!n.nombre || !n.apellidos) return toast("Hacen falta el nombre y los apellidos");
+
+      if (nuevo){
+        if (!n.numero) return toast("El socio necesita un número");
+        const repetido = C("socios").find(x => x.numero === n.numero);
+        if (repetido)
+          return toast(`El número ${n.numero} ya es de ${repetido.nombreCompleto}`);
+        n.perfilPublico = n.perfilPublico || "oculto";   // nace oculto, como todos
+        if (!n.fechaAlta) n.fechaAlta = hoy();
+      }
+
       delete n.id;
-      await guardar("socios", id, n); toast("Perfil actualizado");
+      try {
+        const nid = await guardar("socios", id, n);
+        toast(nuevo ? `Socio nº ${n.numero} dado de alta` : "Perfil actualizado");
+        if (nuevo) ir("socio/" + nid);
+        else render();
+      } catch(e){ toast(e.message || "No se ha podido guardar"); }
     });
   },
   perro(id){
@@ -517,4 +534,11 @@ async function ponerAbuelos(hijoId, nombrePadre, nombreMadre){
   delete n.id;
   try { await guardar("perros", hijoId, n); }
   catch(e){ /* si no tiene permiso sobre esa ficha, se deja como está */ }
+}
+
+
+/* El siguiente número libre del censo, para no tener que buscarlo */
+function siguienteNumeroSocio(){
+  const usados = C("socios").map(s => s.numero).filter(n => Number.isInteger(n));
+  return usados.length ? Math.max(...usados) + 1 : 1;
 }

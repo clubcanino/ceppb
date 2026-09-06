@@ -13,7 +13,7 @@ import vm from "node:vm";
 
 const ARCHIVOS = [
   "js/config.js", "js/util.js", "js/idiomas.js", "idiomas/en.js", "idiomas/fr.js", "idiomas/de.js", "js/reglamento.js", "js/genealogia.js", "js/privacidad.js",
-  "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js", "js/media.js", "js/directo.js",
+  "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js", "js/media.js", "js/exportar.js", "js/directo.js",
   "js/formularios.js", "js/formularios-def.js",
   "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
   "js/vistas/perros.js", "js/vistas/certificado.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
@@ -524,4 +524,70 @@ test("ninguna traducción se ha quedado igual que el castellano por descuido", (
     assert.equal(sospechosos.length, 0,
       `en ${idioma} hay textos sin traducir: ${sospechosos.join(", ")}`);
   }
+});
+
+/* ============================================================
+   Un socio corriente no ve nada de administración
+   ============================================================ */
+function comoSocio(){
+  vm.runInContext(`
+    SESION.rol = "socio"; SESION.esAdmin = false;
+    SESION.usuario = {id:"u1", email:"socio@ejemplo.test"};
+    SESION.socio = {id:"s1", numero:896, nombre:"Ana", apellidos:"Ruiz",
+                    nombreCompleto:"Ana Ruiz", perfilPublico:"socios", priv:{}};
+    S.listo = true; S.error = null;
+    S.data.socios = [SESION.socio, {id:"s2", numero:2, nombre:"Otro", apellidos:"Socio",
+                                    nombreCompleto:"Otro Socio", perfilPublico:"socios"}];
+    S.data.perros = [{id:"p1", nombre:"Uma", propietarioId:"s1", visibilidad:"socios",
+                      salud:{validacion:{estado:"pendiente"}}}];
+    S.data.socios_privado = []; S.data.media = []; S.data.resultados = [];
+    S.data.admins = []; S.data.invitaciones = [];
+  `, ctx);
+}
+
+test("el menú no le ofrece ninguna sección de administración", () => {
+  comoSocio();
+  const rutas = JSON.parse(vm.runInContext(`
+    JSON.stringify(VISTAS.filter(v => v.r && v.v.includes(SESION.rol) && (!v.si || v.si())).map(v => v.r))
+  `, ctx));
+  for (const prohibida of ["admin","validar","videos","invitaciones","altas","cobros","admins"]){
+    assert.equal(rutas.includes(prohibida), false,
+      `un socio no puede ver «${prohibida}» en su menú`);
+  }
+});
+
+test("si escribe la dirección a mano, tampoco entra", () => {
+  comoSocio();
+  for (const prohibida of ["admin","validar","videos","invitaciones","altas","cobros","admins"]){
+    const def = JSON.parse(vm.runInContext(
+      `JSON.stringify(VISTAS.find(v => v.r === ${JSON.stringify(prohibida)}) || null)`, ctx));
+    assert.ok(def, "la pantalla " + prohibida + " tiene que estar declarada");
+    assert.equal(def.v.includes("socio"), false,
+      `«${prohibida}» no puede estar abierta al perfil de socio`);
+  }
+});
+
+test("no ve el botón de dar de alta socios ni el de exportar el censo", () => {
+  comoSocio();
+  const html = vm.runInContext('String(V.socios(""))', ctx);
+  assert.doesNotMatch(html, /Dar de alta un socio/,
+    "los socios los da de alta la junta");
+  assert.doesNotMatch(html, /data-exportar/,
+    "el censo no se exporta desde una cuenta de socio");
+});
+
+test("la junta sí ve esas opciones", () => {
+  comoSocio();
+  vm.runInContext(`SESION.rol = "admin"; SESION.esAdmin = true;`, ctx);
+  const html = vm.runInContext('String(V.socios(""))', ctx);
+  assert.match(html, /Dar de alta un socio/);
+  assert.match(html, /data-exportar="censo"/);
+  assert.match(html, /data-exportar="censo-completo"/);
+});
+
+test("la exportación con datos reservados va aparte y avisa", () => {
+  const ev = readFileSync(new URL("../js/eventos.js", import.meta.url), "utf8");
+  assert.match(ev, /censo-completo/);
+  assert.match(ev, /confirm\(/, "hay que confirmar antes de sacar DNI e IBAN del sistema");
+  assert.match(ev, /sin cifrar/, "y decir claramente lo que eso significa");
 });

@@ -411,3 +411,25 @@ document.addEventListener("change", async ev => {
   toast(nombreIdioma(codigo));
   render();
 });
+
+/* --- exportar listados --- */
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-exportar]");
+  if (!b) return;
+  ev.stopPropagation();
+
+  if (!SESION.esAdmin) return toast("Los listados los exporta la junta directiva");
+
+  const que = b.dataset.exportar;
+  if (que === "censo")            return exportarCenso(C("socios"), false);
+  if (que === "ejemplares")       return exportarEjemplares(perrosVisibles());
+  if (que === "censo-completo"){
+    const cuantos = C("socios_privado").length;
+    if (!confirm(
+      `Este archivo lleva el DNI, la dirección y el número de cuenta de ${cuantos} personas.\n\n` +
+      `Va a quedar en tu ordenador, sin cifrar, y cualquiera que lo abra los verá.\n\n` +
+      `¿Seguro que lo necesitas así? Para listas de asistencia o envíos, el otro botón basta.`
+    )) return;
+    return exportarCenso(C("socios"), true);
+  }
+});
