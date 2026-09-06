@@ -125,7 +125,7 @@ V.certificado = function(id){
         Expedido en ${esc(new Date().toLocaleDateString("es-ES", {day:"numeric", month:"long", year:"numeric"}))}
       </div>
       <div class="cert-rubrica">
-        <img src="assets/firma-presidencia.png" alt="" onerror="this.style.display='none'">
+        ${rubricaPresidencia()}
         <div class="cert-linea"></div>
         <div><b>Santiago Díaz Fandiño</b></div>
         <div class="cert-cargo">Presidente del Club Español del Perro Pastor Belga</div>
@@ -142,3 +142,26 @@ V.certificado = function(id){
 document.addEventListener("click", ev => {
   if (ev.target.id === "imprimir-certificado") window.print();
 });
+
+
+/* La firma de la presidencia. Va incrustada y no como imagen para que
+   tome el color del texto: en modo oscuro, una firma negra sobre
+   fondo negro no se ve.
+
+   Es provisional. En cuanto haya una firma escaneada, se sustituye
+   este dibujo por la imagen de verdad. */
+function rubricaPresidencia(){
+  return `<svg class="cert-rubrica-svg" viewBox="0 0 340 110" width="230" height="74"
+       role="img" aria-label="Firma de la presidencia" fill="none"
+       stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M38 74c-14 4-24-2-22-12 2-11 22-14 30-24 6-8 1-17-10-16-9 1-16 8-18 16"/>
+    <path d="M30 66c16 8 30 2 40-10 4-5 7-12 4-16-4-5-11 0-12 7-2 12 6 22 18 22 10 0 17-7 21-15"/>
+    <path d="M126 30c-4 22-6 36-4 48 1 6 6 8 11 5 10-5 16-20 14-32-1-9-8-14-15-11"/>
+    <path d="M120 46c14-3 26-2 34 2"/>
+    <path d="M166 60c14-6 26-14 34-24 3-4 1-9-4-8-7 2-11 12-9 21 2 10 11 16 21 14 12-3 19-16 17-28"/>
+    <path d="M238 34c-6 20-8 34-6 46"/>
+    <path d="M230 44h26"/>
+    <path d="M244 70c16 6 32 4 46-6 5-4 9-9 10-15"/>
+    <path d="M52 90c60 10 150 6 236-12" stroke-width="2"/>
+  </svg>`;
+}

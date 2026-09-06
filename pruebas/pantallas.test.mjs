@@ -341,3 +341,49 @@ test("el certificado lleva un código para comprobar que es auténtico", () => {
   assert.match(html, /CEPPB-/, "sin código, un PDF con una firma lo falsifica cualquiera");
   assert.match(html, /Código de verificación/);
 });
+
+/* ============================================================
+   El muro tiene que reflejar lo que hay
+   ============================================================ */
+test("un ejemplar registrado aparece en Novedades", () => {
+  vm.runInContext(`
+    SESION.rol = "socio"; SESION.esAdmin = false;
+    SESION.usuario = {id:"u1", email:"socio@ejemplo.test"};
+    SESION.socio = {id:"s1", numero:896, nombre:"Ana", apellidos:"Ruiz", nombreCompleto:"Ana Ruiz"};
+    S.listo = true; S.error = null;
+    S.data.socios = [SESION.socio];
+    S.data.perros = [{id:"p1", nombre:"Uma", afijo:"Del Ejemplo", variedad:"Malinois",
+                      sexo:"H", propietarioId:"s1", visibilidad:"socios",
+                      creado:"2026-09-06T10:00:00Z", salud:{validacion:{estado:"pendiente"}}}];
+    S.data.resultados = []; S.data.camadas = []; S.data.eventos = []; S.data.media = [];
+  `, ctx);
+  const html = vm.runInContext('String(V.muro(""))', ctx);
+  assert.doesNotMatch(html, /El libro está en blanco/,
+    "con un perro dentro, el libro no está en blanco");
+  assert.match(html, /Uma Del Ejemplo se une al libro/);
+});
+
+test("un apto concedido sale destacado en Novedades", () => {
+  vm.runInContext(`
+    S.data.perros = [{id:"p1", nombre:"Uma", variedad:"Malinois", sexo:"H",
+                      fechaNacimiento:"2022-01-01", propietarioId:"s1", visibilidad:"socios",
+                      creado:"2026-09-06T10:00:00Z", adnEjemplar:true,
+                      salud:{hd:"A", ed:"0", lvt:"libre",
+                             genes:{CACA:"libre",CJM:"libre",SDCA1:"libre",SDCA2:"libre"},
+                             validacion:{estado:"validado", fecha:"2026-09-06"}}}];
+    S.data.resultados = [
+      {id:"r1", perroId:"p1", tipo:"estructura", calificacion:"MB", organizadoCEPPB:true,  fecha:"2024-05-01", validado:"validado"},
+      {id:"r2", perroId:"p1", tipo:"estructura", calificacion:"MB", organizadoCEPPB:false, fecha:"2024-07-01", validado:"validado"},
+      {id:"r3", perroId:"p1", tipo:"caracter", modalidad:"TS", resultado:"APTO", fecha:"2024-08-01", validado:"validado"}];
+  `, ctx);
+  const html = vm.runInContext('String(V.muro(""))', ctx);
+  assert.match(html, /obtiene ACE/, "el apto concedido es la noticia del club");
+  assert.match(html, /expediente de salud validado/);
+});
+
+test("sin nada registrado sí dice que está en blanco, y ofrece empezar", () => {
+  vm.runInContext(`S.data.perros = []; S.data.resultados = [];`, ctx);
+  const html = vm.runInContext('String(V.muro(""))', ctx);
+  assert.match(html, /El libro está en blanco/);
+  assert.match(html, /Dar de alta un ejemplar/);
+});

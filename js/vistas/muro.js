@@ -41,6 +41,50 @@ V.muro = function(){
     items.push({f:e.fecha, tipo:"Evento", t:e.nombre,
                 d:`${e.tipo||""}${e.lugar?" · "+e.lugar:""}`, futuro:true}));
 
+  /* Un ejemplar dado de alta es la primera novedad que ve el club.
+     Sin esto, el libro parecía en blanco teniendo perros dentro. */
+  perros.forEach(p => {
+    const cuando = String(p.creado || "").slice(0, 10);
+    items.push({
+      f: cuando,
+      tipo: "Ejemplar",
+      t: [p.nombre, p.afijo].filter(Boolean).join(" ") + " se une al libro",
+      d: [p.variedad, p.sexo === "M" ? "macho" : p.sexo === "H" ? "hembra" : "",
+          p.propietarioId ? "de " + nombreSocio(p.propietarioId) : ""]
+         .filter(Boolean).join(" · "),
+      ir: "perro/" + p.id,
+    });
+  });
+
+  /* Los aptos de cría concedidos: es lo que de verdad importa aquí */
+  perros.forEach(p => {
+    const aptos = R.aptosDe(p, res);
+    if (!aptos.length) return;
+    items.push({
+      f: String(p.creado || "").slice(0, 10),
+      tipo: "Apto de cría",
+      t: `${p.nombre} obtiene ${aptos.join(", ")}`,
+      d: aptos.map(c => (FIG_POR_CODIGO[c] || {}).n).filter(Boolean).join(" · "),
+      ir: "perro/" + p.id,
+      destacado: true,
+    });
+  });
+
+  /* Y los expedientes de salud que la junta acaba de cotejar */
+  perros.forEach(p => {
+    const v = (p.salud || {}).validacion || {};
+    if (v.estado !== "validado") return;
+    const a = R.anexoA(p);
+    items.push({
+      f: v.fecha || String(p.creado || "").slice(0, 10),
+      tipo: "Salud",
+      t: `${p.nombre}: expediente de salud validado`,
+      d: a.ok ? "Cumple el Anexo A completo"
+              : `Faltan ${a.items.filter(i => i.e === "falta").length} pruebas para el Anexo A`,
+      ir: "perro/" + p.id,
+    });
+  });
+
   items.sort((a,b) => String(b.f||"").localeCompare(String(a.f||"")));
   const prox   = items.filter(i => i.futuro);
   const pasado = items.filter(i => !i.futuro).slice(0, 22);
@@ -80,16 +124,19 @@ V.muro = function(){
     <div class="card">
       <div class="card-h"><h3>Novedades del club</h3><span class="hint">${pasado.length} entradas</span></div>
       <div class="card-b" style="padding:0">
-        ${pasado.length ? pasado.map(i => `<div class="feed-row">
+        ${pasado.length ? pasado.map(i => `<div class="feed-row ${i.ir?"clic":""}" ${i.ir?`data-go="${esc(i.ir)}"`:""}>
             <span class="when">${i.f?fmtF(i.f).slice(0,5)+"<br>"+String(i.f).slice(0,4):"—"}</span>
             <div style="min-width:0;flex:1">
               <div style="font-weight:600">${esc(i.t)}</div>
               <div class="mini">${esc(i.d)}</div>
             </div>
-            <span class="chip" style="flex:none">${esc(i.tipo)}</span></div>`).join("")
+            <span class="chip ${i.destacado?"ok":""}" style="flex:none">${esc(i.tipo)}</span></div>`).join("")
           : `<div class="empty"><b>El libro está en blanco</b>
-              ${SESION.usuario ? "Todavía no hay ejemplares, resultados ni camadas registrados."
-                               : "Entra con tu correo de socio para ver el libro del club."}</div>`}
+              ${!SESION.usuario
+                ? `Entra con tu correo de socio para ver el libro del club.
+                   <div style="margin-top:14px"><a class="btn brand" href="#/entrar">Entrar</a></div>`
+                : `Todavía no hay ejemplares registrados. Empieza por los tuyos.
+                   <div style="margin-top:14px"><button class="btn brand" data-form="perro|">Dar de alta un ejemplar</button></div>`}</div>`}
       </div>
     </div>
 

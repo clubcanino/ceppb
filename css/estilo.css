@@ -340,3 +340,5 @@ img.avatar{display:block}
   .certificado section{break-inside:avoid}
   body{background:#fff}
 }
+.cert-rubrica-svg{display:block;margin:0 auto 2px;color:var(--ink-2);opacity:.9}
+@media print{ .cert-rubrica-svg{color:#141311} }
