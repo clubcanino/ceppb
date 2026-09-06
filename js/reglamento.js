@@ -80,8 +80,11 @@ R.anexoA = function(p){
     items.push({k:"gen"+g.k, t:g.k, d: v ? v[0].toUpperCase()+v.slice(1) : "Sin analizar", gen:true,
       e: !v ? "falta" : (v==="afectado" ? "no" : "ok"), r:`Anexo A.4 — ${g.n}. Afectado: excluido. Portador: sólo con libre`});
   });
-  items.push({k:"adn", t:"ADN del ejemplar", d: p.adnEjemplar ? "Verificado (RSCE)" : "Sin verificar",
-    e: p.adnEjemplar ? "ok" : "falta", r:"Cap. 2 — verificación de pureza de línea (regulación RSCE)"});
+  const donde = (s.adnEntidad || "").trim();
+  items.push({k:"adn", t:"ADN del ejemplar",
+    d: p.adnEjemplar ? ("Perfil genético depositado" + (donde ? " · " + donde : "")) : "Sin depositar",
+    e: p.adnEjemplar ? "ok" : "falta",
+    r:"Cap. 2 — perfil de ADN del propio ejemplar, depositado en la RSCE o en el CEPPB"});
   return {items, ok: items.every(i => i.e === "ok"), bloqueos: items.filter(i => i.e === "no")};
 };
 
