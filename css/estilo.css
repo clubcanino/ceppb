@@ -305,11 +305,15 @@ img.avatar{display:block}
 @media (max-width:960px){
   .shell{grid-template-columns:1fr}
 
-  /* El menú se guarda y sale por la izquierda al pulsar el botón */
-  .side{position:fixed;top:0;left:0;bottom:0;width:min(280px,84vw);z-index:60;
-    transform:translateX(-102%);transition:transform .22s ease;
+  /* El menú se guarda y sale por la izquierda al pulsar el botón.
+
+     Se mueve con «left» y no con «transform»: el transform de la
+     regla base seguía ganando y el menú no salía nunca. Con left se
+     ve de un vistazo qué manda, y funciona igual de suave. */
+  .side{position:fixed;top:0;left:-100%;bottom:0;width:min(280px,84vw);z-index:60;
+    transition:left .22s ease;
     box-shadow:0 0 40px -8px rgba(0,0,0,.35);height:100dvh}
-  :root[data-menu="abierto"] .side{transform:none}
+  html[data-menu="abierto"] .side{left:0}
   .nav{flex-direction:column}
 
   /* La cortina que apaga el fondo mientras el menú está abierto */
