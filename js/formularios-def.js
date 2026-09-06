@@ -116,9 +116,9 @@ const FORMS = {
     abrirForm("Pruebas de salud — Anexo A", [
       {t:"Radiología", d:"Diagnóstico de la RSCE o de una asociación reconocida por ella (SETOV, AMVAC o AVEPA).", f:[
         {k:"hd", l:"Displasia de cadera", tipo:"select", op:[""].concat(HD_TODOS), v:s.hd, h:"Aptos: A y B"},
-        {k:"hdEntidad", l:"Entidad", v:s.hdEntidad, ph:"RSCE / SETOV / AMVAC / AVEPA"},
+        {k:"hdEntidad", l:"Diagnosticado por", tipo:"select", op:ENTIDADES_DIAGNOSTICO, v:s.hdEntidad},
         {k:"ed", l:"Displasia de codo", tipo:"select", op:[""].concat(ED_TODOS), v:s.ed, h:"Aptos: 0 y 1"},
-        {k:"edEntidad", l:"Entidad", v:s.edEntidad},
+        {k:"edEntidad", l:"Diagnosticado por", tipo:"select", op:ENTIDADES_DIAGNOSTICO, v:s.edEntidad},
         {k:"lvt", l:"Vértebra de transición (LVT)", tipo:"select", op:[["","Sin tramitar"],["libre","Libre de LVT"],["afectado","Con vértebra de transición"]], v:s.lvt, wide:true, h:"Diagnóstico emitido por el CEPPB"},
       ]},
       {t:"Enfermedades hereditarias", d:"Portador: sólo puede cruzarse con ejemplares libres. Afectado: excluido de la cría.",
@@ -126,8 +126,7 @@ const FORMS = {
       {t:"Genealogía", f:[
         {k:"adnEjemplar", l:"Perfil de ADN del ejemplar depositado", tipo:"check", v:p.adnEjemplar, wide:true,
          h:"El del propio perro, no el de sus padres"},
-        {k:"adnEntidad", l:"Depositado en", tipo:"select",
-         op:[["", "— sin indicar —"], "RSCE", "CEPPB", "Otra entidad reconocida"],
+        {k:"adnEntidad", l:"Depositado en", tipo:"select", op:ENTIDADES_DIAGNOSTICO,
          v:(p.salud||{}).adnEntidad, wide:true,
          h:"Vale tanto el de la Real Sociedad Canina como el del propio club"},
       ]},
@@ -407,3 +406,16 @@ function socioPorNombre(nombre){
   if (!buscado) return null;
   return C("socios").find(s => norm(s.nombreCompleto || "") === buscado) || null;
 }
+
+
+/* Quién puede firmar un diagnóstico o depositar un perfil de ADN.
+   El propio club está entre ellas: no todo pasa por la RSCE. */
+const ENTIDADES_DIAGNOSTICO = [
+  ["", "— sin indicar —"],
+  "CEPPB",
+  "RSCE",
+  "SETOV",
+  "AMVAC",
+  "AVEPA",
+  "Otra entidad reconocida",
+];

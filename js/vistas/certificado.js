@@ -144,24 +144,33 @@ document.addEventListener("click", ev => {
 });
 
 
-/* La firma de la presidencia. Va incrustada y no como imagen para que
-   tome el color del texto: en modo oscuro, una firma negra sobre
-   fondo negro no se ve.
-
-   Es provisional. En cuanto haya una firma escaneada, se sustituye
-   este dibujo por la imagen de verdad. */
+/* La firma de la presidencia, calcada de la firma real y redibujada
+   en vectorial: así sale nítida a cualquier tamaño, pesa nada y toma
+   el color del documento —una firma negra sobre fondo oscuro no se
+   vería. */
 function rubricaPresidencia(){
-  return `<svg class="cert-rubrica-svg" viewBox="0 0 340 110" width="230" height="74"
-       role="img" aria-label="Firma de la presidencia" fill="none"
-       stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M38 74c-14 4-24-2-22-12 2-11 22-14 30-24 6-8 1-17-10-16-9 1-16 8-18 16"/>
-    <path d="M30 66c16 8 30 2 40-10 4-5 7-12 4-16-4-5-11 0-12 7-2 12 6 22 18 22 10 0 17-7 21-15"/>
-    <path d="M126 30c-4 22-6 36-4 48 1 6 6 8 11 5 10-5 16-20 14-32-1-9-8-14-15-11"/>
-    <path d="M120 46c14-3 26-2 34 2"/>
-    <path d="M166 60c14-6 26-14 34-24 3-4 1-9-4-8-7 2-11 12-9 21 2 10 11 16 21 14 12-3 19-16 17-28"/>
-    <path d="M238 34c-6 20-8 34-6 46"/>
-    <path d="M230 44h26"/>
-    <path d="M244 70c16 6 32 4 46-6 5-4 9-9 10-15"/>
-    <path d="M52 90c60 10 150 6 236-12" stroke-width="2"/>
+  return `<svg class="cert-rubrica-svg" viewBox="0 0 768 499" width="250" height="162"
+       role="img" aria-label="Firma de Santiago Díaz Fandiño, presidente del CEPPB"
+       fill="none" stroke="currentColor" stroke-width="3.4"
+       stroke-linecap="round" stroke-linejoin="round">
+
+    <!-- el óvalo que envuelve toda la firma -->
+    <path d="M508 205c78-8 143 2 178 26 32 22 26 50-16 68-56 24-150 36-248 33
+             -104-3-201-22-269-50-58-24-84-53-70-77 13-22 61-38 126-44
+             62-6 133-2 199 12"/>
+
+    <!-- el trazo largo y afilado, de abajo a arriba -->
+    <path d="M300 424c56-70 118-146 176-212 30-34 55-60 76-77 12-10 21-14 26-11
+             5 3 3 13-6 29-16 28-45 68-84 116-46 57-98 117-146 168
+             -18 19-30 30-36 33"/>
+    <path d="M596 100c-14 30-42 74-82 128-38 51-78 98-112 133"/>
+
+    <!-- la eme quebrada del centro -->
+    <path d="M432 322c2-24 8-48 17-66 5-10 10-15 14-14 5 1 7 9 8 22 1 12 2 20 5 22
+             4 3 12-2 24-14 10-10 17-14 21-11 4 3 5 12 3 25 6-6 14-8 24-6
+             16 3 33 12 51 26"/>
+
+    <!-- el trazo horizontal que cruza por dentro -->
+    <path d="M287 178c72-8 148-9 226-4 68 4 129 13 182 26" stroke-width="2.6"/>
   </svg>`;
 }
