@@ -25,10 +25,23 @@ SESION.iniciar = async function(sb){
   const { data } = await sb.auth.getSession();
   SESION.usuario = data.session ? data.session.user : null;
 
-  sb.auth.onAuthStateChange((_evento, sesion) => {
+  /* Al volver del correo, la sesión llega unos instantes después de
+     que la página se haya dibujado. Se actualiza en su sitio: recargar
+     entero aquí puede dejar al socio dando vueltas. */
+  sb.auth.onAuthStateChange(async (_evento, sesion) => {
     const antes = SESION.usuario && SESION.usuario.id;
     SESION.usuario = sesion ? sesion.user : null;
-    if ((SESION.usuario && SESION.usuario.id) !== antes) location.reload();
+    const ahora = SESION.usuario && SESION.usuario.id;
+    if (ahora === antes) return;
+
+    if (SESION.usuario){
+      await SESION.reclamarPendiente();
+      await SESION.refrescar();
+      await recargar();
+    } else {
+      SESION.socio = null; SESION.esAdmin = false; SESION.rol = "visitante";
+    }
+    render();
   });
 
   if (SESION.usuario){
@@ -65,7 +78,6 @@ SESION.pedirEnlace = async function(email){
 SESION.salir = async function(){
   await SESION.sb.auth.signOut();
   location.hash = "#/muro";
-  location.reload();
 };
 
 /* ---------- invitación ---------- */
