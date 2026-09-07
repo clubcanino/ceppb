@@ -35,17 +35,40 @@ def abrir(ruta):
         t = destino[sh.get(REL + 'id')].lstrip('/')
         hojas[sh.get('name')] = t if t.startswith('xl/') else 'xl/' + t
 
+    def columna(ref):
+        """A -> 0, B -> 1, ... AA -> 26. La referencia de la celda dice
+        en qué columna está de verdad."""
+        n = 0
+        for ch in ref:
+            if ch.isalpha():
+                n = n * 26 + (ord(ch.upper()) - 64)
+            else:
+                break
+        return n - 1
+
     def leer(nombre):
+        """Cada fila, con las celdas en su columna real.
+
+        Excel no escribe las celdas vacías: se las salta. Leyendo por
+        orden de aparición, una casilla en blanco corría todo lo que
+        venía detrás una posición a la izquierda, y un pedigrí entero
+        podía quedar con los abuelos en el sitio de los padres. Por eso
+        cada celda se coloca por la letra de su referencia."""
         filas = []
         for row in ET.fromstring(z.read(hojas[nombre])).iter(NS + 'row'):
-            celdas = []
+            celdas = {}
+            ancho = 0
             for c in row:
+                i = columna(c.get('r') or "A")
                 v = c.find(NS + 'v')
                 txt = ""
-                if v is not None:
+                if c.get('t') == 'inlineStr':
+                    txt = "".join(x.text or "" for x in c.iter(NS + 't'))
+                elif v is not None:
                     txt = sst[int(v.text)] if c.get('t') == 's' else (v.text or "")
-                celdas.append(txt.strip())
-            filas.append(celdas)
+                celdas[i] = txt.strip()
+                ancho = max(ancho, i + 1)
+            filas.append([celdas.get(i, "") for i in range(ancho)])
         return filas
 
     return hojas, leer
@@ -164,7 +187,14 @@ def main(ruta):
                 return i
         return None
     i_id, i_perro = col('id'), col('perro')
-    i_part, i_puesto, i_coi = col('participaciones'), col('mejor'), col('coi')
+    i_coi = col('coi')
+    # El archivo cambió de forma cuando se añadió el mundial FMBB: donde
+    # había una columna «Participaciones» ahora hay una por campeonato,
+    # y lo mismo con el mejor puesto. Se leen las que haya.
+    i_parts   = [i for i, c in enumerate(cab)
+                 if c.startswith('participaciones')
+                 or (c.endswith('(nº)') and 'antepasado' not in c)]
+    i_puestos = [i for i, c in enumerate(cab) if c.startswith('mejor')]
 
     competidores = []
     for f in per[1:]:
@@ -176,11 +206,13 @@ def main(ruta):
                 return (float if dec else int)(f[i])
             except (TypeError, ValueError, IndexError):
                 return None
+        puestos = [num(i) for i in i_puestos]
+        puestos = [x for x in puestos if x]
         competidores.append({
             "clave": clave(info["nombre"]), "nombre": info["nombre"],
             "wd": f[i_id] if i_id is not None and i_id < len(f) else "",
-            "participaciones": num(i_part) or 0,
-            "mejorPuesto": num(i_puesto),
+            "participaciones": sum(num(i) or 0 for i in i_parts),
+            "mejorPuesto": min(puestos) if puestos else None,
             "coi5": num(i_coi, True) or 0.0,
         })
 
@@ -204,4 +236,4 @@ def main(ruta):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "datos/CEPPB_pedigries_IGP_2021-2025.xlsx")
+    main(sys.argv[1] if len(sys.argv) > 1 else "datos/CEPPB_FMBB_pedigries_IGP.xlsx")

@@ -40,7 +40,7 @@ def main():
             "padre": id_estable(e["padre"]) if e.get("padre") else None,
             "madre": id_estable(e["madre"]) if e.get("madre") else None,
             "wd": f"https://es.working-dog.com/dogs-details/{wd}" if wd else None,
-            "origen": "working-dog · campeonatos CEPPB 2021-2025",
+            "origen": "working-dog · campeonatos CEPPB 2021-2025 y FMBB 2022-2026",
         })
 
     out = []
@@ -100,6 +100,12 @@ def main():
     out.append("from perros;")
 
     print("\n".join(out))
+
+    # El mismo volcado en JSON, para poder cargarlo desde la propia
+    # plataforma con la sesión de la junta en vez de por el editor SQL.
+    json.dump(filas, open("db/importaciones/ejemplares.json", "w", encoding="utf-8"),
+              ensure_ascii=False, indent=1)
+
 
 if __name__ == "__main__":
     main()
