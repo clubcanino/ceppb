@@ -792,14 +792,16 @@ test("eventos ofrece las convocatorias del libro y el calendario del club", () =
   const ctx = montar();
   vm.runInContext(`SESION.rol="socio"; SESION.esAdmin=false; SESION.usuario={id:"u1"};
                    SESION.socio={id:"s1", numero:1}; S.listo=true; S.error=null;`, ctx);
+  /* Se abre por el calendario: es lo que se viene a buscar aquí. */
+  const web = vm.runInContext("String(V.eventos(''))", ctx);
+  assert.match(web, /data-tabev="web" class="on"/);
+
+  vm.runInContext('tabEventos = "club"', ctx);
   const club = vm.runInContext("String(V.eventos(''))", ctx);
+  vm.runInContext('tabEventos = "web"', ctx);
   assert.match(club, /data-tabev="club"/);
   assert.match(club, /data-tabev="web"/);
   assert.equal(club.includes("<iframe"), false, "la pestaña del libro no empotra nada");
-
-  vm.runInContext('tabEventos = "web"', ctx);
-  const web = vm.runInContext("String(V.eventos(''))", ctx);
-  vm.runInContext('tabEventos = "club"', ctx);
   assert.match(web, /<iframe[^>]+src="https:\/\/www\.ceppb\.info\/eventos"/);
   /* y siempre una salida por si el marco no carga */
   assert.match(web, /target="_blank" rel="noopener noreferrer"/);

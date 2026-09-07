@@ -30,8 +30,12 @@ V.camadas = function(){
 /* Dos cosas distintas bajo el mismo nombre: las convocatorias que el
    club lleva en esta plataforma —con sus inscripciones y sus
    resultados— y el calendario que publica en su web. Se enseñan las
-   dos, cada una en su sitio, sin copiar la una en la otra. */
-let tabEventos = "club";
+   dos, cada una en su sitio, sin copiar la una en la otra.
+
+   Se abre por el calendario de la web, que es lo que un socio viene
+   buscando cuando entra en «Eventos»; las convocatorias del libro,
+   con su botón de convocar, están en la otra pestaña. */
+let tabEventos = "web";
 
 V.eventos = function(){
   const pestanas = [["club", "Convocatorias del libro"], ["web", "Calendario del CEPPB"]];
