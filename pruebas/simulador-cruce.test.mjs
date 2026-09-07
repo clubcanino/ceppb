@@ -243,3 +243,55 @@ test("la base de datos lo exige también: la pantalla no es la que manda", () =>
   assert.match(lee("db/schema.sql"), /propietario_de\(madre_id\) = mi_socio_id\(\)/,
     "y el esquema del repositorio dice lo mismo que la base de datos");
 });
+
+/* ------------------------------------------------------------
+   El pedigrí de la camada
+   ------------------------------------------------------------ */
+test("el simulador enseña el pedigrí de la camada, hasta ocho generaciones", () => {
+  const v = lee("js/vistas/cria.js");
+  assert.match(v, /function pedigriDelCruce\(m, h\)/);
+  assert.match(v, /\$\{pedigriDelCruce\(m, h\)\}/, "se pinta en el panel");
+  assert.match(v, /let genCruce = 8/, "arranca en ocho, que es lo que se pidió");
+  assert.match(v, /\[4,5,6,8\]/, "y se puede bajar");
+});
+
+test("la primera columna son los dos reproductores, no los de uno solo", () => {
+  const v = lee("js/vistas/cria.js");
+  const b = v.slice(v.indexOf("function pedigriDelCruce"));
+  assert.match(b, /let nivel = \[m\.id, h\.id\]/,
+    "es el pedigrí que tendrían los cachorros, no el del macho ni el de la hembra");
+  assert.match(b, /for \(let g = 2; g <= n; g\+\+\)/,
+    "la primera generación ya está puesta");
+});
+
+test("marca los ancestros que salen por las dos ramas", () => {
+  const b = lee("js/vistas/cria.js").slice(lee("js/vistas/cria.js").indexOf("function pedigriDelCruce"));
+  assert.match(b, /filter\(\(\[, c\]\) => c > 1\)/, "los repetidos");
+  assert.match(b, /porPeso\.slice\(0, 16\)/, "y los que más pesan, listados aparte");
+});
+
+test("dice cuánto pedigrí se conoce: los huecos son datos que faltan", () => {
+  const b = lee("js/vistas/cria.js").slice(lee("js/vistas/cria.js").indexOf("function pedigriDelCruce"));
+  assert.match(b, /Pedigrí conocido/);
+  assert.match(b, /conocidas \/ casillas/,
+    "a ocho generaciones caben 510 ancestros y casi ninguno los tiene todos");
+});
+
+test("usa el censo indexado, que son 510 casillas por pedigrí", () => {
+  const b = lee("js/vistas/cria.js").slice(lee("js/vistas/cria.js").indexOf("function pedigriDelCruce"));
+  assert.match(b, /perroDe\(id\)/, "no un find lineal sobre los 3.833 por cada casilla");
+  assert.equal(/byId\(C\("perros"\)/.test(b), false);
+});
+
+test("cambiar de profundidad no redibuja las cajas de escribir", () => {
+  assert.match(lee("js/vistas/cria.js"),
+    /genCruce = Number\(b\.getAttribute\("data-gen-cruce"\)\)[\s\S]{0,40}pintarPanelCruce\(\)/);
+});
+
+test("hay sitio en la hoja de estilo para seis, siete y ocho columnas", () => {
+  const css = lee("css/estilo.css");
+  for (const g of [6, 7, 8])
+    assert.match(css, new RegExp(`\\.ped\\.g${g}\\{grid-template-columns:repeat\\(${g},1fr\\)`),
+      `faltan las ${g} columnas: el pedigrí se pintaría amontonado`);
+  assert.match(css, /\.ped\.g8 \.ped-n b\{font-size:9px/);
+});

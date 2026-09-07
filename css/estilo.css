@@ -518,6 +518,24 @@ img.avatar{display:block}
 .ped.g3{grid-template-columns:repeat(3,1fr);min-width:560px}
 .ped.g4{grid-template-columns:repeat(4,1fr);min-width:820px}
 .ped.g5{grid-template-columns:repeat(5,1fr);min-width:1120px}
+/* Seis, siete y ocho generaciones: 510 ancestros en la última.
+   Las casillas encogen hasta lo que se puede leer y el pedigrí se
+   mira con scroll, como uno impreso en pliego. */
+.ped.g6{grid-template-columns:repeat(6,1fr);min-width:1180px}
+.ped.g7{grid-template-columns:repeat(7,1fr);min-width:1300px}
+.ped.g8{grid-template-columns:repeat(8,1fr);min-width:1420px}
+.ped.g6, .ped.g7, .ped.g8{gap:3px}
+.ped.g6 .ped-col, .ped.g7 .ped-col, .ped.g8 .ped-col{gap:2px}
+.ped.g6 .ped-n, .ped.g7 .ped-n, .ped.g8 .ped-n{
+  padding:2px 5px;min-height:0;border-left-width:3px}
+.ped.g6 .ped-n b{font-size:10px;line-height:1.15}
+.ped.g7 .ped-n b{font-size:9.5px;line-height:1.1}
+.ped.g8 .ped-n b{font-size:9px;line-height:1.08;word-break:break-word}
+.ped.g6 .ped-n small, .ped.g7 .ped-n small, .ped.g8 .ped-n small{display:none}
+.ped.g6 .ped-n.vacio, .ped.g7 .ped-n.vacio, .ped.g8 .ped-n.vacio{min-height:16px;font-size:9px}
+/* La marca ×N no cabe en las columnas estrechas; el color del borde sí */
+.ped.g7 .ped-veces, .ped.g8 .ped-veces{display:none}
+
 .ped.g4 .ped-n, .ped.g5 .ped-n{padding:4px 7px}
 .ped.g4 .ped-n b{font-size:11.5px}
 .ped.g5 .ped-n b{font-size:10.5px;line-height:1.2}

@@ -72,6 +72,7 @@ function panelDeCruce(){
         :"<b>Todavía no reúne los requisitos del club.</b> Abajo tienes exactamente qué le falta a cada uno."}</div>
       ${listaReq(l.map(x=>({t:x.t, d:x.r||"", e:x.n==="bloqueo"?"no":x.n==="aviso"?"falta":"ok"})))}
       ${tarjetaConsanguinidad(m, h)}
+      ${pedigriDelCruce(m, h)}
       ${R.esInter(m,h) ? (()=>{ const sol = solicitudDe(m.id,h.id); const e = sol?EST_SOL[sol.estado]:null;
         return `<div class="card lift" style="margin-top:16px"><div class="card-h"><h3>Autorización previa del club</h3>
           <span class="spacer"></span>${sol?`<span class="chip ${e.c}">${esc(e.t)}</span>`:`<span class="chip warn">Sin solicitar</span>`}</div>
@@ -296,4 +297,109 @@ document.addEventListener("click", ev => {
   const lado = b.getAttribute("data-alta-cruce") === "h" ? "h" : "m";
   TRAS_ALTA.fn = id => { cruceSel[lado] = id; ir("cruce"); };
   FORMS.perro();
+});
+
+/* ============================================================
+   El pedigrí de la camada que saldría de este cruce.
+
+   No es el de ninguno de los dos reproductores: es el que tendrían
+   los cachorros, con el macho y la hembra de padres. Hasta ocho
+   generaciones, que es donde se ven de verdad las líneas que se
+   repiten por las dos ramas — y son esas las que meten la
+   consanguinidad que el número de arriba resume en una cifra.
+
+   A ocho generaciones caben 510 ancestros. Los huecos no son un
+   fallo: son pedigrí que el club todavía no tiene, y por eso se
+   dice cuánto se conoce.
+   ============================================================ */
+let genCruce = 8;
+
+function pedigriDelCruce(m, h){
+  ponerCenso(C("perros"));
+  const n = genCruce;
+
+  /* La primera columna son los padres de la camada. */
+  const columnas = [];
+  let nivel = [m.id, h.id];
+  columnas.push(nivel);
+  for (let g = 2; g <= n; g++){
+    const siguiente = [];
+    for (const id of nivel){
+      const d = id ? perroDe(id) : null;
+      siguiente.push(d ? d.padreId || null : null);
+      siguiente.push(d ? d.madreId || null : null);
+    }
+    columnas.push(siguiente);
+    nivel = siguiente;
+  }
+
+  /* Quién sale por más de una rama: son los que meten consanguinidad. */
+  const veces = new Map();
+  let casillas = 0, conocidas = 0;
+  for (const col of columnas)
+    for (const id of col){
+      casillas++;
+      if (id){ conocidas++; veces.set(id, (veces.get(id) || 0) + 1); }
+    }
+  const repetidos = [...veces.entries()].filter(([, c]) => c > 1).map(([id]) => id);
+  const porPeso = repetidos.slice().sort((a, b) => veces.get(b) - veces.get(a));
+  const marca = new Map(porPeso.map((id, i) => [id, (i % 8) + 1]));
+
+  const casilla = id => {
+    const d = id ? perroDe(id) : null;
+    if (!d) return `<div class="ped-n vacio">—</div>`;
+    const mk = marca.get(id);
+    return `<div class="ped-n ${d.sexo === "M" ? "m" : d.sexo === "H" ? "h" : ""} ${mk ? "rep r" + mk : ""} clic"
+      data-go="perro/${esc(d.id)}" title="${esc(nombrePerro(d))}${mk ? ` · aparece ${veces.get(id)} veces en este pedigrí` : ""}">
+      ${mk ? `<span class="ped-veces">×${veces.get(id)}</span>` : ""}
+      <b>${esc(nombrePerro(d))}</b><small>${esc(d.loe || d.variedad || "")}</small></div>`;
+  };
+
+  const pct = x => (x * 100).toFixed(1).replace(".", ",") + " %";
+  const distintos = veces.size;
+
+  return `<div class="card" style="margin-top:16px">
+    <div class="card-h"><h3>Pedigrí de la camada</h3>
+      <div class="seg" style="margin-left:10px">
+        ${[4,5,6,8].map(g => `<button data-gen-cruce="${g}" class="${n===g?"on":""}">${g} gen.</button>`).join("")}
+      </div>
+      <span class="spacer"></span>
+      <span class="hint">${distintos} ancestros distintos</span>
+    </div>
+
+    <div class="card-b" style="padding:12px 16px 0">
+      <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:baseline">
+        <div><span class="mini">Pedigrí conocido</span>
+          <b style="margin-left:6px">${pct(conocidas / casillas)}</b>
+          <span class="mini"> de ${casillas} casillas</span></div>
+        ${repetidos.length ? `<div><span class="mini">Ancestros por las dos ramas</span>
+          <b style="margin-left:6px">${repetidos.length}</b></div>` : ""}
+      </div>
+    </div>
+
+    <div class="card-b" style="overflow:auto;max-height:78vh">
+      <div class="ped g${n}">
+        ${columnas.map(col => `<div class="ped-col">${col.map(casilla).join("")}</div>`).join("")}
+      </div>
+    </div>
+
+    ${repetidos.length ? `<div class="card-b" style="border-top:1px solid var(--line)">
+      <div class="mini" style="margin-bottom:8px">Los que más se repiten en las ${n} generaciones:</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${porPeso.slice(0, 16).map(id => {
+          const d = perroDe(id);
+          return `<a class="chip rep r${marca.get(id)}" href="#/perro/${esc(id)}">${esc(d ? nombrePerro(d) : "")}
+            <b style="margin-left:5px">×${veces.get(id)}</b></a>`;
+        }).join("")}
+      </div>
+    </div>` : ""}
+  </div>`;
+}
+
+/* Cambiar de profundidad no toca las cajas de escribir. */
+document.addEventListener("click", ev => {
+  const b = ev.target.closest && ev.target.closest("[data-gen-cruce]");
+  if (!b) return;
+  genCruce = Number(b.getAttribute("data-gen-cruce")) || 8;
+  pintarPanelCruce();
 });
