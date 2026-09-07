@@ -127,6 +127,15 @@ test("la que sí se ve trae con qué decidir y los dos botones", () => {
   assert.match(html, /Gas de Azarbe/);
   assert.match(html, /941000012345678/, "el chip, que es lo que lo identifica");
   assert.match(html, /sin titular/, "y que se puede pedir");
+  assert.match(html, /macho/, "concuerda con el sexo del ejemplar");
+  assert.equal(/LOE LOE/.test(html), false,
+    "muchos LOE del libro ya traen el «LOE» delante, tal como figura en el pedigrí");
+
+  /* Una hembra con el LOE ya etiquetado */
+  const h = Object.assign({}, c, {sexo: "H", loe: "LOE 2729031"});
+  const html2 = vm.runInContext(`lineaDeCoincidencia(${JSON.stringify(h)})`, ctx);
+  assert.match(html2, /nacida el/, "hembra: nacida, no nacido");
+  assert.equal(/LOE LOE/.test(html2), false);
   assert.match(html, /data-es-este="p-9"/);
   assert.match(html, /#\/perro\/p-9/, "poder mirarla antes de decidir");
 });

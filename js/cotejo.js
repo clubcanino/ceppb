@@ -80,12 +80,20 @@ function lineaDeCoincidencia(c){
       </div>
     </div>`;
 
+  /* Muchos LOE del libro vienen ya con el «LOE» delante, tal como
+     figura en el pedigrí. Anteponerlo otra vez daba «LOE LOE 2729031». */
+  const conEtiqueta = (et, v) =>
+    !v ? null : (new RegExp("^" + et, "i").test(String(v).trim()) ? v : et + " " + v);
+
   const datos = [
     c.variedad,
     c.sexo === "H" ? "hembra" : (c.sexo === "M" ? "macho" : null),
-    c.fechaNacimiento ? "nacido el " + fmtF(c.fechaNacimiento) : null,
-    c.loe  ? "LOE " + c.loe   : null,
-    c.chip ? "chip " + c.chip : null,
+    c.fechaNacimiento
+      ? (c.sexo === "H" ? "nacida el " : c.sexo === "M" ? "nacido el " : "nació el ")
+        + fmtF(c.fechaNacimiento)
+      : null,
+    conEtiqueta("LOE",  c.loe),
+    conEtiqueta("chip", c.chip),
   ].filter(Boolean).join(" · ");
 
   const estado = c.esMio
