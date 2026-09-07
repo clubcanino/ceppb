@@ -102,8 +102,13 @@ const buscaSocios = () => unicas(C("socios").slice()
   .sort((a,b)=>String(a.apellidos).localeCompare(String(b.apellidos),"es"))
   .map(s=>[s.id, `${s.nombreCompleto} (nº ${s.numero})`]));
 
-const buscaPerros = sexo => unicas(C("perros")
+/* `mios` deja sólo los ejemplares del socio. Lo usa la declaración de
+   camada para la madre: la camada la declara quien es dueño de la
+   perra, y ofrecerle las 2.338 hembras del libro para luego rechazarle
+   el guardado sería engañarle. */
+const buscaPerros = (sexo, mios) => unicas(C("perros")
   .filter(p => !sexo || p.sexo === sexo)
+  .filter(p => !mios || SESION.esAdmin || p.propietarioId === miSocioId())
   .sort((a,b)=>String(a.nombre).localeCompare(String(b.nombre),"es"))
   .map(p=>[p.id, p.nombre + (p.variedad ? " · " + p.variedad : ""),
            p.loe || (p.fechaNacimiento ? "n. " + String(p.fechaNacimiento).slice(0,4) : "")]));

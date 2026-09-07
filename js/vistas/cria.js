@@ -36,7 +36,12 @@ V.aptos = function(){
 
 /* --- Simulador de cruce --- */
 let cruceSel = {m:"", h:""};
-V.cruce = function(){
+/* El panel de resultados, aparte de la pantalla.
+
+   Al elegir un reproductor antes se redibujaba la pantalla entera, y
+   con ella las dos cajas de escribir: el socio perdía el foco y lo que
+   estaba tecleando a mitad de palabra. Ahora sólo se repinta esto. */
+function panelDeCruce(){
   const perros = perrosVisibles(), res = C("resultados");
   /* Los 279 ejemplares que llegaron de los pedigríes sin sexo anotado
      también se pueden elegir: dejarlos fuera era dejar fuera del
@@ -44,11 +49,13 @@ V.cruce = function(){
      reglamento lo dice abajo y se arregla en su ficha. */
   const machos  = perros.filter(p=>p.sexo==="M" || !p.sexo);
   const hembras = perros.filter(p=>p.sexo==="H" || !p.sexo);
-  if(!cruceSel.m && machos.length) cruceSel.m = machos[0].id;
-  if(!cruceSel.h && hembras.length) cruceSel.h = hembras[0].id;
+  /* Las dos cajas empiezan vacías. Antes se rellenaban solas con el
+     primer perro del libro por orden alfabético, y el socio se
+     encontraba un cruce ya hecho entre dos ejemplares que no había
+     elegido. */
   const m = byId(perros, cruceSel.m), h = byId(perros, cruceSel.h);
   let panel = perros.length
-    ? `<div class="empty"><b>Elige los dos reproductores</b>Se comprueban edad, Anexo A, genética y variedades contra el reglamento.</div>`
+    ? `<div class="empty"><b>Escribe los dos reproductores</b>Empieza a escribir el nombre y van saliendo los del libro; con tres letras basta. Se comprueban edad, Anexo A, genética y variedades contra el reglamento.</div>`
     : `<div class="empty"><b>Aún no hay ejemplares registrados</b>El simulador compara dos reproductores contra el reglamento; primero hay que dar de alta al menos un macho y una hembra.
         ${SESION.rol!=="visitante"?`<div style="margin-top:14px"><button class="btn brand" data-form="perro|">Dar de alta un ejemplar</button></div>`:""}</div>`;
   if(m && h){
@@ -87,6 +94,14 @@ V.cruce = function(){
           return `<div class="req"><div class="tx"><b>${g.k}</b><small>${esc(pred)}</small></div></div>`;}).join("")}
       </div></div>`:""}`;
   }
+  return panel;
+}
+
+V.cruce = function(){
+  const perros = perrosVisibles();
+  const machos  = perros.filter(p=>p.sexo==="M" || !p.sexo);
+  const hembras = perros.filter(p=>p.sexo==="H" || !p.sexo);
+
   /* Se escribe el nombre, no se despliega una lista: el libro pasa de
      tres mil ejemplares y bajar por ellos a ojo es inviable. */
   const ficha = l => unicas(l.slice()
@@ -95,7 +110,7 @@ V.cruce = function(){
              p.loe || (p.fechaNacimiento ? "n. " + String(p.fechaNacimiento).slice(0,4) : "")]));
 
   return `<div class="cols23">
-    <div>${panel}</div>
+    <div id="cruce-panel">${panelDeCruce()}</div>
     <div class="grid">
       <div class="card"><div class="card-h"><h3>Reproductores</h3>
         <span class="hint">${perros.length} en el libro</span></div><div class="card-b">
@@ -264,6 +279,12 @@ function tarjetaReglamentos(){
           </div>
         </div>`).join("")}</div>
     </div></div>`;
+}
+
+/* Repintar sólo los resultados, dejando en paz las cajas de escribir. */
+function pintarPanelCruce(){
+  const caja = document.getElementById("cruce-panel");
+  if (caja) caja.innerHTML = panelDeCruce();
 }
 
 /* Dar de alta un reproductor sin perder el simulador: se abre el alta

@@ -216,12 +216,21 @@ const FORMS = {
     });
   },
   camada(){
+    /* La camada la declara quien es dueño de la madre. Si no tiene
+       ninguna hembra a su nombre no hay nada que declarar, y es mejor
+       decírselo que dejarle rellenar un formulario que la base de
+       datos va a rechazar. */
+    const mias = buscaPerros("H", true);
+    if(!mias.length && !SESION.esAdmin)
+      return toast("La camada la declara el propietario de la madre, y no tienes ninguna hembra a tu nombre");
+
     abrirForm("Declarar camada", [
-      {t:"Progenitores", d:"Se comprobará el cruce contra el reglamento antes de guardar.", f:[
+      {t:"Progenitores", d:"La madre tiene que ser tuya: quien declara la camada es el propietario de la hembra. El padre puede ser cualquier ejemplar del libro. Se comprobará el cruce contra el reglamento antes de guardar.", f:[
         {k:"padreId", l:"Padre", tipo:"buscarId", op:buscaPerros("M"), wide:true,
-         ph:"Escribe tres letras del nombre…"},
-        {k:"madreId", l:"Madre", tipo:"buscarId", op:buscaPerros("H"), wide:true,
-         ph:"Escribe tres letras del nombre…"},
+         ph:"Escribe el nombre del perro…"},
+        {k:"madreId", l:"Madre", tipo:"buscarId", op:mias, wide:true,
+         ph: SESION.esAdmin ? "Escribe el nombre de la perra…" : "Tus hembras: escribe el nombre…",
+         h: SESION.esAdmin ? "" : `${mias.length} hembra${mias.length===1?"":"s"} a tu nombre`},
       ]},
       {t:"Camada", f:[
         {k:"fechaNacimiento", l:"Fecha de nacimiento", tipo:"date", v:hoy()},
@@ -234,6 +243,13 @@ const FORMS = {
       ]},
     ], async d => {
       const m = byId(C("perros"), d.padreId), h = byId(C("perros"), d.madreId);
+
+      if(!h) return toast("Elige la madre de la camada");
+      if(!SESION.esAdmin && h.propietarioId !== miSocioId()){
+        toast("Esa hembra no está a tu nombre. La camada la declara el propietario de la madre.");
+        return false;
+      }
+
       if(m && h){
         const v = R.cruceVeredicto(R.cruce(m, h, C("perros"), C("resultados"), d.fechaNacimiento));
         if(v === "bloqueo" && !confirm("Este cruce incumple el reglamento (revísalo en el simulador). ¿Registrar la camada de todas formas?")) return;

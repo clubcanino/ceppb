@@ -492,9 +492,24 @@ create policy resultados_escritura on resultados for all using (
 -- CAMADAS, EVENTOS: lectura abierta a quien entra; escritura restringida
 drop policy if exists camadas_lectura on camadas;
 create policy camadas_lectura on camadas for select using (true);
+-- La camada la declara quien es dueño de la madre: quien pare es la
+-- hembra y quien responde de la camada es su propietario. `with check`
+-- gobierna lo que se crea; `using`, lo que se puede tocar después, y
+-- ahí entra también el criador para que una camada no se quede
+-- huérfana si la perra cambia de manos.
+create or replace function propietario_de(p_perro uuid) returns uuid
+language sql stable security definer set search_path = public as $$
+  select propietario_id from perros where id = p_perro;
+$$;
+revoke all on function propietario_de(uuid) from public;
+grant execute on function propietario_de(uuid) to authenticated;
+
 drop policy if exists camadas_escritura on camadas;
-create policy camadas_escritura on camadas for all using (
-  es_admin() or criador_id = mi_socio_id()) with check (es_admin() or criador_id = mi_socio_id());
+create policy camadas_escritura on camadas for all
+  using (es_admin() or criador_id = mi_socio_id()
+         or propietario_de(madre_id) = mi_socio_id())
+  with check (es_admin()
+         or (madre_id is not null and propietario_de(madre_id) = mi_socio_id()));
 
 drop policy if exists eventos_lectura on eventos;
 create policy eventos_lectura on eventos for select using (true);

@@ -439,8 +439,11 @@ document.addEventListener("click", ev => {
   render();
 });
 
-AL_ELEGIR_FICHA.cruceMacho  = id => { cruceSel.m = id; render(); };
-AL_ELEGIR_FICHA.cruceHembra = id => { cruceSel.h = id; render(); };
+/* Sólo se repintan los resultados: redibujar la pantalla entera
+   recreaba las cajas de escribir y el socio perdía el foco y lo que
+   estaba tecleando a mitad de palabra. */
+AL_ELEGIR_FICHA.cruceMacho  = id => { cruceSel.m = id; pintarPanelCruce(); };
+AL_ELEGIR_FICHA.cruceHembra = id => { cruceSel.h = id; pintarPanelCruce(); };
 
 /* --- instalar la plataforma en el teléfono --- */
 document.addEventListener("click", async ev => {

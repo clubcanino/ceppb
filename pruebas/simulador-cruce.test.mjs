@@ -185,3 +185,61 @@ test("el alta vuelve a donde se pidió, y no se queda colgada si se cancela", ()
   assert.match(lee("js/formularios.js"), /TRAS_ALTA\.fn = null/,
     "al cerrar sin guardar deja de valer: si no, se aplicaría al siguiente ejemplar");
 });
+
+/* ------------------------------------------------------------
+   Las cajas empiezan vacías
+   ------------------------------------------------------------ */
+test("el simulador no elige reproductores por su cuenta", () => {
+  const v = lee("js/vistas/cria.js");
+  assert.equal(/cruceSel\.m = machos\[0\]/.test(v), false,
+    "se rellenaban solas con el primer perro del libro por orden alfabético, " +
+    "y el socio se encontraba un cruce hecho entre dos que no había elegido");
+  assert.equal(/cruceSel\.h = hembras\[0\]/.test(v), false);
+  assert.match(v, /let cruceSel = \{m:"", h:""\}/, "empiezan en blanco");
+});
+
+test("elegir no redibuja las cajas de escribir", () => {
+  assert.match(lee("js/eventos.js"),
+    /cruceMacho\s+= id => \{ cruceSel\.m = id; pintarPanelCruce\(\); \}/,
+    "render() entero recreaba los input y el socio perdía el foco a mitad de palabra");
+  assert.match(lee("js/vistas/cria.js"), /id="cruce-panel"/);
+  assert.match(lee("js/vistas/cria.js"), /function panelDeCruce\(\)/);
+});
+
+/* ------------------------------------------------------------
+   La camada es de quien tiene la madre
+   ------------------------------------------------------------ */
+test("sólo se ofrecen las hembras del socio como madre", () => {
+  const f = lee("js/formularios-def.js");
+  const bloque = f.slice(f.indexOf("  camada(){"), f.indexOf("  evento(id){"));
+  assert.match(bloque, /const mias = buscaPerros\("H", true\)/);
+  assert.match(bloque, /op:mias/, "la madre sale de sus hembras, no del libro entero");
+  assert.match(bloque, /op:buscaPerros\("M"\)/, "el padre puede ser cualquiera del libro");
+  assert.match(lee("js/formularios.js"), /p\.propietarioId === miSocioId\(\)/);
+});
+
+test("y si no tiene ninguna, se le dice en vez de dejarle rellenar el formulario", () => {
+  const f = lee("js/formularios-def.js");
+  const bloque = f.slice(f.indexOf("  camada(){"), f.indexOf("  evento(id){"));
+  assert.match(bloque, /if\(!mias\.length && !SESION\.esAdmin\)/);
+  assert.match(bloque, /no tienes ninguna hembra a tu nombre/);
+});
+
+test("se comprueba otra vez antes de guardar, y el panel no se cierra", () => {
+  const f = lee("js/formularios-def.js");
+  const bloque = f.slice(f.indexOf("  camada(){"), f.indexOf("  evento(id){"));
+  assert.match(bloque, /h\.propietarioId !== miSocioId\(\)/);
+  assert.match(bloque, /return false/, "se queda abierto para que corrija, sin perder lo escrito");
+});
+
+test("la base de datos lo exige también: la pantalla no es la que manda", () => {
+  const sql = lee("db/migraciones/2026-09-07-camada-de-la-madre.sql");
+  assert.match(sql, /with check \([\s\S]*propietario_de\(madre_id\) = mi_socio_id\(\)/,
+    "para crear una camada, la madre tiene que ser tuya");
+  assert.match(sql, /security definer/,
+    "el socio puede no ver la ficha de la madre y la regla tiene que poder comprobarse");
+  assert.match(sql, /using \([\s\S]*criador_id = mi_socio_id\(\)/,
+    "pero una camada ya declarada no se queda huérfana si la perra cambia de manos");
+  assert.match(lee("db/schema.sql"), /propietario_de\(madre_id\) = mi_socio_id\(\)/,
+    "y el esquema del repositorio dice lo mismo que la base de datos");
+});
