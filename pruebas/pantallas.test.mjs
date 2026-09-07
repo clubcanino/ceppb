@@ -1057,3 +1057,37 @@ test("la resolución de la junta queda escrita en la ficha del perro", () => {
   assert.match(sql, /'documento', new\.documento/);
   assert.match(sql, /'tipo', new\.tipo/);
 });
+
+/* ============================================================
+   Los enlaces a working-dog.
+
+   La ficha necesita el identificador Y el nombre con guiones: sin
+   el nombre devuelve «página no encontrada». El pedigrí ampliado
+   va sólo con el identificador.
+   ============================================================ */
+test("el enlace a la ficha lleva el nombre del perro, o no funciona", () => {
+  const ctx = montar();
+  const enlace = vm.runInContext("enlaceWorkingDog", ctx);
+  const pedigri = vm.runInContext("pedigriWorkingDog", ctx);
+
+  const gas = {nombre:"Gas de Azarbe", workingdogUrl:"https://es.working-dog.com/dogs-details/6431570"};
+  assert.equal(enlace(gas), "https://es.working-dog.com/dogs-details/6431570/Gas-de-Azarbe");
+  assert.equal(pedigri(gas), "https://es.working-dog.com/dog/x-6431570/extended-pedigree");
+
+  /* el identificador se saca lo mismo de una dirección que de la otra */
+  const ozone = {nombre:"Ozone van het Dreiland",
+                 workingdogUrl:"https://es.working-dog.com/dog/x-3119259/extended-pedigree"};
+  assert.match(enlace(ozone), /dogs-details\/3119259\/Ozone-van-het-Dreiland$/);
+
+  /* sin enlace guardado no se inventa ninguno */
+  assert.equal(enlace({nombre:"Nadie"}), null);
+  assert.equal(pedigri({nombre:"Nadie"}), null);
+});
+
+test("la ficha usa el enlace recompuesto, no el que había guardado", () => {
+  const perros = readFileSync(new URL("../js/vistas/perros.js", import.meta.url), "utf8");
+  assert.equal(/href="\$\{esc\(p\.workingdogUrl\)\}"/.test(perros), false,
+    "queda un enlace sin recomponer: daría página no encontrada");
+  assert.match(perros, /esc\(enlaceWorkingDog\(p\)\)/);
+  assert.match(perros, /esc\(pedigriWorkingDog\(p\)\)/);
+});

@@ -146,7 +146,7 @@ V.perro = function(id){
           ${puedo?` <button class="btn sm" data-form="traspaso|${esc(p.id)}">Cambiar titularidad</button>`:""}</dd>
         ${(p.historialTitularidad||[]).length?`<dt>Titulares anteriores</dt><dd style="font-weight:400">${
           (p.historialTitularidad||[]).map(h=>`${esc(byId(C("socios"),h.de)?.nombreCompleto||"—")} <span class="dim">→</span> ${esc(byId(C("socios"),h.a)?.nombreCompleto||"—")} <span class="mini">${fmtF(h.fecha)}</span>`).join("<br>")}</dd>`:""}
-        ${p.workingdogUrl?`<dt>working-dog</dt><dd><a class="linkish" href="${esc(p.workingdogUrl)}" target="_blank" rel="noopener">Ficha externa</a></dd>`:""}
+        ${p.workingdogUrl?`<dt>working-dog</dt><dd><a class="linkish" href="${esc(enlaceWorkingDog(p))}" target="_blank" rel="noopener noreferrer">Ficha externa</a>${pedigriWorkingDog(p)?` · <a class="linkish" href="${esc(pedigriWorkingDog(p))}" target="_blank" rel="noopener noreferrer">Pedigrí ampliado</a>`:""}</dd>`:""}
       </dl></div></div>
     </div><div class="grid">
       <div class="card"><div class="card-h"><h3>Situación reproductiva</h3></div><div class="card-b">
@@ -332,7 +332,7 @@ function pedigriDe(p, puedo){
         ${[3,4,5].map(g => `<button data-gen="${g}" class="${genPedigri===g?"on":""}">${g} gen.</button>`).join("")}
       </div>
       <span class="spacer"></span>
-      ${p.workingdogUrl ? `<a class="btn sm" href="${esc(p.workingdogUrl)}" target="_blank" rel="noopener noreferrer">En working-dog</a>` : ""}
+      ${p.workingdogUrl ? `<a class="btn sm" href="${esc(enlaceWorkingDog(p))}" target="_blank" rel="noopener noreferrer">En working-dog</a>` : ""}
       ${puedo ? `<button class="btn sm" data-form="perro|${esc(p.id)}">Editar padres</button>` : ""}
     </div>
 

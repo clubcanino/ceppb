@@ -18,3 +18,32 @@ function norm(s){ return String(s??"").toLowerCase().normalize("NFD").replace(/[
 
 /* Registro de pantallas: cada archivo de js/vistas/ se apunta aquí. */
 const V = {};
+
+/* ============================================================
+   Los enlaces a working-dog.
+
+   La ficha necesita el identificador Y el nombre del perro con
+   guiones en lugar de espacios: sin el nombre devuelve un «página
+   no encontrada». El pedigrí ampliado, en cambio, va sólo con el
+   identificador.
+
+   Por eso se guarda la dirección tal como llegó y se recompone al
+   enseñarla: si mañana cambian otra vez el formato, se arregla
+   aquí y no en cuatro mil fichas.
+   ============================================================ */
+function idWorkingDog(url){
+  const m = String(url || "").match(/(?:dogs-details\/|dog\/x-)(\d+)/);
+  return m ? m[1] : null;
+}
+
+function enlaceWorkingDog(perro){
+  const id = idWorkingDog(perro && perro.workingdogUrl);
+  if (!id) return perro && perro.workingdogUrl ? String(perro.workingdogUrl) : null;
+  const nombre = String((perro && perro.nombre) || "").trim().replace(/\s+/g, "-");
+  return `https://es.working-dog.com/dogs-details/${id}` + (nombre ? "/" + nombre : "");
+}
+
+function pedigriWorkingDog(perro){
+  const id = idWorkingDog(perro && perro.workingdogUrl);
+  return id ? `https://es.working-dog.com/dog/x-${id}/extended-pedigree` : null;
+}
