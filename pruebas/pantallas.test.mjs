@@ -535,7 +535,7 @@ test("ninguna traducción se ha quedado igual que el castellano por descuido", (
          "aplicado ficha por ficha", "Vídeos por publicar", "Vinculación de altas",
          "Administradores", "Descendencia", "Validado", "Completo",
          "Guía", "Puntos", "Descargar", "De", "Para", "Responder", "Borrar",
-         "Mensaxes", "Sen asunto"],
+         "Mensaxes", "Sen asunto", "Escribir a un socio", "Que me escriban"],
     eu: ["Palmaresa"],
   };
   for (const idioma of OTRAS_LENGUAS){
