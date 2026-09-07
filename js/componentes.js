@@ -42,7 +42,10 @@ function barras(pares, color){
    ejemplares son más de mil perros y hay que poder buscarlos por la
    letra. Pulsando una cabecera se reordena por otra columna. */
 let ordenTabla = {soc:{c:0, d:false}, alt:{c:0, d:false}, cob:{c:0, d:false},
-                  per:{c:0, d:false}};
+                  per:{c:0, d:false},
+                  /* Los resultados, del más reciente al más antiguo: es
+                     lo que se quiere ver primero de un perro. */
+                  res:{c:0, d:true}};
 function tabla(key, cols, filas, onClick){
   const o = ordenTabla[key] || {};
   if(o.c != null){
