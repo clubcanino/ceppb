@@ -152,10 +152,29 @@ document.addEventListener("click", async ev => {
   if(ib){
     const [acc, id] = ib.dataset.inv.split("|");
     if(acc === "ver") return FORMS.invitacion(id);
+    /* Que un perfil está reclamado lo dice la cuenta atada a la ficha,
+       y eso lo hace el propio socio al abrir su enlace. Esto es sólo
+       para cuando se hizo por otra vía —a mano en secretaría— y hay
+       que dejar constancia. */
     if(acc === "reclamada"){
-      const s = byId(C("socios"), id); if(!s) return;
-      const n = Object.assign({}, s, {invitacion:Object.assign({}, s.invitacion, {estado:"aceptada", fechaAlta:hoy()}), cuentaVinculada:true});
-      delete n.id; await guardar("socios", id, n); toast("Perfil marcado como reclamado"); render(); return;
+      const inv = C("invitaciones")
+        .filter(i => i.socioId === id && i.estado === "enviada")
+        .sort((a,b) => String(b.enviada).localeCompare(String(a.enviada)))[0];
+      if(!inv) return toast("Ese socio no tiene ninguna invitación enviada");
+      await guardar("invitaciones", inv.token,
+        {socioId:id, estado:"aceptada", aceptada:new Date().toISOString()});
+      toast("Invitación marcada como reclamada");
+      render(); return;
+    }
+    if(acc === "anular"){
+      const inv = C("invitaciones")
+        .filter(i => i.socioId === id && i.estado === "enviada")
+        .sort((a,b) => String(b.enviada).localeCompare(String(a.enviada)))[0];
+      if(!inv) return toast("Ese socio no tiene ninguna invitación que anular");
+      if(!confirm("¿Anular esta invitación? El enlace dejará de servir y habrá que enviar otro.")) return;
+      await guardar("invitaciones", inv.token, {socioId:id, estado:"anulada"});
+      toast("Invitación anulada");
+      render(); return;
     }
   }
   const fb = ev.target.closest("[data-inv-f]");

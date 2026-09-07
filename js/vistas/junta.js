@@ -114,13 +114,25 @@ V.validar = function(){
 V.altas = function(){
   const socios = C("socios");
   const conEmail = socios.filter(s => s.email), sinEmail = socios.filter(s => !s.email);
-  const vinc = socios.filter(s => s.cuentaVinculada);
+  /* Que un socio ha entrado lo dice la cuenta atada a su ficha. Antes
+     se miraba un campo «cuentaVinculada» que no existe, así que la
+     pantalla decía «Sin reclamar» de todo el mundo. */
+  const vinc = socios.filter(s => s.authUserId);
+  const accesoDe = id => (S.accesos || []).find(a => a.socioId === id) || null;
+  /* Cuentas creadas que no están atadas a ninguna ficha del censo:
+     alguien que entró por su cuenta y no consta como socio. */
+  const sueltas = (S.accesos || []).filter(a => !a.socioId);
   const cols = [
     {t:"Nº", s:s=>s.numero, r:s=>`<span class="num">${s.numero}</span>`},
     {t:"Socio", s:s=>s.apellidos, r:s=>esc(s.nombreCompleto)},
     {t:"Correo registrado", s:s=>s.email||"", r:s=>s.email?`<span class="num">${esc(s.email)}</span>`:`<span class="chip warn">Sin correo</span>`},
     {t:"Vía de alta", s:s=>s.email?0:1, r:s=>s.email?`<span class="chip">Invitación por correo</span>`:`<span class="chip warn">Reclamación manual</span>`},
-    {t:"Estado", s:s=>s.cuentaVinculada?1:0, r:s=>s.cuentaVinculada?`<span class="chip ok">Vinculada</span>`:`<span class="chip">Sin reclamar</span>`},
+    {t:"Estado", s:s=>s.authUserId?1:0, r:s=>s.authUserId?`<span class="chip ok">Vinculada</span>`:`<span class="chip">Sin reclamar</span>`},
+    {t:"Última entrada", s:s=>{const a=accesoDe(s.id); return a&&a.ultimaEntrada?a.ultimaEntrada:"";},
+     r:s=>{const a=accesoDe(s.id);
+       if(!a) return `<span class="dim">—</span>`;
+       if(!a.ultimaEntrada) return `<span class="chip warn" title="Creó la cuenta pero no ha llegado a entrar">Sin estrenar</span>`;
+       return `<span class="num">${fmtF(String(a.ultimaEntrada).slice(0,10))}</span>`;}},
   ];
   return `<div class="card" style="margin-bottom:16px"><div class="card-h"><h3>Cómo entra cada socio en su ficha</h3></div><div class="card-b">
       <div class="reqs">
@@ -134,7 +146,22 @@ V.altas = function(){
       <div class="stat"><div class="k">Invitables por correo</div><div class="v">${conEmail.length}</div><div class="n">${Math.round(conEmail.length/socios.length*100)} % del censo</div></div>
       <div class="stat"><div class="k">Reclamación manual</div><div class="v">${sinEmail.length}</div><div class="n">Requieren validación de secretaría</div></div>
       <div class="stat"><div class="k">Cuentas vinculadas</div><div class="v">${vinc.length}</div><div class="n">Han completado el alta</div></div>
+      <div class="stat"><div class="k">Invitaciones enviadas</div><div class="v">${C("invitaciones").filter(i=>i.estado==="enviada").length}</div><div class="n">Esperando que entren</div></div>
     </div>
+    ${sueltas.length ? `<div class="card" style="margin-bottom:16px">
+      <div class="card-h"><h3>Cuentas sin ficha de socio</h3>
+        <span class="hint">${sueltas.length}</span></div>
+      <div class="card-b">
+        <div class="mini" style="margin-bottom:10px">Han creado cuenta con su correo pero no constan en el censo. Hasta que se les ate a una ficha no tienen perfil de socio ni pueden registrar ejemplares.</div>
+        <table>${sueltas.map(a => `<tr>
+          <td><span class="num">${esc(a.email)}</span>
+            <div class="mini">Cuenta creada el ${fmtF(String(a.creada).slice(0,10))}</div></td>
+          <td style="text-align:right;white-space:nowrap">
+            ${a.correoConfirmado ? `<span class="chip ok">Correo confirmado</span>`
+                                 : `<span class="chip warn" title="Puede que el correo le llegara a Spam">Sin confirmar</span>`}
+            ${a.ultimaEntrada ? `<span class="chip">Entró el ${fmtF(String(a.ultimaEntrada).slice(0,10))}</span>`
+                              : `<span class="chip">No ha entrado</span>`}</td></tr>`).join("")}</table>
+      </div></div>` : ""}
     ${tabla("alt", cols, socios, s=>"socio/"+s.id)}`;
 };
 

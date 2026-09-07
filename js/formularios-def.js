@@ -300,24 +300,37 @@ const FORMS = {
       toast("Inscripción enviada");
     });
   },
+  /* La invitación es una fila de su propia tabla, con su token, su
+     fecha de envío y su caducidad. Antes se guardaba dentro de la
+     ficha del socio, en un campo que no existe: se descartaba al
+     grabar y el estado no se movía nunca de «Sin invitar». */
   invitacion(id){
     const s = byId(C("socios"), id); if(!s) return;
-    const token = (s.invitacion||{}).token || tokenNuevo();
+    const previa = C("invitaciones")
+      .filter(i => i.socioId === id && i.estado !== "anulada")
+      .sort((a,b) => String(b.enviada).localeCompare(String(a.enviada)))[0] || null;
+    const token = previa ? previa.token : tokenNuevo();
     const {asunto, cuerpo, enlace} = textoInvitacion(s, token);
-    const enviada = (s.invitacion||{}).estado === "enviada" || (s.invitacion||{}).estado === "aceptada";
+    const yaVa = !!previa;
+
     abrirForm(`Invitación a ${s.nombreCompleto}`, [
-      {t:"Destinatario", d:`<b>${esc(s.email)}</b> · socio nº ${esc(s.numero)}${enviada?` · ya enviada el ${fmtF((s.invitacion||{}).fecha)}`:""}`, f:[
+      {t:"Destinatario",
+       d:`<b>${esc(s.email)}</b> · socio nº ${esc(s.numero)}` +
+         (yaVa ? ` · enviada el ${fmtF(previa.enviada)}${previa.estado === "aceptada" ? ", y ya reclamada" : ""}` : ""),
+       f:[
         {k:"asunto", l:"Asunto", v:asunto, wide:true},
-        {k:"cuerpo", l:"Mensaje", tipo:"textarea", v:cuerpo, h:"Cópialo y envíalo desde el correo del club. El enlace ya lleva su token."},
+        {k:"cuerpo", l:"Mensaje", tipo:"textarea", v:cuerpo,
+         h:"Cópialo y envíalo desde el correo del club. El enlace ya lleva su token."},
         {k:"enlace", l:"Enlace personal de un solo uso", v:enlace, wide:true},
       ]},
-    ], async d => {
-      const n = Object.assign({}, s, {invitacion:{estado:"enviada", fecha:hoy(), token,
-        asunto:d.asunto, enviadaPor:"junta"}}); delete n.id;
-      await guardar("socios", id, n);
+    ], async () => {
+      if (yaVa) return toast("Esta invitación ya estaba registrada");
+      /* El token es la clave de la tabla: se crea la fila con él. */
+      await guardar("invitaciones", null, {token, socioId:id, estado:"enviada"});
       toast("Invitación registrada como enviada");
+      render();
     });
-    const b = $("#sheet-ok"); if(b) b.textContent = enviada ? "Guardar" : "Marcar como enviada";
+    const b = $("#sheet-ok"); if(b) b.textContent = yaVa ? "Cerrar" : "Marcar como enviada";
   },
   admins(){
     const emails = C("admins").map(a => a.email).sort();

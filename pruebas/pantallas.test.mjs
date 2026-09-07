@@ -1091,3 +1091,49 @@ test("la ficha usa el enlace recompuesto, no el que había guardado", () => {
   assert.match(perros, /esc\(enlaceWorkingDog\(p\)\)/);
   assert.match(perros, /esc\(pedigriWorkingDog\(p\)\)/);
 });
+
+/* ============================================================
+   Las invitaciones.
+
+   Viven en su propia tabla, con su token y su caducidad. Antes se
+   guardaban dentro de la ficha del socio, en un campo que no
+   existe: se descartaban al grabar y el estado no se movía nunca
+   de «Sin invitar».
+   ============================================================ */
+test("la invitación se guarda en su tabla, no dentro del socio", () => {
+  const def = readFileSync(new URL("../js/formularios-def.js", import.meta.url), "utf8");
+  const club = readFileSync(new URL("../js/vistas/club.js", import.meta.url), "utf8");
+  const ev = readFileSync(new URL("../js/eventos.js", import.meta.url), "utf8");
+  for (const [f, txt] of [["formularios-def.js", def], ["club.js", club], ["eventos.js", ev]]){
+    const sinComentarios = txt.replace(/\/\*[\s\S]*?\*\//g, "");
+    assert.equal(/guardar\("socios",[^)]*invitacion/.test(sinComentarios), false,
+      f + " sigue guardando la invitación dentro del socio");
+    assert.equal(/cuentaVinculada/.test(sinComentarios), false,
+      f + " usa «cuentaVinculada», que no existe");
+  }
+  assert.match(def, /guardar\("invitaciones", null, \{token, socioId:id, estado:"enviada"\}\)/);
+});
+
+test("quien ya tiene cuenta figura como reclamado, lo diga o no la invitación", () => {
+  const club = readFileSync(new URL("../js/vistas/club.js", import.meta.url), "utf8");
+  assert.match(club, /if \(s\.authUserId\) return "aceptada"/);
+});
+
+test("el enlace de alta apunta a la plataforma, no a la web del club", () => {
+  const club = readFileSync(new URL("../js/vistas/club.js", import.meta.url), "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, "");     // el comentario sí puede nombrarla
+  assert.equal(club.includes("ceppb.info/alta/"), false,
+    "esa dirección no existe: el socio se encuentra una página no encontrada");
+  assert.match(club, /baseDeLaPlataforma\(\) \+ "#\/alta\/" \+ token/);
+
+  const ctx = montar();
+  const base = vm.runInContext("baseDeLaPlataforma()", ctx);
+  assert.match(base, /\/$/, "la base termina en barra");
+});
+
+test("la pantalla de altas dice de verdad quién ha entrado", () => {
+  const junta = readFileSync(new URL("../js/vistas/junta.js", import.meta.url), "utf8");
+  assert.match(junta, /socios\.filter\(s => s\.authUserId\)/);
+  /* y saca a la luz las cuentas que no están atadas a ninguna ficha */
+  assert.match(junta, /Cuentas sin ficha de socio/);
+});

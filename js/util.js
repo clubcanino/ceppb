@@ -47,3 +47,14 @@ function pedigriWorkingDog(perro){
   const id = idWorkingDog(perro && perro.workingdogUrl);
   return id ? `https://es.working-dog.com/dog/x-${id}/extended-pedigree` : null;
 }
+
+/* La dirección en la que vive la plataforma, con su barra final. De
+   aquí salen los enlaces personales de alta: escribirla a mano lleva a
+   equivocarse de sitio, como pasó con «ceppb.info/alta/…». */
+function baseDeLaPlataforma(){
+  try {
+    return location.origin + location.pathname.replace(/[^/]*$/, "");
+  } catch(e){
+    return "https://clubcanino.github.io/ceppb/";
+  }
+}

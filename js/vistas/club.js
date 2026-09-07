@@ -75,7 +75,11 @@ function tokenNuevo(){
   return [...a].map(x => x.toString(16).padStart(2, "0")).join("");
 }
 function textoInvitacion(s, token){
-  const enlace = `https://ceppb.info/alta/${token}`;
+  /* El enlace de la propia plataforma, no el de la web del club:
+     «ceppb.info/alta/…» no existe, y el socio se encontraba una página
+     no encontrada. Se compone de la dirección desde la que se está
+     mirando, así que vale igual en pruebas que publicada. */
+  const enlace = baseDeLaPlataforma() + "#/alta/" + token;
   return {
     asunto: `${s.nombre || "Hola"}, tu acceso al Libro de Cría del CEPPB`,
     cuerpo:
@@ -104,16 +108,32 @@ V.invitaciones = function(){
   const socios = C("socios").slice().sort((a,b)=>(a.numero||0)-(b.numero||0));
   const conEmail = socios.filter(s => s.email);
   const sinEmail = socios.filter(s => !s.email);
-  const est = s => (s.invitacion||{}).estado || "no_enviada";
+
+  /* La invitación vive en su propia tabla, no dentro de la ficha del
+     socio. Aquí se cruzan: la última de cada uno es la que vale. */
+  const invitacionDe = id => C("invitaciones")
+    .filter(i => i.socioId === id)
+    .sort((a,b) => String(b.enviada).localeCompare(String(a.enviada)))[0] || null;
+  const est = s => {
+    const i = invitacionDe(s.id);
+    /* Quien ya tiene cuenta ha reclamado su perfil, se lo diga o no
+       la invitación: es el dato que manda. */
+    if (s.authUserId) return "aceptada";
+    return i ? i.estado : "no_enviada";
+  };
   const grupos = {
-    pendientes: conEmail.filter(s => est(s) === "no_enviada"),
+    pendientes: conEmail.filter(s => est(s) === "no_enviada" || est(s) === "anulada"),
     enviadas:   conEmail.filter(s => est(s) === "enviada"),
     aceptadas:  conEmail.filter(s => est(s) === "aceptada"),
   };
   const l = grupos[filtroInv] || [];
-  const chipEst = s => ({no_enviada:`<span class="chip">Sin invitar</span>`,
-    enviada:`<span class="chip warn">Invitada ${fmtF((s.invitacion||{}).fecha)}</span>`,
-    aceptada:`<span class="chip ok">Perfil reclamado</span>`})[est(s)];
+  const chipEst = s => {
+    const i = invitacionDe(s.id);
+    return ({no_enviada:`<span class="chip">Sin invitar</span>`,
+      enviada:`<span class="chip warn">Invitada ${fmtF(i && i.enviada)}</span>`,
+      anulada:`<span class="chip block">Anulada</span>`,
+      aceptada:`<span class="chip ok">Perfil reclamado</span>`})[est(s)];
+  };
   return `<div class="note" style="margin-bottom:16px">Cada invitación lleva un <b>enlace personal de un solo uso</b>: es lo que ata la cuenta al número de socio y evita que nadie reclame un perfil ajeno. El estado de cada una queda registrado aquí.</div>
     <div class="note warn" style="margin-bottom:16px"><b>Advierte a los socios de que miren en Spam.</b>
     Un correo automático que llega por primera vez cae en el buzón de no deseado más veces
@@ -141,7 +161,8 @@ V.invitaciones = function(){
         <td>${chipEst(s)}</td>
         <td style="text-align:right;white-space:nowrap">
           <button class="btn sm" data-inv="ver|${esc(s.id)}">${est(s)==="no_enviada"?"Preparar invitación":"Ver invitación"}</button>
-          ${est(s)==="enviada"?`<button class="btn sm" data-inv="reclamada|${esc(s.id)}" title="Marcar que ya ha entrado">Marcar reclamado</button>`:""}
+          ${est(s)==="enviada"?`<button class="btn sm" data-inv="reclamada|${esc(s.id)}" title="Si entró por otra vía y hay que dejar constancia">Marcar reclamado</button>
+          <button class="btn sm danger" data-inv="anular|${esc(s.id)}" title="El enlace deja de servir">Anular</button>`:""}
         </td></tr>`).join("") : `<tr><td colspan="5"><div class="empty" style="padding:30px">Nada en esta lista</div></td></tr>`}
       </tbody></table></div>
     ${sinEmail.length?`<div class="note warn" style="margin-top:16px"><b>${sinEmail.length} socios no tienen correo en el fichero de secretaría.</b> No se les puede invitar: reclaman su perfil a mano con nº de socio, DNI y teléfono, y la secretaría lo aprueba. Los tienes listados en «Vinculación de altas».</div>`:""}`;
