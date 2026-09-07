@@ -845,3 +845,69 @@ test("los resultados se ven evento por evento, con su clasificación", () => {
   vm.runInContext('tabEventos="web"; eventoElegido=""', ctx);
   assert.match(fmbb, /Organiza otra entidad/);
 });
+
+/* ============================================================
+   «Este ejemplar es mío».
+
+   El libro tiene miles de fichas sin dueño, salidas del pedigrí de
+   un campeonato. Reclamar la propia es la única forma de que un
+   socio la gobierne — y no puede bastar con pedirlo: lo reconoce
+   la junta, igual que todo lo demás.
+   ============================================================ */
+function fichaDePerro(rol, perro, solicitudes){
+  const ctx = montar();
+  vm.runInContext(`
+    SESION.rol=${JSON.stringify(rol)}; SESION.esAdmin=${rol === "admin"};
+    SESION.usuario={id:"u1", email:"x@y.z"};
+    SESION.socio=${rol === "visitante" ? "null" : '{id:"s1", numero:1, nombreCompleto:"Ana Ruiz"}'};
+    S.listo=true; S.error=null;
+    S.data.socios = [{id:"s1", numero:1, nombreCompleto:"Ana Ruiz", perfilPublico:"socios"},
+                     {id:"s2", numero:2, nombreCompleto:"Otro Socio", perfilPublico:"socios"}];
+    S.data.perros = [${JSON.stringify(perro)}];
+    S.data.solicitudes = ${JSON.stringify(solicitudes || [])};
+    tabPerro = "resumen";
+  `, ctx);
+  return vm.runInContext(`String(V.perro(${JSON.stringify(perro.id)}))`, ctx);
+}
+const sinDuenio = {id:"p1", nombre:"Ozone van het Dreiland", visibilidad:"socios",
+                   sexo:"M", salud:{}, historialTitularidad:[]};
+
+test("una ficha sin titular se puede reclamar", () => {
+  const html = fichaDePerro("socio", sinDuenio);
+  assert.match(html, /data-form="reclamacion\|p1"/);
+  assert.match(html, /no tiene titular/);
+});
+
+test("la ficha propia no se reclama a uno mismo", () => {
+  const mia = Object.assign({}, sinDuenio, {propietarioId:"s1"});
+  assert.equal(fichaDePerro("socio", mia).includes('data-form="reclamacion'), false);
+});
+
+test("quien no ha entrado no puede reclamar nada", () => {
+  assert.equal(fichaDePerro("visitante", sinDuenio).includes('data-form="reclamacion'), false);
+});
+
+test("con una reclamación en curso no se abre otra, y se avisa", () => {
+  const html = fichaDePerro("socio", sinDuenio, [{id:"x1", tipo:"reclamacion", perroId:"p1",
+    estado:"pendiente", aSocioId:"s2", fecha:"2026-09-07", motivo:"LOE 12345"}]);
+  assert.equal(html.includes('data-form="reclamacion'), false, "no debe dejar reclamar dos veces");
+  assert.match(html, /Reclamación de titularidad pendiente/);
+});
+
+test("sólo la junta la reconoce o la deniega", () => {
+  const pendiente = [{id:"x1", tipo:"reclamacion", perroId:"p1", estado:"pendiente",
+                      aSocioId:"s2", fecha:"2026-09-07", motivo:"LOE 12345"}];
+  const socio = fichaDePerro("socio", sinDuenio, pendiente);
+  assert.equal(socio.includes('data-sol="autorizada'), false, "un socio no resuelve expedientes");
+  const junta = fichaDePerro("admin", sinDuenio, pendiente);
+  assert.match(junta, /data-sol="autorizada\|x1"/);
+  assert.match(junta, /data-sol="denegada\|x1"/);
+});
+
+test("la reclamación autorizada cambia la titularidad, como el traspaso", () => {
+  const ev = readFileSync(new URL("../js/eventos.js", import.meta.url), "utf8");
+  assert.match(ev, /x\.tipo === "traspaso" \|\| x\.tipo === "reclamacion"/);
+  /* y en la base de datos, que es donde manda de verdad */
+  const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
+  assert.match(sql, /new\.tipo in \('traspaso', 'reclamacion'\)/);
+});

@@ -358,6 +358,45 @@ const FORMS = {
       render();
     });
   },
+  /* «Este perro es mío». El libro tiene miles de ejemplares que salieron
+     de los pedigríes de los campeonatos y no tienen dueño: su ficha
+     existe, pero nadie la gobierna. El socio la reclama y la junta la
+     entrega. Si el ejemplar ya tiene titular, lo que hace falta no es
+     una reclamación sino un traspaso, con el consentimiento de quien lo
+     tiene: eso se avisa aquí y se resuelve en la junta. */
+  reclamacion(perroId){
+    const p = byId(C("perros"), perroId); if(!p) return;
+    const yo = miSocioId();
+    if(!yo) return toast("Tu cuenta no está atada a ninguna ficha de socio");
+    if(p.propietarioId === yo) return toast("Este ejemplar ya está a tu nombre");
+    if(C("solicitudes").some(x => x.tipo === "reclamacion" && x.perroId === perroId && x.estado === "pendiente"))
+      return toast("Ya hay una reclamación pendiente sobre este ejemplar");
+
+    const actual = byId(C("socios"), p.propietarioId);
+    abrirForm("Este ejemplar es mío", [
+      {t:"Reclamación de titularidad",
+       d: actual
+         ? `Este ejemplar figura a nombre de <b>${esc(actual.nombreCompleto)}</b>. La junta no lo cambiará de manos sin el consentimiento de su titular: explica abajo en qué te basas y aporta el documento que lo acredite.`
+         : `Este ejemplar no tiene titular: su ficha salió del pedigrí de un campeonato, no de un alta de socio. Si es tuyo, dilo aquí y la junta lo comprobará.`,
+       f: [
+        {k:"documento", l:"En qué te basas", tipo:"select", wide:true,
+         op:["Soy su propietario desde el nacimiento","Contrato de compraventa","Contrato de cesión",
+             "Certificado de la RSCE a mi nombre","Herencia o cambio familiar","Otro"]},
+        {k:"motivo", l:"Datos que lo acrediten", tipo:"textarea", wide:true,
+         ph:"Número de LOE, microchip, fecha de adquisición, nombre del criador… lo que la junta pueda cotejar."},
+        {k:"fechaEfecto", l:"Desde cuándo es tuyo", tipo:"date", v:hoy()},
+      ]},
+    ], async d => {
+      if(!d.motivo || d.motivo.trim().length < 10)
+        return toast("Escribe con qué puede la junta comprobarlo");
+      await guardar("solicitudes", null, {tipo:"reclamacion", perroId,
+        deSocioId: p.propietarioId || "", aSocioId: yo, fechaEfecto: d.fechaEfecto,
+        documento: d.documento, motivo: d.motivo, estado: "pendiente", fecha: hoy(),
+        solicitanteId: yo});
+      toast("Reclamación enviada a la junta");
+      render();
+    });
+  },
   solicitud(par){
     const [machoId, hembraId] = String(par).split("~");
     const m = byId(C("perros"), machoId), h = byId(C("perros"), hembraId);

@@ -155,6 +155,13 @@ def main():
     # Dos identificadores de working-dog que caen en la misma ficha son
     # dos perros con el mismo nombre: o es una ficha duplicada en el
     # origen, o son dos perros distintos y hay que separarlos a mano.
+    #
+    # Alan: la presidencia del club confirmó el 7 de septiembre de 2026
+    # que los dos identificadores son el mismo perro, con ficha
+    # duplicada en working-dog. Mismo guía, años consecutivos, y en uno
+    # de ellos consta el LOE 2467434. Compartir ficha es lo correcto.
+    FUSIONES_CONFIRMADAS = {frozenset({"7026915", "7570769"})}
+
     porFicha = {}
     for r in cuerpo:
         wd = (r.get("I") or "").strip()
@@ -162,7 +169,7 @@ def main():
         if c:
             porFicha.setdefault(id_estable(c["clave"]), set()).add((wd, c["nombre"]))
     for pid, wds in porFicha.items():
-        if len(wds) > 1:
+        if len(wds) > 1 and frozenset(w for w, _ in wds) not in FUSIONES_CONFIRMADAS:
             print("-- REVISAR, misma ficha para varios working-dog: " +
                   ", ".join(f"{n} ({w})" for w, n in sorted(wds)), file=sys.stderr)
 

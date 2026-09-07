@@ -60,6 +60,8 @@ V.ajustes = function(){
         </div>
       </div>
 
+      ${tarjetaInstalar()}
+
       <div class="card"><div class="card-h"><h3>Idioma</h3></div>
         <div class="card-b">
           <p class="dim">En qué idioma ves la plataforma. Los nombres de los perros, los
@@ -149,5 +151,37 @@ function tarjetaPrivacidad(s){
 
       <div class="note" style="margin-top:14px">Tu número de cuenta bancaria no está en esta
       lista y no se comparte en ningún nivel: solo lo ven tú y la tesorería.</div>
+    </div></div>`;
+}
+
+/* ============================================================
+   Llevar la plataforma en el teléfono.
+
+   Queda con el emblema del club en la pantalla de inicio y se
+   abre a pantalla completa. No hay que descargar nada de ninguna
+   tienda: es esta misma página, guardada como acceso directo.
+   ============================================================ */
+function tarjetaInstalar(){
+  if (abiertaComoApp()) return `
+    <div class="card"><div class="card-h"><h3>${esc(t("En tu pantalla de inicio"))}</h3></div>
+      <div class="card-b"><div class="note ok">${esc(t("Ya la estás usando como aplicación."))}</div></div></div>`;
+
+  const pasosApple = [
+    t("Toca el botón de compartir, el cuadrado con la flecha hacia arriba."),
+    t("Baja y elige «Añadir a pantalla de inicio»."),
+    t("Confirma. Te queda el emblema del club junto a tus demás aplicaciones."),
+  ];
+
+  return `<div class="card"><div class="card-h">
+      <h3>${esc(t("Llévala en el teléfono"))}</h3>
+      <span class="hint">${esc(t("Sin descargar nada"))}</span></div>
+    <div class="card-b">
+      <p class="dim">${esc(t("Queda con el emblema del club en tu pantalla de inicio y se abre a pantalla completa, como cualquier otra aplicación. Es esta misma página: no ocupa apenas nada y se actualiza sola."))}</p>
+
+      ${ofertaDeInstalar ? `<div style="margin-top:14px">
+        <button class="btn brand" id="instalar-app">${esc(t("Instalar en este dispositivo"))}</button>
+      </div>` : esApple() ? `
+        <ol class="pasos-instalar">${pasosApple.map(x => `<li>${esc(x)}</li>`).join("")}</ol>`
+      : `<div class="note" style="margin-top:14px">${esc(t("Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio»."))}</div>`}
     </div></div>`;
 }

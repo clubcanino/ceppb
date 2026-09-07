@@ -152,4 +152,16 @@ TEXTOS.va = {
   "Guía": "Guia",
   "Puntos": "Punts",
   "Calificación": "Qualificació",
+
+  /* Instalarla en el teléfono */
+  "En tu pantalla de inicio": "En la teua pantalla d'inici",
+  "Ya la estás usando como aplicación.": "Ja l'estàs fent servir com a aplicació.",
+  "Llévala en el teléfono": "Porta-la al telèfon",
+  "Sin descargar nada": "Sense descarregar res",
+  "Queda con el emblema del club en tu pantalla de inicio y se abre a pantalla completa, como cualquier otra aplicación. Es esta misma página: no ocupa apenas nada y se actualiza sola.": "Queda amb l'emblema del club en la teua pantalla d'inici i s'obri a pantalla completa, com qualsevol altra aplicació. És esta mateixa pàgina: quasi no ocupa res i s'actualitza sola.",
+  "Instalar en este dispositivo": "Instal·la en este dispositiu",
+  "Toca el botón de compartir, el cuadrado con la flecha hacia arriba.": "Toca el botó de compartir, el quadrat amb la fletxa cap amunt.",
+  "Baja y elige «Añadir a pantalla de inicio».": "Baixa i tria «Afig a la pantalla d'inici».",
+  "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Confirma. Et queda l'emblema del club al costat de les altres aplicacions.",
+  "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Des del menú del teu navegador, busca «Instal·la l'aplicació» o «Afig a la pantalla d'inici».",
 };

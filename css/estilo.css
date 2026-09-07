@@ -300,6 +300,11 @@ img.avatar{display:block}
 .abrir-menu:hover{background:var(--surface-2)}
 .tapa-menu{display:none}
 
+/* Los pasos para instalarla en el iPhone, que allí van a mano. */
+.pasos-instalar{margin:14px 0 0;padding-left:20px;color:var(--muted);font-size:12.5px;line-height:1.6}
+.pasos-instalar li{margin-bottom:6px}
+.pasos-instalar li::marker{color:var(--brand);font-weight:700}
+
 /* La web del club empotrada: alta como una pantalla, y con su propia
    barra de desplazamiento para que no arrastre a la página entera. */
 .marco-web{position:relative;width:100%;height:min(78vh,900px);min-height:460px;

@@ -154,4 +154,16 @@ TEXTOS.de = {
   "Guía": "Hundeführer",
   "Puntos": "Punkte",
   "Calificación": "Bewertung",
+
+  /* Instalarla en el teléfono */
+  "En tu pantalla de inicio": "Auf Ihrem Startbildschirm",
+  "Ya la estás usando como aplicación.": "Sie nutzen sie bereits als App.",
+  "Llévala en el teléfono": "Nehmen Sie sie aufs Handy mit",
+  "Sin descargar nada": "Nichts herunterzuladen",
+  "Queda con el emblema del club en tu pantalla de inicio y se abre a pantalla completa, como cualquier otra aplicación. Es esta misma página: no ocupa apenas nada y se actualiza sola.": "Sie liegt mit dem Wappen des Vereins auf Ihrem Startbildschirm und öffnet sich im Vollbild, wie jede andere App. Es ist dieselbe Seite: sie braucht kaum Platz und aktualisiert sich von selbst.",
+  "Instalar en este dispositivo": "Auf diesem Gerät installieren",
+  "Toca el botón de compartir, el cuadrado con la flecha hacia arriba.": "Tippen Sie auf die Teilen-Schaltfläche, das Quadrat mit dem Pfeil nach oben.",
+  "Baja y elige «Añadir a pantalla de inicio».": "Scrollen Sie nach unten und wählen Sie „Zum Home-Bildschirm“.",
+  "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Bestätigen Sie. Das Vereinswappen liegt dann neben Ihren übrigen Apps.",
+  "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Suchen Sie im Menü Ihres Browsers nach „App installieren“ oder „Zum Startbildschirm hinzufügen“.",
 };

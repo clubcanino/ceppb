@@ -80,6 +80,20 @@ V.validar = function(){
                 <button class="btn sm danger" data-val="res|rechazado|${esc(r.id)}">✕</button></td></tr>`).join("")}</table>`
             : `<div class="empty" style="padding:34px">Nada pendiente de validar</div>`}
         </div></div>
+      <div class="card"><div class="card-h"><h3>«Este ejemplar es mío»</h3><span class="hint">${C("solicitudes").filter(x=>x.tipo==="reclamacion"&&x.estado==="pendiente").length} por resolver</span></div>
+        <div class="card-b" style="padding:0">
+          ${(()=>{const rl=C("solicitudes").filter(x=>x.tipo==="reclamacion"&&x.estado==="pendiente");
+            return rl.length ? `<table>${rl.map(x=>{const anterior=byId(C("socios"),x.deSocioId);
+              return `<tr>
+              <td class="clic" data-go="perro/${esc(x.perroId)}"><span class="nm">${esc(byId(perros,x.perroId)?.nombre||"—")}</span>
+                <div class="mini">Lo reclama <b>${esc(byId(C("socios"),x.aSocioId)?.nombreCompleto||"—")}</b>${
+                  anterior?` · figura a nombre de ${esc(anterior.nombreCompleto)}`:" · ficha sin titular"}</div>
+                <div class="mini">${esc(x.documento||"")}${x.motivo?` · ${esc(String(x.motivo).slice(0,90))}`:""}</div></td>
+              <td style="text-align:right;white-space:nowrap">
+                <button class="btn sm" data-sol="autorizada|${esc(x.id)}">Reconocer</button>
+                <button class="btn sm danger" data-sol="denegada|${esc(x.id)}">✕</button></td></tr>`;}).join("")}</table>`
+              : `<div class="empty" style="padding:34px">Sin reclamaciones pendientes</div>`;})()}
+        </div></div>
       <div class="card"><div class="card-h"><h3>Cambios de titularidad</h3><span class="hint">${C("solicitudes").filter(x=>x.tipo==="traspaso"&&x.estado==="pendiente").length} por autorizar</span></div>
         <div class="card-b" style="padding:0">
           ${(()=>{const tl=C("solicitudes").filter(x=>x.tipo==="traspaso"&&x.estado==="pendiente");

@@ -102,7 +102,25 @@ V.perro = function(id){
     const prop = byId(C("socios"), p.propietarioId), cria = byId(C("socios"), p.criadorId);
     const a = R.anexoA(p);
     const trasp = C("solicitudes").find(x => x.tipo==="traspaso" && x.perroId===id && x.estado==="pendiente");
-    cuerpo = `${trasp?`<div class="note warn" style="margin-bottom:14px"><b>Cambio de titularidad pendiente de autorización.</b>
+    const recl  = C("solicitudes").find(x => x.tipo==="reclamacion" && x.perroId===id && x.estado==="pendiente");
+    /* Miles de fichas del libro salieron del pedigrí de un campeonato y
+       no tienen dueño. Quien reconozca ahí a su perro puede decirlo. */
+    const puedoReclamar = !!SESION.socio && !esYo(p.propietarioId) && !recl && !trasp;
+
+    cuerpo = `${recl?`<div class="note warn" style="margin-bottom:14px"><b>Reclamación de titularidad pendiente.</b>
+      ${esc(byId(C("socios"),recl.aSocioId)?.nombreCompleto||"Un socio")} dice que este ejemplar es suyo, el ${fmtF(recl.fecha)}${recl.documento?` · ${esc(recl.documento)}`:""}.
+      ${recl.deSocioId?"La ficha sigue a nombre de su titular actual hasta que la junta resuelva.":"La ficha no cambia de manos hasta que la junta resuelva."}
+      ${recl.motivo?`<div class="mini" style="margin-top:8px">${esc(recl.motivo)}</div>`:""}
+      ${SESION.esAdmin?`<div style="margin-top:10px;display:flex;gap:8px">
+        <button class="btn brand" data-sol="autorizada|${esc(recl.id)}">Reconocer la titularidad</button>
+        <button class="btn danger" data-sol="denegada|${esc(recl.id)}">Denegar</button></div>`:""}</div>`:""}
+    ${puedoReclamar?`<div class="note" style="margin-bottom:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px">${p.propietarioId
+        ? "Si crees que esta ficha debería estar a tu nombre, dilo y la junta lo comprobará con su titular actual."
+        : "Esta ficha no tiene titular: salió del pedigrí de un campeonato. Si el perro es tuyo, reclámala."}</div>
+      <button class="btn brand" data-form="reclamacion|${esc(p.id)}">Este ejemplar es mío</button>
+    </div>`:""}
+    ${trasp?`<div class="note warn" style="margin-bottom:14px"><b>Cambio de titularidad pendiente de autorización.</b>
       Solicitado el ${fmtF(trasp.fecha)} a favor de ${esc(byId(C("socios"),trasp.aSocioId)?.nombreCompleto||"—")}${trasp.documento?` · ${esc(trasp.documento)}`:""}.
       La ficha sigue a nombre del titular actual hasta que la junta resuelva.
       ${SESION.esAdmin?`<div style="margin-top:10px;display:flex;gap:8px">

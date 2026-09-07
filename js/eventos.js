@@ -106,13 +106,18 @@ document.addEventListener("click", async ev => {
   if(sb){
     const [estado, id] = sb.dataset.sol.split("|");
     const x = byId(C("solicitudes"), id); if(!x) return;
+    const porDefecto = {
+      intervariedad: "Informe favorable de la Comisión de Cría; la Junta Directiva autoriza el cruce.",
+      traspaso:      "Documentación conforme; la Junta Directiva autoriza el cambio de titularidad.",
+      reclamacion:   "Comprobada la documentación, la Junta Directiva reconoce la titularidad.",
+    };
     const txt = prompt(estado === "autorizada"
-      ? "Resolución de la Junta Directiva (se traslada al criador y a la RSCE):"
-      : "Motivo de la denegación:", estado === "autorizada" ? "Informe favorable de la Comisión de Cría; la Junta Directiva autoriza el cruce." : "");
+      ? "Resolución de la Junta Directiva:"
+      : "Motivo de la denegación:", estado === "autorizada" ? (porDefecto[x.tipo] || "") : "");
     if(txt === null) return;
     const n = Object.assign({}, x, {estado, resolucion:txt, fechaResolucion:hoy()}); delete n.id;
     await guardar("solicitudes", id, n);
-    if(x.tipo === "traspaso" && estado === "autorizada"){
+    if((x.tipo === "traspaso" || x.tipo === "reclamacion") && estado === "autorizada"){
       const p = byId(C("perros"), x.perroId), nuevo = byId(C("socios"), x.aSocioId);
       if(p && nuevo){
         const hist = (p.historialTitularidad || []).concat([{de:x.deSocioId, a:x.aSocioId,
@@ -122,9 +127,12 @@ document.addEventListener("click", async ev => {
         await guardar("perros", x.perroId, np);
       }
     }
-    toast(estado === "autorizada"
-      ? (x.tipo === "traspaso" ? "Titularidad transferida" : "Cruce autorizado")
-      : (x.tipo === "traspaso" ? "Traspaso denegado" : "Cruce denegado"));
+    const dicho = {
+      intervariedad: ["Cruce autorizado", "Cruce denegado"],
+      traspaso:      ["Titularidad transferida", "Traspaso denegado"],
+      reclamacion:   ["Titularidad reconocida: la ficha ya es suya", "Reclamación denegada"],
+    }[x.tipo] || ["Expediente autorizado", "Expediente denegado"];
+    toast(estado === "autorizada" ? dicho[0] : dicho[1]);
     render(); return;
   }
   const ib = ev.target.closest("[data-inv]");
@@ -390,6 +398,17 @@ document.addEventListener("click", ev => {
   const b = ev.target.closest("[data-gen]");
   if (!b) return;
   genPedigri = +b.dataset.gen;
+  render();
+});
+
+/* --- instalar la plataforma en el teléfono --- */
+document.addEventListener("click", async ev => {
+  if (ev.target.id !== "instalar-app") return;
+  if (!ofertaDeInstalar) return toast("Este navegador no ofrece instalarla");
+  ofertaDeInstalar.prompt();
+  const { outcome } = await ofertaDeInstalar.userChoice;
+  ofertaDeInstalar = null;                 // el ofrecimiento sirve una sola vez
+  if (outcome !== "accepted") toast("Puedes instalarla más adelante desde aquí");
   render();
 });
 

@@ -154,4 +154,16 @@ TEXTOS.fr = {
   "Guía": "Conducteur",
   "Puntos": "Points",
   "Calificación": "Qualificatif",
+
+  /* Instalarla en el teléfono */
+  "En tu pantalla de inicio": "Sur votre écran d'accueil",
+  "Ya la estás usando como aplicación.": "Vous l'utilisez déjà comme application.",
+  "Llévala en el teléfono": "Emportez-la sur votre téléphone",
+  "Sin descargar nada": "Rien à télécharger",
+  "Queda con el emblema del club en tu pantalla de inicio y se abre a pantalla completa, como cualquier otra aplicación. Es esta misma página: no ocupa apenas nada y se actualiza sola.": "Elle s'installe sur votre écran d'accueil avec l'emblème du club et s'ouvre en plein écran, comme n'importe quelle application. C'est cette même page : elle ne prend presque pas de place et se met à jour toute seule.",
+  "Instalar en este dispositivo": "Installer sur cet appareil",
+  "Toca el botón de compartir, el cuadrado con la flecha hacia arriba.": "Touchez le bouton de partage, le carré avec la flèche vers le haut.",
+  "Baja y elige «Añadir a pantalla de inicio».": "Descendez et choisissez « Sur l'écran d'accueil ».",
+  "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Confirmez. L'emblème du club rejoindra vos autres applications.",
+  "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Dans le menu de votre navigateur, cherchez « Installer l'application » ou « Ajouter à l'écran d'accueil ».",
 };

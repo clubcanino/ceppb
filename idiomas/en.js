@@ -154,4 +154,16 @@ TEXTOS.en = {
   "Guía": "Handler",
   "Puntos": "Points",
   "Calificación": "Grade",
+
+  /* Instalarla en el teléfono */
+  "En tu pantalla de inicio": "On your home screen",
+  "Ya la estás usando como aplicación.": "You are already using it as an app.",
+  "Llévala en el teléfono": "Take it with you on your phone",
+  "Sin descargar nada": "Nothing to download",
+  "Queda con el emblema del club en tu pantalla de inicio y se abre a pantalla completa, como cualquier otra aplicación. Es esta misma página: no ocupa apenas nada y se actualiza sola.": "It sits on your home screen with the club emblem and opens full screen, like any other app. It is this same page: it takes up almost no room and updates itself.",
+  "Instalar en este dispositivo": "Install on this device",
+  "Toca el botón de compartir, el cuadrado con la flecha hacia arriba.": "Tap the share button, the square with the arrow pointing up.",
+  "Baja y elige «Añadir a pantalla de inicio».": "Scroll down and choose “Add to Home Screen”.",
+  "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Confirm. The club emblem will sit alongside your other apps.",
+  "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "In your browser menu, look for “Install app” or “Add to Home Screen”.",
 };

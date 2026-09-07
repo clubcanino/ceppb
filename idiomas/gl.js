@@ -150,4 +150,16 @@ TEXTOS.gl = {
   "Guía": "Guía",
   "Puntos": "Puntos",
   "Calificación": "Cualificación",
+
+  /* Instalarla en el teléfono */
+  "En tu pantalla de inicio": "Na túa pantalla de inicio",
+  "Ya la estás usando como aplicación.": "Xa a estás usando como aplicación.",
+  "Llévala en el teléfono": "Lévaa no teléfono",
+  "Sin descargar nada": "Sen descargar nada",
+  "Queda con el emblema del club en tu pantalla de inicio y se abre a pantalla completa, como cualquier otra aplicación. Es esta misma página: no ocupa apenas nada y se actualiza sola.": "Queda co emblema do club na túa pantalla de inicio e ábrese a pantalla completa, coma calquera outra aplicación. É esta mesma páxina: apenas ocupa nada e actualízase soa.",
+  "Instalar en este dispositivo": "Instalar neste dispositivo",
+  "Toca el botón de compartir, el cuadrado con la flecha hacia arriba.": "Toca o botón de compartir, o cadrado coa frecha cara arriba.",
+  "Baja y elige «Añadir a pantalla de inicio».": "Baixa e escolle «Engadir á pantalla de inicio».",
+  "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Confirma. Quédache o emblema do club xunto ás demais aplicacións.",
+  "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Desde o menú do teu navegador, busca «Instalar aplicación» ou «Engadir á pantalla de inicio».",
 };

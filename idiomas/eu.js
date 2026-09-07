@@ -149,4 +149,16 @@ TEXTOS.eu = {
   "Guía": "Gidaria",
   "Puntos": "Puntuak",
   "Calificación": "Kalifikazioa",
+
+  /* Instalarla en el teléfono */
+  "En tu pantalla de inicio": "Zure hasierako pantailan",
+  "Ya la estás usando como aplicación.": "Dagoeneko aplikazio gisa erabiltzen ari zara.",
+  "Llévala en el teléfono": "Eraman ezazu mugikorrean",
+  "Sin descargar nada": "Ezer deskargatu gabe",
+  "Queda con el emblema del club en tu pantalla de inicio y se abre a pantalla completa, como cualquier otra aplicación. Es esta misma página: no ocupa apenas nada y se actualiza sola.": "Klubaren ikurrarekin geratzen da zure hasierako pantailan eta pantaila osoan irekitzen da, beste edozein aplikazio bezala. Orri hau bera da: ia lekurik ez du hartzen eta bere kabuz eguneratzen da.",
+  "Instalar en este dispositivo": "Instalatu gailu honetan",
+  "Toca el botón de compartir, el cuadrado con la flecha hacia arriba.": "Ukitu partekatzeko botoia, gora begira dagoen gezidun karratua.",
+  "Baja y elige «Añadir a pantalla de inicio».": "Jaitsi eta aukeratu «Gehitu hasierako pantailan».",
+  "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Berretsi. Klubaren ikurra zure gainerako aplikazioen ondoan geratuko zaizu.",
+  "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Zure nabigatzailearen menuan, bilatu «Instalatu aplikazioa» edo «Gehitu hasierako pantailan».",
 };

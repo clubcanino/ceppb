@@ -252,3 +252,61 @@ abrirDB().then(render).catch(e => {
   S.listo = true;
   render();
 });
+
+/* ============================================================
+   Instalar la plataforma en el teléfono.
+
+   Con esto el socio la tiene en su pantalla de inicio con el
+   emblema del club, y se abre a pantalla completa, sin la barra
+   del navegador. No es una app de las tiendas: es la misma
+   plataforma, guardada como acceso directo.
+   ============================================================ */
+let ofertaDeInstalar = null;
+
+/* Nada de esto existe fuera de un navegador; las pruebas cargan estos
+   archivos en Node y allí no hay ni navigator ni ventana. */
+const HAY_NAVEGADOR = typeof navigator !== "undefined" &&
+                      typeof addEventListener === "function";
+
+if (HAY_NAVEGADOR && "serviceWorker" in navigator && location.protocol === "https:"){
+  addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {
+      /* Si no se puede registrar, la plataforma funciona igual:
+         simplemente no se podrá instalar. */
+    });
+  });
+}
+
+if (HAY_NAVEGADOR){
+  /* Chrome y Edge avisan cuando la plataforma se puede instalar, y
+     guardan el ofrecimiento para usarlo cuando el socio quiera. */
+  addEventListener("beforeinstallprompt", ev => {
+    ev.preventDefault();
+    ofertaDeInstalar = ev;
+    if (typeof render === "function") render();
+  });
+
+  addEventListener("appinstalled", () => {
+    ofertaDeInstalar = null;
+    if (typeof toast === "function") toast("Ya la tienes en tu pantalla de inicio");
+    if (typeof render === "function") render();
+  });
+}
+
+/* ¿Se está viendo ya como aplicación instalada? */
+function abiertaComoApp(){
+  try {
+    return matchMedia("(display-mode: standalone)").matches ||
+           navigator.standalone === true;
+  } catch(e){ return false; }
+}
+
+/* En iPhone y iPad no hay ofrecimiento automático: se hace a mano
+   desde el botón de compartir, y hay que explicarlo. */
+function esApple(){
+  try {
+    const ua = navigator.userAgent || "";
+    return /iPad|iPhone|iPod/.test(ua) ||
+           (/Macintosh/.test(ua) && typeof document !== "undefined" && "ontouchend" in document);
+  } catch(e){ return false; }
+}
