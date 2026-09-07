@@ -382,13 +382,14 @@ const FORMS = {
         {k:"documento", l:"En qué te basas", tipo:"select", wide:true,
          op:["Soy su propietario desde el nacimiento","Contrato de compraventa","Contrato de cesión",
              "Certificado de la RSCE a mi nombre","Herencia o cambio familiar","Otro"]},
-        {k:"motivo", l:"Datos que lo acrediten", tipo:"textarea", wide:true,
-         ph:"Número de LOE, microchip, fecha de adquisición, nombre del criador… lo que la junta pueda cotejar."},
+        {k:"motivo", l:"Cuéntaselo a la junta", tipo:"textarea", wide:true,
+         ph:"Lo que quieras contar: número de LOE, microchip, cuándo lo adquiriste, quién fue el criador… o nada, si prefieres.",
+         h:"Opcional. La junta te pedirá lo que le falte."},
         {k:"fechaEfecto", l:"Desde cuándo es tuyo", tipo:"date", v:hoy()},
       ]},
     ], async d => {
-      if(!d.motivo || d.motivo.trim().length < 10)
-        return toast("Escribe con qué puede la junta comprobarlo");
+      /* Sin exigir nada por escrito: cada uno manda la solicitud como
+         quiera y es la junta la que decide si le hace falta más. */
       await guardar("solicitudes", null, {tipo:"reclamacion", perroId,
         deSocioId: p.propietarioId || "", aSocioId: yo, fechaEfecto: d.fechaEfecto,
         documento: d.documento, motivo: d.motivo, estado: "pendiente", fecha: hoy(),
