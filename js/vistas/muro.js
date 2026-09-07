@@ -63,7 +63,7 @@ V.muro = function(){
     items.push({
       f: cuando,
       tipo: "Ejemplar",
-      t: [p.nombre, p.afijo].filter(Boolean).join(" ") + " se une al libro",
+      t: nombrePerro(p) + " se une al libro",
       d: [p.variedad, p.sexo === "M" ? "macho" : p.sexo === "H" ? "hembra" : "",
           p.propietarioId ? "de " + nombreSocio(p.propietarioId) : ""]
          .filter(Boolean).join(" · "),

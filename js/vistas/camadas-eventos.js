@@ -94,9 +94,9 @@ function resultadosDeEventos(){
 
   const cols = [
     {t:t("Puesto"), s:r=>r.puesto||9999, r:r=>r.puesto?`<span class="num">${r.puesto}º</span>`:`<span class="dim">—</span>`},
-    {t:t("Ejemplar"), s:r=>{const p=byId(C("perros"),r.perroId); return p?p.nombre:"";},
+    {t:t("Ejemplar"), s:r=>{const p=byId(C("perros"),r.perroId); return p?nombrePerro(p):"";},
      r:r=>{const p=byId(C("perros"),r.perroId);
-       return p?`<span class="nm">${esc(p.nombre)}</span>${r.clase?`<div class="mini">Clase ${esc(String(r.clase).toLowerCase())}</div>`:""}`:`<span class="dim">—</span>`;}},
+       return p?`<span class="nm">${esc(nombrePerro(p))}</span>${r.clase?`<div class="mini">Clase ${esc(String(r.clase).toLowerCase())}</div>`:""}`:`<span class="dim">—</span>`;}},
     {t:t("Guía"), s:r=>r.guia||"", r:r=>`${esc(r.guia||"—")}${r.equipo?`<div class="mini">${esc(r.equipo)}</div>`:""}`},
     {t:t("Puntos"), s:r=>r.puntos==null?-1:r.puntos,
      r:r=>r.puntos==null?`<span class="dim">—</span>`

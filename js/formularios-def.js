@@ -74,9 +74,17 @@ const FORMS = {
     const p = byId(C("perros"), id) || {};
     abrirForm(id ? "Editar ejemplar" : "Dar de alta un ejemplar", [
       {t:"Identificación", f:[
-        {k:"nombre", l:"Nombre", v:p.nombre, h:"Sin el afijo: ese va en el campo de al lado"},
-        {k:"afijo", l:"Afijo del criadero", v:p.afijo, ph:"Del criador, tal como figura en el LOE",
-         h:"Escríbelo tal cual. Si es el afijo de un socio del club, la ficha se enlaza sola con él"},
+        /* El nombre va entero, con su afijo, como figura en el pedigrí:
+           así están los 3.833 ejemplares que trajimos de los pedigríes
+           de los campeonatos. Partirlo en dos campos crearía fichas
+           que no casan con las que ya hay, y el cotejo de repetidos no
+           las reconocería. */
+        {k:"nombre", l:"Nombre registrado", v:p.nombre, wide:true,
+         ph:"Ninfa de Supercan",
+         h:"Entero, tal como figura en el pedigrí, con su afijo"},
+        {k:"afijo", l:"Afijo del criadero", v:p.afijo,
+         ph:"de Supercan",
+         h:"Sólo para saber de qué criadero es. Si es el afijo de un socio del club, la ficha se enlaza sola con él. Puedes dejarlo en blanco: ya va dentro del nombre"},
         {k:"variedad", l:"Variedad", tipo:"select", op:[""].concat(VARIEDADES), v:p.variedad},
         {k:"sexo", l:"Sexo", tipo:"select", op:[["M","Macho"],["H","Hembra"]], v:p.sexo||"M"},
         {k:"fechaNacimiento", l:"Fecha de nacimiento", tipo:"date", v:p.fechaNacimiento},
@@ -298,7 +306,7 @@ const FORMS = {
     const mios = C("perros").filter(p => p.propietarioId === miSocioId());
     abrirForm("Inscribir ejemplar", [
       {t:"Inscripción", f:[
-        {k:"perroId", l:"Ejemplar", tipo:"select", op:[["","— elegir —"]].concat(mios.map(p=>[p.id,p.nombre])), wide:true},
+        {k:"perroId", l:"Ejemplar", tipo:"select", op:[["","— elegir —"]].concat(mios.map(p=>[p.id,nombrePerro(p)])), wide:true},
         {k:"clase", l:"Clase / modalidad", tipo:"select", op:["Cachorros","Jóvenes","Intermedia","Abierta","Trabajo","Utilidad","Campeones","Veteranos","Test simple","Test completo","Confirmación"], wide:true},
       ]},
     ], async d => {
@@ -461,7 +469,7 @@ const FORMS = {
        d:`Le llega a su área de la plataforma. Ni tú ves su correo ni él el tuyo: si quiere dártelo, te contestará.`,
        f:[
         {k:"asunto", l:"Asunto", wide:true,
-         v: perro ? `Sobre ${perro.nombre}` : "",
+         v: perro ? `Sobre ${nombrePerro(perro)}` : "",
          ph:"De qué le escribes"},
         {k:"cuerpo", l:"Mensaje", tipo:"textarea", wide:true,
          ph:"Escríbele lo que quieras contarle."},
@@ -515,7 +523,7 @@ const FORMS = {
     if(!m || !h) return toast("Elige antes los dos reproductores");
     const cr = byId(C("socios"), miSocioId()) || byId(C("socios"), m.criadorId);
     abrirForm("Solicitud de cruce intervariedades", [
-      {t:"Cruce", d:`<b>${esc(m.nombre)}</b> (${esc(m.variedad)}) × <b>${esc(h.nombre)}</b> (${esc(h.variedad)}). La Comisión de Cría informa y la Junta Directiva resuelve en 30 días hábiles.`, f:[
+      {t:"Cruce", d:`<b>${esc(nombrePerro(m))}</b> (${esc(m.variedad)}) × <b>${esc(nombrePerro(h))}</b> (${esc(h.variedad)}). La Comisión de Cría informa y la Junta Directiva resuelve en 30 días hábiles.`, f:[
         {k:"criadorId", l:"Criador solicitante", tipo:"buscarId", op:buscaSocios(), v:cr?cr.id:"", wide:true,
          ph:"Escribe tres letras del apellido…"},
         {k:"linea", l:"Línea para la que se solicita", tipo:"select", wide:true,
@@ -636,14 +644,14 @@ const ENTIDADES_DIAGNOSTICO = [
 function nombresDePerros(sexo){
   return C("perros")
     .filter(p => !sexo || !p.sexo || p.sexo === sexo)
-    .map(p => p.nombre)
+    .map(nombrePerro)
     .filter(Boolean)
     .sort((a, b) => a.localeCompare(b, "es"));
 }
 
 function nombreDePerro(id){
   const p = id ? byId(C("perros"), id) : null;
-  return p ? p.nombre : "";
+  return p ? nombrePerro(p) : "";
 }
 
 function abueloDe(perro, lado, cual){
@@ -659,8 +667,12 @@ async function perroPorNombreOAlta(nombre, sexo){
   const t = String(nombre || "").replace(/\s+/g, " ").trim();
   if (!t) return null;
 
+  /* Se busca por las dos formas: el nombre a secas y el nombre con su
+     afijo, que es como lo escriben ahora las listas. Sin esto, editar
+     una ficha y volver a guardarla daría de alta un padre repetido. */
   const buscado = norm(t);
-  const ya = C("perros").find(p => norm(p.nombre || "") === buscado);
+  const ya = C("perros").find(p =>
+    norm(p.nombre || "") === buscado || norm(nombrePerro(p)) === buscado);
   if (ya) return ya.id;
 
   const nuevo = {nombre: t, sexo: sexo || null, visibilidad: "socios",

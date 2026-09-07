@@ -312,8 +312,8 @@ R.cruce = function(macho, hembra, perros, resultados, fecha){
 
   [[macho,"Macho"],[hembra,"Hembra"]].forEach(([p,rol]) => {
     const aptos = R.aptosDe(p, resultados);
-    if(!aptos.length) out.push({n:"bloqueo", t:`${rol} ${p.nombre} no tiene ningún apto de cría del CEPPB`, r:"Cap. 1 §4.1"});
-    else out.push({n:"ok", t:`${rol} ${p.nombre}: ${aptos.join(", ")}`});
+    if(!aptos.length) out.push({n:"bloqueo", t:`${rol} ${nombrePerro(p)} no tiene ningún apto de cría del CEPPB`, r:"Cap. 1 §4.1"});
+    else out.push({n:"ok", t:`${rol} ${nombrePerro(p)}: ${aptos.join(", ")}`});
     const a = R.anexoA(p);
     a.bloqueos.forEach(b => out.push({n:"bloqueo", t:`${rol}: ${b.t} — ${b.d}`, r:b.r}));
   });
@@ -367,7 +367,7 @@ R.intervariedad = function(macho, hembra, ctx){
   [[macho,"macho"],[hembra,"hembra"]].forEach(([p,rol]) => {
     const s = p.salud || {};
     items.push({t:`Radiografías de cadera y codos del ${rol}`, r:"Cap. 8.4.2.3",
-      d: `${p.nombre}: HD ${s.hd||"—"} · ED ${s.ed!==undefined&&s.ed!==""?s.ed:"—"}`,
+      d: `${nombrePerro(p)}: HD ${s.hd||"—"} · ED ${s.ed!==undefined&&s.ed!==""?s.ed:"—"}`,
       e: (s.hd && s.ed!==undefined && s.ed!=="") ? (HD_OK.includes(s.hd)&&ED_OK.includes(String(s.ed)) ? "ok" : "no") : "falta"});
   });
   items.push({t:"Identificación genética (ADN) de ambos reproductores", r:"Cap. 8.4.2.4",

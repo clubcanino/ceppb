@@ -135,7 +135,7 @@ V.socio = function(id){
 function tablaPerrosMini(l){
   return `<table>${l.map(p => `<tr class="clic" data-go="perro/${esc(p.id)}">
     <td><span class="celda-nm">${p.avatar?`<img class="thumb" src="${p.avatar}" alt="" loading="lazy">`:avatar(p,30,"cuadrado")}
-      <span><span class="nm">${esc(p.nombre)}</span> ${p.afijo?`<span class="dim">${esc(p.afijo)}</span>`:""}</span></span></td>
+      <span><span class="nm">${esc(nombrePerro(p))}</span></span></span></td>
     <td>${chipVar(p.variedad)}</td>
     <td class="sexo">${p.sexo==="M"?"♂":"♀"}</td>
     <td class="num">${esc(String(p.fechaNacimiento||"").slice(0,4)||"—")}</td>

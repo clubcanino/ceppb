@@ -166,7 +166,7 @@ function buscarEnElClub(texto){
     .filter(p => norm([p.nombre, p.afijo, p.loe, p.chip].join(" ")).includes(q))
     .slice(0, BUSCA_MAX)
     .map(p => ({
-      ir: "perro/" + p.id, titulo: p.nombre,
+      ir: "perro/" + p.id, titulo: nombrePerro(p),
       pie: [p.variedad, p.loe, p.sexo === "M" ? "♂" : p.sexo === "H" ? "♀" : ""]
              .filter(Boolean).join(" · "),
       grupo: "Ejemplares",

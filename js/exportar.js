@@ -100,7 +100,7 @@ function exportarCenso(socios, conReservados){
    Los ejemplares
    ------------------------------------------------------------ */
 const COLUMNAS_EJEMPLARES = [
-  {t:"Nombre",     v: p => p.nombre},
+  {t:"Nombre",     v: p => nombrePerro(p)},
   {t:"Afijo",      v: p => p.afijo},
   {t:"Variedad",   v: p => p.variedad},
   {t:"Sexo",       v: p => p.sexo === "M" ? "Macho" : p.sexo === "H" ? "Hembra" : ""},
@@ -108,8 +108,8 @@ const COLUMNAS_EJEMPLARES = [
   {t:"LOE",        v: p => p.loe},
   {t:"Chip",       v: p => p.chip},
   {t:"Propietario",v: p => { const s = byId(C("socios"), p.propietarioId); return s ? s.nombreCompleto : ""; }},
-  {t:"Padre",      v: p => { const d = byId(C("perros"), p.padreId); return d ? d.nombre : ""; }},
-  {t:"Madre",      v: p => { const d = byId(C("perros"), p.madreId); return d ? d.nombre : ""; }},
+  {t:"Padre",      v: p => { const d = byId(C("perros"), p.padreId); return d ? nombrePerro(d) : ""; }},
+  {t:"Madre",      v: p => { const d = byId(C("perros"), p.madreId); return d ? nombrePerro(d) : ""; }},
   {t:"Anexo A",    v: p => R.anexoA(p).ok ? "Completo" : "Incompleto"},
   {t:"Aptos",      v: p => R.aptosDe(p, C("resultados"))},
   {t:"Consanguinidad", v: p => (consanguinidad(p.id) * 100).toFixed(2).replace(".", ",")},
@@ -120,7 +120,7 @@ function exportarEjemplares(perros){
   if (!SESION.esAdmin) return toast("El listado completo solo lo exporta la junta directiva");
   ponerCenso(C("perros"));
   const csv = generarCSV(COLUMNAS_EJEMPLARES,
-    perros.slice().sort((a, b) => String(a.nombre).localeCompare(String(b.nombre), "es")));
+    perros.slice().sort((a, b) => nombrePerro(a).localeCompare(nombrePerro(b), "es")));
   descargar(`ejemplares-ceppb-${hoyArchivo()}.csv`, csv);
   toast(`${perros.length} ejemplares exportados`);
 }

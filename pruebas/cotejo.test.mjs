@@ -34,9 +34,6 @@ function montar(coincidencias){
     console, window: {}, setTimeout: fn => fn(), clearTimeout(){},
     document: { querySelector: () => nodo(), addEventListener(){} },
     /* Lo mínimo que cotejo.js usa de la plataforma */
-    esc: s => String(s ?? ""),
-    fmtF: s => String(s ?? ""),
-    hoy: () => "2026-09-07",
     miSocioId: () => "socio-1",
     toast: m => hechos.avisos.push(m),
     ir: r => { hechos.ido = r; },
@@ -55,6 +52,13 @@ function montar(coincidencias){
       },
     },
   });
+  /* util.js de verdad: de ahí sale nombrePerro(), que es quien escribe
+     el nombre del ejemplar con su afijo. */
+  vm.runInContext(lee("js/util.js"), ctx, { filename: "js/util.js" });
+  /* util.js trae su propio toast, que pinta en pantalla. Aquí se
+     apunta lo que se le dice al socio, que es lo que se comprueba. */
+  ctx.__avisos = hechos.avisos;
+  vm.runInContext(`toast = t => { __avisos.push(t); };`, ctx);
   vm.runInContext(lee("js/cotejo.js"), ctx, { filename: "js/cotejo.js" });
   return { ctx, hechos };
 }
@@ -167,7 +171,7 @@ test("al declarar que es otro perro, queda constancia de qué se le enseñó", a
   await hechos.enviar({ certificoNoRepetido: true });
 
   assert.notEqual(decl, null, "ahora sí se guarda");
-  assert.equal(decl.fecha, "2026-09-07");
+  assert.match(decl.fecha, /^\d{4}-\d{2}-\d{2}$/, "con la fecha del día");
   assert.equal(decl.socioId, "socio-1", "quién lo declaró");
   assert.equal(decl.coincidencias.join(","), "p-9,p-12",
     "y qué fichas se le pusieron delante, para que la junta pueda mirarlo");

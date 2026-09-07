@@ -104,7 +104,7 @@ function lineaDeCoincidencia(c){
 
   return `<div class="coin">
     <div style="min-width:0">
-      <b>${esc([c.nombre, c.afijo].filter(Boolean).join(" "))}</b> ${marca} ${estado}
+      <b>${esc(nombrePerro(c))}</b> ${marca} ${estado}
       ${datos ? `<div class="mini">${esc(datos)}</div>` : ""}
     </div>
     <div class="coin-b">

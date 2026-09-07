@@ -18,8 +18,10 @@ V.perros = function(){
   if(fPer.salud === "pendiente") l = l.filter(p => !R.anexoA(p).ok);
   if(fPer.afijo) l = l.filter(p => (p.afijo||"") === fPer.afijo);
   const cols = [
-    {t:"Ejemplar", s:p=>p.nombre, r:p=>`<span class="celda-nm">${p.avatar?`<img class="thumb" src="${p.avatar}" alt="" loading="lazy">`:avatar(p,34,"cuadrado")}
-      <span><span class="nm">${esc(p.nombre)}</span>${p.afijo?`<div class="mini">${esc(p.afijo)}</div>`:""}</span></span>`},
+    /* El nombre va entero, con su afijo, como en el pedigrí. Debajo,
+       la variedad: repetir el afijo en pequeño ya no aporta nada. */
+    {t:"Ejemplar", s:p=>nombrePerro(p), r:p=>`<span class="celda-nm">${p.avatar?`<img class="thumb" src="${p.avatar}" alt="" loading="lazy">`:avatar(p,34,"cuadrado")}
+      <span><span class="nm">${esc(nombrePerro(p))}</span>${p.loe?`<div class="mini">${esc(p.loe)}</div>`:""}</span></span>`},
     {t:"Afijo", s:p=>p.afijo||"", r:p=>afijoChip(p)},
     {t:"Var.", s:p=>p.variedad, r:p=>chipVar(p.variedad)},
     {t:"Sexo", s:p=>p.sexo, r:p=>`<span class="sexo">${p.sexo==="M"?"♂":"♀"}</span>`},
@@ -130,7 +132,7 @@ V.perro = function(id){
     <div class="cols23"><div class="grid">
       ${tarjetaTitulos(p, res)}
       <div class="card"><div class="card-h"><h3>Identificación</h3></div><div class="card-b"><dl class="kv">
-        <dt>Nombre registrado</dt><dd>${esc(p.nombre)}${p.afijo?` <span class="dim">${esc(p.afijo)}</span>`:""}</dd>
+        <dt>Nombre registrado</dt><dd>${esc(nombrePerro(p))}</dd>
         <dt>Afijo del criadero</dt><dd>${afijoChip(p)}</dd>
         <dt>Variedad</dt><dd>${chipVar(p.variedad)}${p.color?` <span class="dim">${esc(p.color)}</span>`:""}</dd>
         <dt>Sexo</dt><dd>${p.sexo==="M"?"Macho":"Hembra"}</dd>

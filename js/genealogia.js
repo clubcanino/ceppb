@@ -176,7 +176,7 @@ function ancestrosComunes(padreId, madreId){
 
     fuera.push({
       id,
-      nombre: p ? p.nombre : "",
+      nombre: p ? nombrePerro(p) : "",
       aporta,
       porPadre: Math.min(...nivelesPadre),
       porMadre: Math.min(...nivelesMadre),
@@ -193,7 +193,7 @@ function ancestrosComunes(padreId, madreId){
     let aporta = 0;
     for (const n of enElOtro) aporta += Math.pow(0.5, n + 1) * (1 + fA);
     fuera.push({
-      id: extremo, nombre: p ? p.nombre : "", aporta,
+      id: extremo, nombre: p ? nombrePerro(p) : "", aporta,
       porPadre: ladoPadre ? 0 : Math.min(...enElOtro),
       porMadre: ladoPadre ? Math.min(...enElOtro) : 0,
     });
@@ -254,7 +254,7 @@ function hermanosDe(perroId){
      igualdad, por nombre. */
   const ordenar = l => l.sort((a, b) =>
     String(a.fechaNacimiento || "9999").localeCompare(String(b.fechaNacimiento || "9999")) ||
-    String(a.nombre).localeCompare(String(b.nombre), "es"));
+    nombrePerro(a).localeCompare(nombrePerro(b), "es"));
 
   return { completos: ordenar(completos),
            porPadre: ordenar(porPadre),

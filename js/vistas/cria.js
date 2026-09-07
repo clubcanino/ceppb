@@ -106,7 +106,7 @@ V.cruce = function(){
      tres mil ejemplares y bajar por ellos a ojo es inviable. */
   const ficha = l => unicas(l.slice()
     .sort((a,b)=>String(a.nombre).localeCompare(String(b.nombre),"es"))
-    .map(p=>[p.id, p.nombre + (p.variedad ? " · " + p.variedad : ""),
+    .map(p=>[p.id, nombrePerro(p) + (p.variedad ? " · " + p.variedad : ""),
              p.loe || (p.fechaNacimiento ? "n. " + String(p.fechaNacimiento).slice(0,4) : "")]));
 
   return `<div class="cols23">

@@ -83,9 +83,16 @@ language sql stable security definer set search_path = public as $$
       case
         when b.c is not null and llano(p.chip) = b.c then 'chip'
         when b.l is not null and llano(p.loe)  = b.l then 'loe'
-        when b.n is not null and llano(p.nombre) = b.n then 'nombre'
-        when b.na is not null
-         and llano(coalesce(p.nombre,'') || coalesce(p.afijo,'')) = b.na then 'nombre'
+        /* El nombre registrado lleva el afijo dentro: «Ninfa de
+           Supercan». Pero alguien puede escribirlo partido, con el
+           afijo en su casilla, así que se comparan las dos formas del
+           que se busca contra las dos formas de cada ficha. Si no,
+           «Lorazepam» + «de Scofos» no encontraría a «LORAZEPAM DE
+           SCOFOS» y se duplicaría el ejemplar. */
+        when coalesce(b.n, b.na) is not null and (
+               llano(p.nombre) in (b.n, b.na)
+            or llano(coalesce(p.nombre,'') || coalesce(p.afijo,'')) in (b.n, b.na)
+             ) then 'nombre'
       end as m,
       (es_admin()
         or p.propietario_id = mi_socio_id()

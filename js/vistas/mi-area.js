@@ -166,7 +166,7 @@ V.mensajes = function(){
         <div class="mini" style="margin-bottom:8px">
           ${mio ? esc(t("Para")) : esc(t("De"))}
           <b>${esc(quien(mio ? m.paraId : m.deId))}</b>
-          ${p ? ` · <a class="linkish" href="#/perro/${esc(p.id)}">${esc(p.nombre)}</a>` : ""}
+          ${p ? ` · <a class="linkish" href="#/perro/${esc(p.id)}">${esc(nombrePerro(p))}</a>` : ""}
         </div>
         <div style="white-space:pre-wrap;font-size:13px;line-height:1.55">${esc(m.cuerpo)}</div>
         <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">

@@ -36,6 +36,27 @@ function idWorkingDog(url){
   return m ? m[1] : null;
 }
 
+/* ------------------------------------------------------------
+   El nombre registrado de un ejemplar.
+
+   El afijo del criadero forma parte del nombre: en el pedigrí pone
+   «Gas de Azarbe», no «Gas». Así que así se escribe en todas partes
+   —listas, buscadores, pedigríes, certificados y exportaciones—, y no
+   sólo en la ficha.
+
+   Muchas fichas que llegaron de los pedigríes de los campeonatos
+   traen el afijo ya dentro del nombre. Ahí no se repite.
+   ------------------------------------------------------------ */
+function nombrePerro(p){
+  if (!p) return "";
+  const n = String(p.nombre || "").trim();
+  const a = String(p.afijo || "").trim();
+  if (!n) return a;
+  if (!a) return n;
+  const nn = norm(n), na = norm(a);
+  return (nn.endsWith(na) || nn.startsWith(na)) ? n : n + " " + a;
+}
+
 function enlaceWorkingDog(perro){
   const id = idWorkingDog(perro && perro.workingdogUrl);
   if (!id) return perro && perro.workingdogUrl ? String(perro.workingdogUrl) : null;

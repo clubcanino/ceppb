@@ -44,7 +44,7 @@ V.certificado = function(id){
   const saludValidada = (p.salud || {}).validacion &&
                         (p.salud.validacion.estado === "validado");
   const s = p.salud || {};
-  const nombreLargo = [p.nombre, p.afijo].filter(Boolean).join(" ");
+  const nombreLargo = nombrePerro(p);
   const prop = p.propietarioId ? byId(C("socios"), p.propietarioId) : null;
 
   return `

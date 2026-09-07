@@ -110,12 +110,12 @@ const buscaPerros = (sexo, mios) => unicas(C("perros")
   .filter(p => !sexo || p.sexo === sexo)
   .filter(p => !mios || SESION.esAdmin || p.propietarioId === miSocioId())
   .sort((a,b)=>String(a.nombre).localeCompare(String(b.nombre),"es"))
-  .map(p=>[p.id, p.nombre + (p.variedad ? " · " + p.variedad : ""),
+  .map(p=>[p.id, nombrePerro(p) + (p.variedad ? " · " + p.variedad : ""),
            p.loe || (p.fechaNacimiento ? "n. " + String(p.fechaNacimiento).slice(0,4) : "")]));
 const optSociosAfijo = () => [["", "— criador no socio o desconocido —"]].concat(
   C("socios").slice().sort((a,b)=>(b.afijo?1:0)-(a.afijo?1:0) || a.apellidos.localeCompare(b.apellidos,"es"))
     .map(s=>[s.id, s.afijo ? `${s.afijo} — ${s.nombreCompleto}` : `${s.nombreCompleto} (sin afijo)`]));
-const optPerros = sexo => [["", "— sin registrar —"]].concat(C("perros").filter(p=>!sexo||p.sexo===sexo).map(p=>[p.id, `${p.nombre}${p.variedad?" · "+p.variedad:""}`]));
+const optPerros = sexo => [["", "— sin registrar —"]].concat(C("perros").filter(p=>!sexo||p.sexo===sexo).map(p=>[p.id, `${nombrePerro(p)}${p.variedad?" · "+p.variedad:""}`]));
 
 
 /* ------------------------------------------------------------
