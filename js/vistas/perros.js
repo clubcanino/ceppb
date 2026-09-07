@@ -183,13 +183,16 @@ V.perro = function(id){
   }
   if(tabPerro === "resultados"){
     const cols = [
-      {t:"Fecha", s:r=>r.fecha||"", r:r=>`<span class="num">${fmtF(r.fecha)}</span>`},
+      /* Las actas de los campeonatos que volcó el club traen el año pero
+         no el día: se enseña el año antes que un hueco en blanco. */
+      {t:"Fecha", s:r=>r.fecha||(r.anio?r.anio+"-00-00":""), r:r=>`<span class="num">${r.fecha?fmtF(r.fecha):(r.anio||"—")}</span>`},
       {t:"Tipo", s:r=>r.tipo, r:r=>`<span class="chip">${esc({estructura:"Estructura",caracter:"Carácter",trabajo:"Trabajo",confirmacion:"Confirmación"}[r.tipo]||r.tipo)}</span>`},
       {t:"Evento", s:r=>r.evento||"", r:r=>`${esc(r.evento||r.tipoEvento||"—")}${r.organizadoCEPPB?` <span class="chip">CEPPB</span>`:""}`},
       {t:"Resultado", s:r=>r.calificacion||r.resultado||r.titulo||"", r:r=>{
         if(r.tipo==="estructura") return `<span class="chip ${r.calificacion==="EXC"?"ok":""}">${esc(r.calificacion||"—")}</span>${r.distincion?` <span class="chip">${esc(r.distincion)}</span>`:""}${r.puesto?` <span class="num">${r.puesto}º</span>`:""}`;
-        if(r.tipo==="trabajo") return `<span class="chip ok">${esc(r.titulo||"—")}</span>${r.calificacion?` <span class="chip">${esc(r.calificacion)}</span>`:""}`;
+        if(r.tipo==="trabajo") return `${r.titulo?`<span class="chip ok">${esc(r.titulo)}</span> `:""}${r.calificacion?`<span class="chip">${esc(r.calificacion)}</span>`:""}${r.puntos!=null?` <span class="num">${r.puntos} pts</span>`:""}${r.puesto?` <span class="num">${r.puesto}º</span>`:""}${!r.titulo&&!r.calificacion?`<span class="chip">—</span>`:""}`;
         return `<span class="chip ${r.resultado==="APTO"?"ok":"block"}">${esc(r.modalidad?r.modalidad+" · ":"")}${esc(r.resultado||"—")}</span>`;}},
+      {t:"Guía", s:r=>r.guia||"", r:r=>esc(r.guia||"—")},
       {t:"Juez", s:r=>r.juez||"", r:r=>esc(r.juez||"—")},
       {t:"Validación", s:r=>r.validado||"pendiente", r:r=>chipVal(r.validado) +
         (SESION.esAdmin && r.validado!=="validado" ? ` <button class="btn sm" data-val="res|validado|${esc(r.id)}">Validar</button>` : "") +

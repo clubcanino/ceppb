@@ -200,6 +200,8 @@ const FORMS = {
         {k:"modalidad", l:"Prueba de carácter", tipo:"select", op:[["","—"],["TS","Test simple (sociabilidad + estrés acústico)"],["TC","Test completo (+ coraje)"]], wide:true},
         {k:"resultado", l:"Calificación", tipo:"select", op:[["","—"],["APTO","APTO"],["NO APTO","NO APTO"]]},
         {k:"titulo", l:"Título de trabajo", tipo:"select", op:TIT_TRABAJO},
+        {k:"puntos", l:"Puntos", tipo:"number", v:"", h:"Sobre 300 en IGP"},
+        {k:"guia", l:"Guía", v:"", h:"Quien condujo al perro, si no fue el propietario"},
       ]},
     ], async d => {
       const n = {perroId, tipo:d.tipo, fecha:d.fecha, evento:d.evento, tipoEvento:d.tipoEvento, juez:d.juez,
@@ -208,7 +210,8 @@ const FORMS = {
         validadoFecha: SESION.esAdmin ? hoy() : ""};
       if(d.tipo === "estructura") Object.assign(n, {calificacion:d.calificacion, puesto:Number(d.puesto)||null, distincion:d.distincion});
       if(d.tipo === "caracter") Object.assign(n, {modalidad:d.modalidad, resultado:d.resultado});
-      if(d.tipo === "trabajo") Object.assign(n, {titulo:d.titulo, calificacion:d.calificacion});
+      if(d.tipo === "trabajo") Object.assign(n, {titulo:d.titulo, calificacion:d.calificacion,
+        puntos:Number(d.puntos)||null, puesto:Number(d.puesto)||null, guia:d.guia});
       if(d.tipo === "confirmacion") Object.assign(n, {resultado:d.resultado});
       await guardar("resultados", null, n); toast("Resultado registrado");
     });
