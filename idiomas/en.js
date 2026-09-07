@@ -89,7 +89,7 @@ TEXTOS.en = {
 
   /* Pantalla de bienvenida */
   "Guía rápida": "Quick guide",
-  "Bienvenido al Libro de Cría": "Welcome to the Studbook",
+  "Bienvenido a Mi CEPPB": "Welcome to Mi CEPPB",
   "Qué puedes hacer aquí y por dónde se empieza": "What you can do here and where to start",
   "Da de alta tus ejemplares": "Register your dogs",
   "Nombre y afijo tal como figuran en el pedigrí, LOE, chip y fecha de nacimiento. La ficha es tuya: nadie más la edita.": "Name and kennel name exactly as they appear on the pedigree, LOE number, microchip and date of birth. The record is yours: nobody else edits it.",
@@ -182,7 +182,7 @@ TEXTOS.en = {
   /* Cuando el correo no consta en el censo */
   "Tu correo no consta en el censo": "Your email is not on the membership roll",
   "Has entrado con": "You signed in as",
-  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "and that address is not on any member's record. The Studbook is for the club's own use: until your account is linked to a record on the roll, it stays closed.",
+  "y ese correo no figura en la ficha de ningún socio del club. Mi CEPPB es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "and that address is not on any member's record. The Studbook is for the club's own use: until your account is linked to a record on the roll, it stays closed.",
   "Dos motivos suele haber:": "There are usually two reasons:",
   "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "The club office has a different address for you. Write to them to change it, or sign in with that one.",
   "Todavía no eres socio del club.": "You are not a member of the club yet.",
@@ -243,4 +243,5 @@ TEXTOS.en = {
   "Cada socio saca el suyo": "Each member issues their own",
   "El carnet lo expide su titular, y la junta directiva.": "The card is issued by its holder, and by the committee.",
   "Socio no encontrado": "Member not found",
+  "Mi CEPPB": "Mi CEPPB",
 };

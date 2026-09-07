@@ -81,11 +81,11 @@ function textoInvitacion(s, token){
      mirando, así que vale igual en pruebas que publicada. */
   const enlace = baseDeLaPlataforma() + "#/alta/" + token;
   return {
-    asunto: `${s.nombre || "Hola"}, tu acceso al Libro de Cría del CEPPB`,
+    asunto: `${s.nombre || "Hola"}, tu acceso a Mi CEPPB`,
     cuerpo:
 `Hola ${s.nombre || ""}:
 
-El Club Español del Perro Pastor Belga ha puesto en marcha el Libro de Cría, la plataforma donde el club lleva el censo de socios, las fichas de los ejemplares, las pruebas de salud, los títulos y las camadas.
+El Club Español del Perro Pastor Belga ha puesto en marcha Mi CEPPB, la plataforma donde el club lleva el censo de socios, las fichas de los ejemplares, las pruebas de salud, los títulos y las camadas.
 
 Tu perfil ya existe con los datos que constan en secretaría (socio nº ${s.numero}). Nadie puede verlo todavía: los perfiles nacen reservados y eres tú quien decide si apareces en el directorio del club y qué datos compartes. El número de cuenta no se comparte nunca, con nadie.
 

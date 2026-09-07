@@ -84,7 +84,7 @@ TEXTOS.eu = {
 
   /* Pantalla de bienvenida */
   "Guía rápida": "Gida azkarra",
-  "Bienvenido al Libro de Cría": "Ongi etorri Hazkuntza Liburura",
+  "Bienvenido a Mi CEPPB": "Ongi etorri Mi CEPPBra",
   "Qué puedes hacer aquí y por dónde se empieza": "Zer egin dezakezu hemen eta nondik hasi",
   "Da de alta tus ejemplares": "Eman alta zure aleei",
   "Nombre y afijo tal como figuran en el pedigrí, LOE, chip y fecha de nacimiento. La ficha es tuya: nadie más la edita.": "Izena eta afixua pedigrian ageri diren bezala, LOE zenbakia, txipa eta jaiotze-data. Fitxa zurea da: beste inork ez du editatzen.",
@@ -177,7 +177,7 @@ TEXTOS.eu = {
   /* Cuando el correo no consta en el censo */
   "Tu correo no consta en el censo": "Zure helbidea ez dago bazkideen zerrendan",
   "Has entrado con": "Honekin sartu zara:",
-  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "eta helbide hori ez dago klubeko bazkide baten ere fitxan. Hazkuntza Liburua barne erabilerarako da: zure kontua zerrendako fitxa bati lotu arte, itxita dago.",
+  "y ese correo no figura en la ficha de ningún socio del club. Mi CEPPB es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "eta helbide hori ez dago klubeko bazkide baten ere fitxan. Hazkuntza Liburua barne erabilerarako da: zure kontua zerrendako fitxa bati lotu arte, itxita dago.",
   "Dos motivos suele haber:": "Normalean bi arrazoi egoten dira:",
   "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "Idazkaritzak beste helbide bat du zurea. Idatzi eta alda dezala, edo sartu harekin.",
   "Todavía no eres socio del club.": "Oraindik ez zara klubeko bazkidea.",
@@ -238,4 +238,5 @@ TEXTOS.eu = {
   "Cada socio saca el suyo": "Bazkide bakoitzak berea ateratzen du",
   "El carnet lo expide su titular, y la junta directiva.": "Txartela bere titularrak ematen du, eta zuzendaritza batzordeak.",
   "Socio no encontrado": "Bazkidea ez da aurkitu",
+  "Mi CEPPB": "Mi CEPPB",
 };

@@ -77,7 +77,7 @@ const TITULOS_VISTA = {
   cobros:   ["Cuotas y cobros", "Domiciliaciones y recibos"],
   admins:   ["Administradores", "Cuentas con permiso de junta directiva"],
   entrar:   ["Entrar", "Acceso de socios del CEPPB"],
-  bienvenida: ["Bienvenido al Libro de Cría", "Qué puedes hacer aquí y por dónde se empieza"],
+  bienvenida: ["Bienvenido a Mi CEPPB", "Qué puedes hacer aquí y por dónde se empieza"],
   alta:     ["Vincular tu cuenta", "Invitación personal de secretaría"],
 };
 

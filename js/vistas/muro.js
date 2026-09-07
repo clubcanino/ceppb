@@ -119,7 +119,7 @@ V.muro = function(){
       <img class="crest-dark" src="assets/emblema-ceppb-oscuro.webp" alt="" width="82" height="82">
       <div style="flex:1;min-width:230px">
         <div class="eyebrow">Club Español del Perro Pastor Belga</div>
-        <h2>Libro de Cría</h2>
+        <h2>Mi CEPPB</h2>
         <div class="motto">${MOTTO_HTML}</div>
       </div>
       <div style="max-width:34ch;color:var(--muted);font-size:12.5px;line-height:1.5">
@@ -205,7 +205,7 @@ function portadaPublica(){
       <img class="crest-dark" src="assets/emblema-ceppb-oscuro.webp" alt="" width="82" height="82">
       <div style="flex:1;min-width:230px">
         <div class="eyebrow">${esc(t("Club Español del Perro Pastor Belga"))}</div>
-        <h2>${esc(t("Libro de Cría"))}</h2>
+        <h2>${esc(t("Mi CEPPB"))}</h2>
         <div class="motto">${MOTTO_HTML}</div>
       </div>
       <div style="max-width:38ch;color:var(--muted);font-size:12.5px;line-height:1.5">
@@ -276,7 +276,7 @@ function sinFichaEnElCenso(){
       <h3>${esc(t("Tu correo no consta en el censo"))}</h3></div>
       <div class="card-b">
         <div class="note warn" style="margin-bottom:14px">
-          ${esc(t("Has entrado con"))} <b>${esc(correo)}</b>, ${esc(t("y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre."))}
+          ${esc(t("Has entrado con"))} <b>${esc(correo)}</b>, ${esc(t("y ese correo no figura en la ficha de ningún socio del club. Mi CEPPB es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre."))}
         </div>
         <p class="dim">${esc(t("Dos motivos suele haber:"))}</p>
         <ul class="pasos-instalar">

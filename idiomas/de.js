@@ -89,7 +89,7 @@ TEXTOS.de = {
 
   /* Pantalla de bienvenida */
   "Guía rápida": "Kurzanleitung",
-  "Bienvenido al Libro de Cría": "Willkommen im Zuchtbuch",
+  "Bienvenido a Mi CEPPB": "Willkommen bei Mi CEPPB",
   "Qué puedes hacer aquí y por dónde se empieza": "Was Sie hier tun können und womit Sie anfangen",
   "Da de alta tus ejemplares": "Melden Sie Ihre Hunde an",
   "Nombre y afijo tal como figuran en el pedigrí, LOE, chip y fecha de nacimiento. La ficha es tuya: nadie más la edita.": "Name und Zwingername genau wie in der Ahnentafel, LOE-Nummer, Chip und Wurftag. Die Karteikarte gehört Ihnen: niemand sonst bearbeitet sie.",
@@ -182,7 +182,7 @@ TEXTOS.de = {
   /* Cuando el correo no consta en el censo */
   "Tu correo no consta en el censo": "Ihre Adresse steht nicht in der Mitgliederliste",
   "Has entrado con": "Sie haben sich angemeldet mit",
-  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "und diese Adresse steht auf keiner Karteikarte eines Vereinsmitglieds. Das Zuchtbuch ist für den internen Gebrauch: solange Ihr Konto nicht mit einer Karteikarte der Liste verknüpft ist, bleibt es geschlossen.",
+  "y ese correo no figura en la ficha de ningún socio del club. Mi CEPPB es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "und diese Adresse steht auf keiner Karteikarte eines Vereinsmitglieds. Das Zuchtbuch ist für den internen Gebrauch: solange Ihr Konto nicht mit einer Karteikarte der Liste verknüpft ist, bleibt es geschlossen.",
   "Dos motivos suele haber:": "Dafür gibt es meist zwei Gründe:",
   "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "Die Geschäftsstelle hat eine andere Adresse von Ihnen. Schreiben Sie ihr, damit sie sie ändert, oder melden Sie sich mit jener an.",
   "Todavía no eres socio del club.": "Sie sind noch kein Mitglied des Vereins.",
@@ -243,4 +243,5 @@ TEXTOS.de = {
   "Cada socio saca el suyo": "Jedes Mitglied stellt seinen eigenen aus",
   "El carnet lo expide su titular, y la junta directiva.": "Der Ausweis wird von seinem Inhaber ausgestellt, und vom Vorstand.",
   "Socio no encontrado": "Mitglied nicht gefunden",
+  "Mi CEPPB": "Mi CEPPB",
 };

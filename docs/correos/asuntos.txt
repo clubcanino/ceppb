@@ -1,5 +1,5 @@
-Magic Link           CEPPB · Tu enlace para entrar en el Libro de Cría
-Invite user          CEPPB · Tu acceso al Libro de Cría del club
-Reset Password       CEPPB · Cambiar tu contraseña del Libro de Cría
-Confirm signup       CEPPB · Confirma tu correo en el Libro de Cría
-Change Email         CEPPB · Confirma tu nuevo correo en el Libro de Cría
+Magic Link           CEPPB · Tu enlace para entrar en Mi CEPPB
+Invite user          CEPPB · Tu acceso a Mi CEPPB
+Reset Password       CEPPB · Cambiar tu contraseña de Mi CEPPB
+Confirm signup       CEPPB · Confirma tu correo en Mi CEPPB
+Change Email         CEPPB · Confirma tu nuevo correo en Mi CEPPB

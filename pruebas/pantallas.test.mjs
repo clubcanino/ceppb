@@ -512,6 +512,9 @@ test("todas las lenguas traducen lo mismo, sin huecos entre ellas", () => {
 });
 
 test("ninguna traducción se ha quedado igual que el castellano por descuido", () => {
+  /* «Mi CEPPB» es el nombre del club: no se traduce en ninguna lengua,
+     igual que no se traducen Malinois ni Tervueren. */
+  const nombrePropio = ["Mi CEPPB"];
   const sonIguales = {
     en: ["Pedigrí", "Público", "Privado", "Foto", "Invitaciones", "Administración"],
     fr: ["Pedigree", "Public", "Privé", "Photo", "Invitations", "Administration",
@@ -545,7 +548,8 @@ test("ninguna traducción se ha quedado igual que el castellano por descuido", (
     const sospechosos = Object.entries(tabla)
       .filter(([es, tr]) => es === tr)
       .map(([es]) => es)
-      .filter(es => !(sonIguales[idioma] || []).includes(es) &&
+      .filter(es => !nombrePropio.includes(es) &&
+                    !(sonIguales[idioma] || []).includes(es) &&
                     !(sonIguales[idioma] || []).includes(tabla[es]));
     assert.equal(sospechosos.length, 0,
       `en ${idioma} hay textos sin traducir: ${sospechosos.join(", ")}`);

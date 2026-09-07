@@ -87,7 +87,7 @@ TEXTOS.va = {
 
   /* Pantalla de bienvenida */
   "Guía rápida": "Guia ràpida",
-  "Bienvenido al Libro de Cría": "Benvingut al Llibre de Cria",
+  "Bienvenido a Mi CEPPB": "Benvingut a Mi CEPPB",
   "Qué puedes hacer aquí y por dónde se empieza": "Què hi pots fer i per on es comença",
   "Da de alta tus ejemplares": "Dona d'alta els teus exemplars",
   "Nombre y afijo tal como figuran en el pedigrí, LOE, chip y fecha de nacimiento. La ficha es tuya: nadie más la edita.": "Nom i afix tal com figuren en el pedigrí, LOE, xip i data de naixement. La fitxa és teua: ningú més no l'edita.",
@@ -180,7 +180,7 @@ TEXTOS.va = {
   /* Cuando el correo no consta en el censo */
   "Tu correo no consta en el censo": "El teu correu no consta en el cens",
   "Has entrado con": "Has entrat amb",
-  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "i eixe correu no figura en la fitxa de cap soci del club. El Llibre de Cria és d'ús intern: fins que el teu compte no estiga lligat a una fitxa del cens no s'obri.",
+  "y ese correo no figura en la ficha de ningún socio del club. Mi CEPPB es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "i eixe correu no figura en la fitxa de cap soci del club. El Llibre de Cria és d'ús intern: fins que el teu compte no estiga lligat a una fitxa del cens no s'obri.",
   "Dos motivos suele haber:": "Sol haver-hi dos motius:",
   "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "La secretaria té un altre correu teu. Escriu-li i el canvia, o entra amb aquell.",
   "Todavía no eres socio del club.": "Encara no eres soci del club.",
@@ -241,4 +241,5 @@ TEXTOS.va = {
   "Cada socio saca el suyo": "Cada soci trau el seu",
   "El carnet lo expide su titular, y la junta directiva.": "El carnet l'expedix el seu titular, i la junta directiva.",
   "Socio no encontrado": "Soci no trobat",
+  "Mi CEPPB": "Mi CEPPB",
 };

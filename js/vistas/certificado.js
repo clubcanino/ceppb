@@ -67,7 +67,7 @@ V.certificado = function(id){
       <div>
         <div class="cert-club">Club Español del Perro Pastor Belga</div>
         <h1>Certificado del ejemplar</h1>
-        <div class="cert-sub">Libro de Cría · Reglamento de Cría, actualización de enero de 2025</div>
+        <div class="cert-sub">Libro genealógico · Reglamento de Cría, actualización de enero de 2025</div>
       </div>
     </header>
 

@@ -85,7 +85,7 @@ TEXTOS.gl = {
 
   /* Pantalla de bienvenida */
   "Guía rápida": "Guía rápida",
-  "Bienvenido al Libro de Cría": "Benvido ao Libro de Cría",
+  "Bienvenido a Mi CEPPB": "Benvido a Mi CEPPB",
   "Qué puedes hacer aquí y por dónde se empieza": "Que podes facer aquí e por onde se empeza",
   "Da de alta tus ejemplares": "Da de alta os teus exemplares",
   "Nombre y afijo tal como figuran en el pedigrí, LOE, chip y fecha de nacimiento. La ficha es tuya: nadie más la edita.": "Nome e afixo tal como figuran no pedigrí, LOE, chip e data de nacemento. A ficha é túa: ninguén máis a edita.",
@@ -178,7 +178,7 @@ TEXTOS.gl = {
   /* Cuando el correo no consta en el censo */
   "Tu correo no consta en el censo": "O teu correo non consta no censo",
   "Has entrado con": "Entraches con",
-  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "e ese correo non figura na ficha de ningún socio do club. O Libro de Cría é de uso interno: ata que a túa conta estea ligada a unha ficha do censo non se abre.",
+  "y ese correo no figura en la ficha de ningún socio del club. Mi CEPPB es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "e ese correo non figura na ficha de ningún socio do club. O Libro de Cría é de uso interno: ata que a túa conta estea ligada a unha ficha do censo non se abre.",
   "Dos motivos suele haber:": "Adoita haber dous motivos:",
   "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "A secretaría ten outro correo teu. Escríbelle e cámbiao, ou entra con aquel.",
   "Todavía no eres socio del club.": "Aínda non es socio do club.",
@@ -239,4 +239,5 @@ TEXTOS.gl = {
   "Cada socio saca el suyo": "Cada socio saca o seu",
   "El carnet lo expide su titular, y la junta directiva.": "O carné exíxeo o seu titular, e mais a xunta directiva.",
   "Socio no encontrado": "Socio non atopado",
+  "Mi CEPPB": "Mi CEPPB",
 };

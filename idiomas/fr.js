@@ -89,7 +89,7 @@ TEXTOS.fr = {
 
   /* Pantalla de bienvenida */
   "Guía rápida": "Guide rapide",
-  "Bienvenido al Libro de Cría": "Bienvenue dans le Livre d'Élevage",
+  "Bienvenido a Mi CEPPB": "Bienvenue sur Mi CEPPB",
   "Qué puedes hacer aquí y por dónde se empieza": "Ce que vous pouvez faire ici et par où commencer",
   "Da de alta tus ejemplares": "Enregistrez vos chiens",
   "Nombre y afijo tal como figuran en el pedigrí, LOE, chip y fecha de nacimiento. La ficha es tuya: nadie más la edita.": "Nom et affixe tels qu'ils figurent au pedigree, LOE, puce et date de naissance. La fiche est la vôtre : personne d'autre ne la modifie.",
@@ -182,7 +182,7 @@ TEXTOS.fr = {
   /* Cuando el correo no consta en el censo */
   "Tu correo no consta en el censo": "Votre adresse ne figure pas au fichier des membres",
   "Has entrado con": "Vous vous êtes connecté avec",
-  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "et cette adresse ne figure sur la fiche d'aucun membre du club. Le Livre d'Élevage est à usage interne : tant que votre compte n'est pas rattaché à une fiche du fichier, il reste fermé.",
+  "y ese correo no figura en la ficha de ningún socio del club. Mi CEPPB es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "et cette adresse ne figure sur la fiche d'aucun membre du club. Le Livre d'Élevage est à usage interne : tant que votre compte n'est pas rattaché à une fiche du fichier, il reste fermé.",
   "Dos motivos suele haber:": "Il y a généralement deux raisons :",
   "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "Le secrétariat a une autre adresse pour vous. Écrivez-lui pour la changer, ou connectez-vous avec celle-là.",
   "Todavía no eres socio del club.": "Vous n'êtes pas encore membre du club.",
@@ -243,4 +243,5 @@ TEXTOS.fr = {
   "Cada socio saca el suyo": "Chaque membre édite la sienne",
   "El carnet lo expide su titular, y la junta directiva.": "La carte est délivrée par son titulaire, et par le comité.",
   "Socio no encontrado": "Membre introuvable",
+  "Mi CEPPB": "Mi CEPPB",
 };
