@@ -53,7 +53,7 @@ self.addEventListener("fetch", ev => {
         "<!doctype html><meta charset=utf-8><title>Sin conexión</title>" +
         "<div style=\"font:16px/1.5 system-ui;padding:40px;max-width:30em;margin:auto\">" +
         "<h1 style=font-size:20px>Sin conexión</h1>" +
-        "<p>El Libro de Cría necesita conexión para leer el libro. " +
+        "<p>Mi CEPPB necesita conexión para leer el libro. " +
         "Vuelve a intentarlo cuando tengas cobertura.</p></div>",
         { status: 503, headers: { "Content-Type": "text/html; charset=utf-8" } });
     }

@@ -38,6 +38,10 @@ function formContrasena(){
       <a class="linkish" id="ir-olvidada">He olvidado la contraseña</a>
       <a class="linkish" id="ir-primera">Es mi primera vez</a>
     </div>
+    <p class="dim" style="margin-top:18px;margin-bottom:0">
+      ¿Es la primera vez que oyes hablar de esto?
+      <a href="manual.html">Lee el manual</a>: qué puedes hacer aquí y cómo
+      instalarlo en el móvil.</p>
   </div></div>`;
 }
 
