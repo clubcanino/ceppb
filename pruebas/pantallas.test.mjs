@@ -929,7 +929,7 @@ test("los campos de socio y de ejemplar se buscan, no se despliegan", () => {
       assert.equal(m[0].includes(prohibido), false,
         "sigue habiendo un desplegable con fichas dentro: " + m[0].slice(0, 70));
   /* y los que había son ahora buscadores */
-  assert.equal((sinComentarios.match(/tipo:"buscarId"/g) || []).length, 7);
+  assert.equal((sinComentarios.match(/tipo:"buscarId"/g) || []).length, 8);
 });
 
 test("el simulador de cruce tampoco despliega los tres mil ejemplares", () => {
@@ -1275,4 +1275,12 @@ test("se puede escribir a cualquier socio que lo acepte, sin ver sus datos", () 
 
   /* quien no quiere, lo apaga; por defecto está encendido */
   assert.match(sql, /acepta_mensajes boolean not null default true/);
+});
+
+test("una cuenta huérfana se puede atar a su ficha, y sólo la junta", () => {
+  const def = readFileSync(new URL("../js/formularios-def.js", import.meta.url), "utf8");
+  assert.match(def, /atarCuenta\(email\)/);
+  assert.match(def, /if\(!SESION\.esAdmin\) return toast\("Sólo la junta directiva"\)/);
+  /* sólo se ofrecen fichas que no tengan ya cuenta */
+  assert.match(def, /\.filter\(x => !x\.authUserId\)/);
 });

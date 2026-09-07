@@ -152,7 +152,7 @@ V.altas = function(){
       <div class="card-h"><h3>Cuentas sin ficha de socio</h3>
         <span class="hint">${sueltas.length}</span></div>
       <div class="card-b">
-        <div class="mini" style="margin-bottom:10px">Han creado cuenta con su correo pero no constan en el censo. Hasta que se les ate a una ficha no tienen perfil de socio ni pueden registrar ejemplares.</div>
+        <div class="mini" style="margin-bottom:10px">Han creado cuenta con su correo pero ese correo no consta en ninguna ficha del censo. Suele pasar cuando alguien se registra con un correo y luego la secretaría le anota otro: su cuenta se queda huérfana. Átala a su ficha y entrará con normalidad.</div>
         <table>${sueltas.map(a => `<tr>
           <td><span class="num">${esc(a.email)}</span>
             <div class="mini">Cuenta creada el ${fmtF(String(a.creada).slice(0,10))}</div></td>
@@ -160,7 +160,8 @@ V.altas = function(){
             ${a.correoConfirmado ? `<span class="chip ok">Correo confirmado</span>`
                                  : `<span class="chip warn" title="Puede que el correo le llegara a Spam">Sin confirmar</span>`}
             ${a.ultimaEntrada ? `<span class="chip">Entró el ${fmtF(String(a.ultimaEntrada).slice(0,10))}</span>`
-                              : `<span class="chip">No ha entrado</span>`}</td></tr>`).join("")}</table>
+                              : `<span class="chip">No ha entrado</span>`}
+            <button class="btn sm" data-atar="${esc(a.email)}">Atar a un socio</button></td></tr>`).join("")}</table>
       </div></div>` : ""}
     ${tabla("alt", cols, socios, s=>"socio/"+s.id)}`;
 };

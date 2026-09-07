@@ -454,6 +454,12 @@ document.addEventListener("change", ev => {
   render();
 });
 
+/* --- atar una cuenta huérfana a su ficha --- */
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-atar]");
+  if (b) FORMS.atarCuenta(b.dataset.atar);
+});
+
 /* --- que me escriban, o no --- */
 document.addEventListener("click", async ev => {
   const b = ev.target.closest("[data-mensajes-si]");

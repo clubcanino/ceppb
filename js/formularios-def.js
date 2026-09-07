@@ -397,6 +397,34 @@ const FORMS = {
      que permite que los perfiles sigan siendo reservados. */
   /* Elegir a quién escribir de entre los socios que lo aceptan. No se
      enseña de ellos más que el nombre. */
+  /* Atar a mano una cuenta huérfana a su ficha del censo. Pasa cuando
+     alguien se registra con un correo y después la secretaría le anota
+     otro: la vinculación automática deja de reconocerla. */
+  atarCuenta(email){
+    if(!SESION.esAdmin) return toast("Sólo la junta directiva");
+    const libres = C("socios")
+      .filter(x => !x.authUserId)
+      .sort((a,b) => String(a.apellidos).localeCompare(String(b.apellidos),"es"));
+    abrirForm(`Atar ${email} a su ficha`, [
+      {t:"Ficha del censo",
+       d:`La cuenta <b>${esc(email)}</b> no coincide con ningún correo del censo. Elige de quién es y quedará atada a esa ficha: entrará con normalidad, con el correo que tenga.`,
+       f:[
+        {k:"socioId", l:"Socio", tipo:"buscarId", wide:true,
+         op: unicas(libres.map(x => [x.id, `${x.nombreCompleto} (nº ${x.numero})`])),
+         ph:"Escribe tres letras del apellido…",
+         h:"Sólo salen las fichas que todavía no tienen cuenta"},
+      ]},
+    ], async d => {
+      if(!d.socioId) return toast("Elige de quién es la cuenta");
+      const { error } = await S.sb.rpc("vincular_cuenta_a_socio",
+        { p_email: email, p_socio: d.socioId });
+      if(error) return avisarError(error);
+      await recargar();
+      toast("Cuenta atada a su ficha");
+      render();
+    });
+  },
+
   nuevoMensaje(){
     if(!miSocioId()) return toast("Sólo los socios pueden escribirse");
     const l = S.escribibles || [];
