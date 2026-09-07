@@ -19,6 +19,7 @@ const VISTAS = [
 
   {h:"mio", t:"Mi área"},
   {r:"entrar",   n:"Entrar",           v:["visitante"]},
+  {r:"bienvenida", n:"Guía rápida",    v:["socio","admin"]},
   /* «Mi perfil» y «Cuota y pagos» son de socio: una cuenta de junta sin
      ficha en el censo —la del club, por ejemplo— no tiene qué enseñar
      ahí, así que no se le ofrece. «Mi cuenta» sí: la contraseña y la
@@ -67,6 +68,7 @@ const TITULOS_VISTA = {
   cobros:   ["Cuotas y cobros", "Domiciliaciones y recibos"],
   admins:   ["Administradores", "Cuentas con permiso de junta directiva"],
   entrar:   ["Entrar", "Acceso de socios del CEPPB"],
+  bienvenida: ["Bienvenido al Libro de Cría", "Qué puedes hacer aquí y por dónde se empieza"],
   alta:     ["Vincular tu cuenta", "Invitación personal de secretaría"],
 };
 
@@ -109,7 +111,7 @@ function render(){
      después de dejarle pasar, con un cartel diciéndole que preguntara
      en secretaría. Se le lleva a su sitio. */
   if (vista === "entrar" && SESION.usuario){
-    location.hash = SESION.socio ? "#/yo" : "#/muro";
+    location.hash = "#/bienvenida";
     return;
   }
 

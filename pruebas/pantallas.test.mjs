@@ -17,7 +17,7 @@ const ARCHIVOS = [
   "js/formularios.js", "js/formularios-def.js",
   "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
   "js/vistas/perros.js", "js/vistas/certificado.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
-  "js/vistas/mi-area.js", "js/vistas/junta.js", "js/vistas/videos.js", "js/vistas/club.js",
+  "js/vistas/bienvenida.js", "js/vistas/mi-area.js", "js/vistas/junta.js", "js/vistas/videos.js", "js/vistas/club.js",
   "js/app.js",
 ];
 
@@ -611,4 +611,48 @@ test("los ejemplares salen por orden alfabético español", () => {
   ]);
   const salida = [...html.matchAll(/<td data-col="Ejemplar">([^<]*)</g)].map(m => m[1]);
   assert.deepEqual(salida, ["ábaco", "Alan", "Ñu", "ozone", "Zorro"]);
+});
+
+/* ============================================================
+   La bienvenida: lo primero que ve un socio al entrar.
+
+   Tiene que saludar, explicar qué puede hacer y —sobre todo— no
+   enseñarle a un socio corriente ni una sola opción de la junta.
+   ============================================================ */
+function bienvenidaComo(rol){
+  const ctx = montar();
+  vm.runInContext(`
+    SESION.rol = ${JSON.stringify(rol)};
+    SESION.esAdmin = ${rol === "admin"};
+    SESION.usuario = {id:"u1", email:"x@y.z"};
+    SESION.socio = {id:"s1", numero:7, nombreCompleto:"Ana Ruiz López"};
+    S.listo = true; S.error = null;
+  `, ctx);
+  return vm.runInContext("String(V.bienvenida(''))", ctx);
+}
+
+test("la bienvenida saluda por el nombre y explica por dónde se empieza", () => {
+  const html = bienvenidaComo("socio");
+  assert.match(html, /Bienvenido, Ana/);
+  assert.match(html, /href="#\/perros"/);
+  assert.match(html, /href="#\/cruce"/);
+  assert.match(html, /href="#\/aptos"/);
+  /* y deja clara la regla que sostiene el resto */
+  assert.match(html, /junta directiva/i);
+});
+
+test("un socio corriente no ve en la bienvenida nada de administración", () => {
+  const html = bienvenidaComo("socio");
+  for (const r of ["#/admin", "#/validar", "#/invitaciones", "#/cobros", "#/admins", "#/altas"])
+    assert.equal(html.includes(`href="${r}"`), false, "la bienvenida ofrece " + r + " a un socio");
+});
+
+test("a la junta sí se le ofrece su panel", () => {
+  assert.match(bienvenidaComo("admin"), /href="#\/admin"/);
+});
+
+test("entrar lleva a la bienvenida, no a una puerta cerrada", () => {
+  const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+  assert.match(app, /vista === "entrar" && SESION\.usuario/);
+  assert.match(app, /location\.hash = "#\/bienvenida"/);
 });
