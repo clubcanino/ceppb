@@ -532,7 +532,7 @@ test("ninguna traducción se ha quedado igual que el castellano por descuido", (
          "Acceso de socios", "EN DIRECTO", "Pedigrí completo",
          "aplicado ficha por ficha", "Vídeos por publicar", "Vinculación de altas",
          "Administradores", "Descendencia", "Validado", "Completo",
-         "Guía", "Puntos"],
+         "Guía", "Puntos", "Descargar"],
     eu: ["Palmaresa"],
   };
   for (const idioma of OTRAS_LENGUAS){
@@ -1018,4 +1018,21 @@ test("la portada enlaza el formulario de alta del club", () => {
   const html = vm.runInContext("String(V.muro(''))", ctx);
   assert.match(html, /href="https:\/\/www\.ceppb\.info\/inscripcion"/);
   assert.match(html, /target="_blank" rel="noopener noreferrer"/);
+});
+
+test("los reglamentos se pueden descargar desde la plataforma", () => {
+  const ctx = montar();
+  vm.runInContext(`SESION.rol="socio"; SESION.esAdmin=false; SESION.usuario={id:"u1"};
+                   SESION.socio={id:"s1", numero:1, nombreCompleto:"Ana Ruiz"};
+                   S.listo=true; S.error=null;`, ctx);
+  const bienvenida = vm.runInContext("String(V.bienvenida(''))", ctx);
+  const cfg = JSON.parse(vm.runInContext("JSON.stringify(CONFIG.REGLAMENTOS)", ctx));
+  assert.equal(cfg.length, 2, "el Reglamento de Cría y el Anexo A");
+  for (const r of cfg){
+    assert.match(r.u, /^https:\/\/www\.ceppb\.info\//, "se enlaza a la web del club");
+    assert.ok(bienvenida.includes(r.u), "falta en la bienvenida: " + r.t);
+  }
+  /* y se descargan, no se quedan mirando */
+  assert.match(bienvenida, /download/);
+  assert.match(bienvenida, /target="_blank" rel="noopener noreferrer"/);
 });

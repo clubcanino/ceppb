@@ -26,6 +26,7 @@ V.aptos = function(){
     Esta pantalla cruza cada perro registrado con las cinco figuras del Capítulo 2 y señala qué le falta a cada uno.
     ${SESION.rol!=="visitante"?`<div style="margin-top:14px"><button class="btn brand" data-form="perro|">Dar de alta un ejemplar</button></div>`:""}</div></div>`;
   return `<div class="note" style="margin-bottom:14px">Cada columna es una de las cinco figuras del <b>Capítulo 2</b>. Pasa el cursor sobre un aviso para ver qué falta exactamente.</div>
+    ${tarjetaReglamentos()}
     ${casi.length?`<div class="card" style="margin-bottom:14px"><div class="card-h"><h3>A un solo requisito del apto</h3><span class="hint">${casi.length} ejemplares</span></div>
       <div class="card-b" style="padding:0"><table>${casi.map(x=>{const f=x.figs.find(y=>!y.cumple&&!y.excluido&&y.faltan===1);
         return `<tr class="clic" data-go="perro/${esc(x.p.id)}"><td><span class="nm">${esc(x.p.nombre)}</span></td><td><span class="chip">${f.fig.c}</span></td>
@@ -220,4 +221,31 @@ function tarjetaConsanguinidad(macho, hembra){
           </tbody></table>` : ""}
     </div>
   </div>`;
+}
+
+/* ============================================================
+   Los reglamentos del club, para leerlos o llevárselos.
+
+   Se enlazan a la web del club, no se copian aquí: si la junta
+   aprueba una revisión, el socio se descarga la nueva sin que
+   nadie tenga que acordarse de sustituir un archivo.
+   ============================================================ */
+function tarjetaReglamentos(){
+  return `<div class="card" style="margin-bottom:14px">
+    <div class="card-h"><h3>${esc(t("Los reglamentos del club"))}</h3>
+      <span class="spacer"></span>
+      <a class="btn sm" href="${esc(CONFIG.WEB_REGLAMENTOS)}" target="_blank" rel="noopener noreferrer">${esc(t("Toda la reglamentación"))}</a>
+    </div>
+    <div class="card-b">
+      <div class="fgrid">${CONFIG.REGLAMENTOS.map(r => `
+        <div class="f wide" style="display:flex;gap:12px;align-items:flex-start">
+          <span class="doc-ico" aria-hidden="true">PDF</span>
+          <div style="flex:1;min-width:0">
+            <b>${esc(t(r.t))}</b>
+            <div class="mini" style="margin:3px 0 8px">${esc(t(r.d))}</div>
+            <a class="btn sm" href="${esc(r.u)}" target="_blank" rel="noopener noreferrer"
+               download>${esc(t("Descargar"))}</a>
+          </div>
+        </div>`).join("")}</div>
+    </div></div>`;
 }

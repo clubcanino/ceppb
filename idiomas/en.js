@@ -168,4 +168,14 @@ TEXTOS.en = {
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "In your browser menu, look for “Install app” or “Add to Home Screen”.",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "The Spanish Belgian Shepherd Dog Club brings together the breeders, competitors and enthusiasts of the four Belgian Shepherd varieties.",
   "Hazte socio": "Join the club",
+
+  /* Los reglamentos */
+  "Los reglamentos del club": "The club's regulations",
+  "Toda la reglamentación": "All the regulations",
+  "Descargar": "Download",
+  "Reglamento de Cría del CEPPB": "CEPPB Breeding Regulations",
+  "Anexo A · Salud": "Annex A · Health",
+  "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "The full text: breeding qualifications, the five categories, ages, inter-variety matings and scoring.",
+  "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "The required tests and their valid results: hips, elbows, LVT, genetics and DNA.",
+  "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "What the platform applies to every record, in its original wording. To read or to take with you.",
 };

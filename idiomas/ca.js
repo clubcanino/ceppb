@@ -163,4 +163,14 @@ TEXTOS.ca = {
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Des del menú del teu navegador, busca «Instal·la l'aplicació» o «Afegeix a la pantalla d'inici».",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "El Club Espanyol del Gos d'Atura Belga reuneix els criadors, esportistes i aficionats de les quatre varietats del pastor belga.",
   "Hazte socio": "Fes-te soci",
+
+  /* Los reglamentos */
+  "Los reglamentos del club": "Els reglaments del club",
+  "Toda la reglamentación": "Tota la reglamentació",
+  "Descargar": "Descarrega",
+  "Reglamento de Cría del CEPPB": "Reglament de Cria del CEPPB",
+  "Anexo A · Salud": "Annex A · Salut",
+  "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "El text complet: aptes de cria, figures, edats, encreuaments entre varietats i barems.",
+  "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "Les proves exigides i els seus resultats vàlids: malucs, colzes, LVT, genètica i ADN.",
+  "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "Allò que la plataforma aplica sobre cada fitxa, en el seu text original. Per llegir-lo o endur-te'l.",
 };

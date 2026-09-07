@@ -168,4 +168,14 @@ TEXTOS.de = {
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Suchen Sie im Menü Ihres Browsers nach „App installieren“ oder „Zum Startbildschirm hinzufügen“.",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "Der Spanische Belgische-Schäferhund-Klub vereint die Züchter, Sportler und Liebhaber der vier Varietäten des Belgischen Schäferhundes.",
   "Hazte socio": "Mitglied werden",
+
+  /* Los reglamentos */
+  "Los reglamentos del club": "Die Ordnungen des Vereins",
+  "Toda la reglamentación": "Alle Ordnungen",
+  "Descargar": "Herunterladen",
+  "Reglamento de Cría del CEPPB": "Zuchtordnung des CEPPB",
+  "Anexo A · Salud": "Anhang A · Gesundheit",
+  "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "Der vollständige Text: Zuchttauglichkeit, die fünf Stufen, Altersgrenzen, Verpaarungen zwischen Varietäten und Bewertung.",
+  "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "Die geforderten Untersuchungen und ihre gültigen Befunde: Hüften, Ellenbogen, LÜW, Genetik und DNA.",
+  "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "Was die Plattform auf jede Karteikarte anwendet, im Originalwortlaut. Zum Lesen oder Mitnehmen.",
 };

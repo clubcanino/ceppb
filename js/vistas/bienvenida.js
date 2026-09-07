@@ -96,7 +96,7 @@ V.bienvenida = function(){
         </div>`).join("")}</div>
     </div></div>
 
-    <div class="cols2">
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
       <div class="card"><div class="card-h"><h3>La regla que sostiene todo lo demás</h3></div><div class="card-b">
         <p style="color:var(--muted);font-size:12.5px;line-height:1.55">
           Las pruebas de salud y los resultados los introduce <b>su propietario</b>, y sólo
@@ -107,6 +107,15 @@ V.bienvenida = function(){
           Nadie puede dar por buenos sus propios papeles, y eso vale para todos:
           es lo que hace que un apto de cría del CEPPB signifique algo.
         </p>
+      </div></div>
+
+      <div class="card"><div class="card-h"><h3>${esc(t("Los reglamentos del club"))}</h3></div><div class="card-b">
+        <p style="color:var(--muted);font-size:12.5px;line-height:1.55;margin-bottom:12px">
+          ${esc(t("Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo."))}
+        </p>
+        ${CONFIG.REGLAMENTOS.map(r => `<div style="margin-bottom:8px">
+          <a class="btn sm" href="${esc(r.u)}" target="_blank" rel="noopener noreferrer" download>${esc(t(r.t))}</a>
+        </div>`).join("")}
       </div></div>
 
       <div class="card"><div class="card-h"><h3>Detalles prácticos</h3></div><div class="card-b">

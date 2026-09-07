@@ -168,4 +168,14 @@ TEXTOS.fr = {
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Dans le menu de votre navigateur, cherchez « Installer l'application » ou « Ajouter à l'écran d'accueil ».",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "Le Club Espagnol du Chien de Berger Belge réunit les éleveurs, les compétiteurs et les passionnés des quatre variétés du berger belge.",
   "Hazte socio": "Devenir membre",
+
+  /* Los reglamentos */
+  "Los reglamentos del club": "Les règlements du club",
+  "Toda la reglamentación": "Toute la réglementation",
+  "Descargar": "Télécharger",
+  "Reglamento de Cría del CEPPB": "Règlement d'Élevage du CEPPB",
+  "Anexo A · Salud": "Annexe A · Santé",
+  "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "Le texte complet : aptitudes à l'élevage, catégories, âges, accouplements entre variétés et barèmes.",
+  "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "Les tests exigés et leurs résultats valables : hanches, coudes, LVT, génétique et ADN.",
+  "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "Ce que la plateforme applique à chaque fiche, dans son texte d'origine. À lire ou à emporter.",
 };

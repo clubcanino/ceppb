@@ -163,4 +163,14 @@ TEXTOS.eu = {
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Zure nabigatzailearen menuan, bilatu «Instalatu aplikazioa» edo «Gehitu hasierako pantailan».",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "Belgikako Artzain Txakurraren Espainiako Klubak belgikar artzainaren lau aldaeretako hazleak, kirolariak eta zaleak biltzen ditu.",
   "Hazte socio": "Egin zaitez bazkide",
+
+  /* Los reglamentos */
+  "Los reglamentos del club": "Klubaren erregelamenduak",
+  "Toda la reglamentación": "Erregelamendu guztiak",
+  "Descargar": "Deskargatu",
+  "Reglamento de Cría del CEPPB": "CEPPBren Hazkuntza Erregelamendua",
+  "Anexo A · Salud": "A Eranskina · Osasuna",
+  "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "Testu osoa: hazkuntzarako gaitasunak, bost figurak, adinak, aldaeren arteko gurutzaketak eta baremoak.",
+  "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "Eskatzen diren probak eta haien emaitza baliagarriak: aldakak, ukondoak, LVT, genetika eta DNA.",
+  "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "Plataformak fitxa bakoitzari aplikatzen diona, bere jatorrizko testuan. Irakurtzeko edo eramateko.",
 };

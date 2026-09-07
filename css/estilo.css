@@ -300,6 +300,11 @@ img.avatar{display:block}
 .abrir-menu:hover{background:var(--surface-2)}
 .tapa-menu{display:none}
 
+/* El distintivo de los documentos descargables */
+.doc-ico{flex:none;display:inline-flex;align-items:center;justify-content:center;
+  width:38px;height:44px;border-radius:5px;background:var(--brand);color:#fff;
+  font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.06em}
+
 /* Buscar una ficha del club escribiendo. Ocupa lo mismo que ocupaba
    el desplegable al que sustituye. */
 .buscaficha{position:relative}
