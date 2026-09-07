@@ -178,4 +178,15 @@ TEXTOS.de = {
   "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "Der vollständige Text: Zuchttauglichkeit, die fünf Stufen, Altersgrenzen, Verpaarungen zwischen Varietäten und Bewertung.",
   "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "Die geforderten Untersuchungen und ihre gültigen Befunde: Hüften, Ellenbogen, LÜW, Genetik und DNA.",
   "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "Was die Plattform auf jede Karteikarte anwendet, im Originalwortlaut. Zum Lesen oder Mitnehmen.",
+
+  /* Cuando el correo no consta en el censo */
+  "Tu correo no consta en el censo": "Ihre Adresse steht nicht in der Mitgliederliste",
+  "Has entrado con": "Sie haben sich angemeldet mit",
+  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "und diese Adresse steht auf keiner Karteikarte eines Vereinsmitglieds. Das Zuchtbuch ist für den internen Gebrauch: solange Ihr Konto nicht mit einer Karteikarte der Liste verknüpft ist, bleibt es geschlossen.",
+  "Dos motivos suele haber:": "Dafür gibt es meist zwei Gründe:",
+  "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "Die Geschäftsstelle hat eine andere Adresse von Ihnen. Schreiben Sie ihr, damit sie sie ändert, oder melden Sie sich mit jener an.",
+  "Todavía no eres socio del club.": "Sie sind noch kein Mitglied des Vereins.",
+  "¿Cuál de estas fichas es la tuya?": "Welche dieser Karteikarten ist Ihre?",
+  "En el censo hay varias fichas con tu mismo correo, que es lo normal en una familia. Elige la tuya: sólo se ata una vez, así que asegúrate.": "In der Liste stehen mehrere Karteikarten mit Ihrer Adresse, was in einer Familie normal ist. Wählen Sie Ihre: die Verknüpfung erfolgt nur einmal, seien Sie also sicher.",
+  "Si ninguna es la tuya, escribe a la secretaría del club.": "Wenn keine davon Ihre ist, schreiben Sie an die Geschäftsstelle des Vereins.",
 };

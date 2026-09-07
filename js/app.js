@@ -8,7 +8,7 @@
    enseña de fuera ni el censo, ni los ejemplares, ni los cargos. */
 const VISTAS = [
   {h:"", t:"La plataforma"},
-  {r:"muro",     n:"Novedades",        v:["admin","socio","visitante"]},
+  {r:"muro",     n:"Novedades",        v:["admin","socio","visitante","sin-ficha"]},
   {r:"socios",   n:"Socios",           v:["admin","socio"], ct:()=>C("socios").filter(perfilVisible).length || null},
   {r:"perros",   n:"Ejemplares",       v:["admin","socio"], ct:()=>perrosVisibles().length || null},
   {r:"eventos",  n:"Eventos",          v:["admin","socio"], ct:()=>C("eventos").length || null},
@@ -28,7 +28,7 @@ const VISTAS = [
      ahí, así que no se le ofrece. «Mi cuenta» sí: la contraseña y la
      foto las tiene todo el mundo. */
   {r:"yo",       n:"Mi perfil",        v:["socio","admin"], si:()=>!!SESION.socio},
-  {r:"ajustes",  n:"Mi cuenta",        v:["socio","admin"]},
+  {r:"ajustes",  n:"Mi cuenta",        v:["socio","admin","sin-ficha"]},
   {r:"cuenta",   n:"Cuota y pagos",    v:["socio","admin"], si:()=>!!SESION.socio},
 
   {h:"adm", t:"Administración"},

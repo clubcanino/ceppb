@@ -173,4 +173,15 @@ TEXTOS.eu = {
   "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "Testu osoa: hazkuntzarako gaitasunak, bost figurak, adinak, aldaeren arteko gurutzaketak eta baremoak.",
   "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "Eskatzen diren probak eta haien emaitza baliagarriak: aldakak, ukondoak, LVT, genetika eta DNA.",
   "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "Plataformak fitxa bakoitzari aplikatzen diona, bere jatorrizko testuan. Irakurtzeko edo eramateko.",
+
+  /* Cuando el correo no consta en el censo */
+  "Tu correo no consta en el censo": "Zure helbidea ez dago bazkideen zerrendan",
+  "Has entrado con": "Honekin sartu zara:",
+  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "eta helbide hori ez dago klubeko bazkide baten ere fitxan. Hazkuntza Liburua barne erabilerarako da: zure kontua zerrendako fitxa bati lotu arte, itxita dago.",
+  "Dos motivos suele haber:": "Normalean bi arrazoi egoten dira:",
+  "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "Idazkaritzak beste helbide bat du zurea. Idatzi eta alda dezala, edo sartu harekin.",
+  "Todavía no eres socio del club.": "Oraindik ez zara klubeko bazkidea.",
+  "¿Cuál de estas fichas es la tuya?": "Fitxa hauetako zein da zurea?",
+  "En el censo hay varias fichas con tu mismo correo, que es lo normal en una familia. Elige la tuya: sólo se ata una vez, así que asegúrate.": "Zerrendan hainbat fitxa daude zure helbide berarekin, familia batean ohikoa dena. Aukeratu zurea: behin bakarrik lotzen da, beraz, ziurtatu.",
+  "Si ninguna es la tuya, escribe a la secretaría del club.": "Bat ere ez bada zurea, idatzi klubaren idazkaritzara.",
 };

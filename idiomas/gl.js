@@ -174,4 +174,15 @@ TEXTOS.gl = {
   "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "O texto completo: aptos de cría, figuras, idades, cruzamentos entre variedades e baremos.",
   "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "As probas esixidas e os seus resultados válidos: cadeiras, cóbados, LVT, xenética e ADN.",
   "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "O que a plataforma aplica sobre cada ficha, no seu texto orixinal. Para lelo ou levalo contigo.",
+
+  /* Cuando el correo no consta en el censo */
+  "Tu correo no consta en el censo": "O teu correo non consta no censo",
+  "Has entrado con": "Entraches con",
+  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "e ese correo non figura na ficha de ningún socio do club. O Libro de Cría é de uso interno: ata que a túa conta estea ligada a unha ficha do censo non se abre.",
+  "Dos motivos suele haber:": "Adoita haber dous motivos:",
+  "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "A secretaría ten outro correo teu. Escríbelle e cámbiao, ou entra con aquel.",
+  "Todavía no eres socio del club.": "Aínda non es socio do club.",
+  "¿Cuál de estas fichas es la tuya?": "Cal destas fichas é a túa?",
+  "En el censo hay varias fichas con tu mismo correo, que es lo normal en una familia. Elige la tuya: sólo se ata una vez, así que asegúrate.": "No censo hai varias fichas co teu mesmo correo, o normal nunha familia. Escolle a túa: só se liga unha vez, así que asegúrate.",
+  "Si ninguna es la tuya, escribe a la secretaría del club.": "Se ningunha é a túa, escribe á secretaría do club.",
 };

@@ -454,6 +454,20 @@ document.addEventListener("change", ev => {
   render();
 });
 
+/* --- elegir cuál de las fichas de la familia es la mía --- */
+document.addEventListener("click", async ev => {
+  const b = ev.target.closest("[data-vincular]");
+  if (!b) return;
+  b.disabled = true;
+  const { error } = await S.sb.rpc("vincular_a_mi_ficha", { p_socio: b.dataset.vincular });
+  if (error){ b.disabled = false; return avisarError(error); }
+  await SESION.refrescar();
+  await recargar();
+  toast("Ya estás en tu ficha del club");
+  location.hash = "#/bienvenida";
+  render();
+});
+
 /* --- pestañas de la pantalla de eventos --- */
 document.addEventListener("click", ev => {
   const b = ev.target.closest("[data-tabev]");

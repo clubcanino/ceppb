@@ -178,4 +178,15 @@ TEXTOS.en = {
   "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "The full text: breeding qualifications, the five categories, ages, inter-variety matings and scoring.",
   "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "The required tests and their valid results: hips, elbows, LVT, genetics and DNA.",
   "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "What the platform applies to every record, in its original wording. To read or to take with you.",
+
+  /* Cuando el correo no consta en el censo */
+  "Tu correo no consta en el censo": "Your email is not on the membership roll",
+  "Has entrado con": "You signed in as",
+  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "and that address is not on any member's record. The Studbook is for the club's own use: until your account is linked to a record on the roll, it stays closed.",
+  "Dos motivos suele haber:": "There are usually two reasons:",
+  "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "The club office has a different address for you. Write to them to change it, or sign in with that one.",
+  "Todavía no eres socio del club.": "You are not a member of the club yet.",
+  "¿Cuál de estas fichas es la tuya?": "Which of these records is yours?",
+  "En el censo hay varias fichas con tu mismo correo, que es lo normal en una familia. Elige la tuya: sólo se ata una vez, así que asegúrate.": "There are several records on the roll with your email, which is normal in a family. Choose yours: it is linked only once, so make sure.",
+  "Si ninguna es la tuya, escribe a la secretaría del club.": "If none of them is yours, write to the club office.",
 };

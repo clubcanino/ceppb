@@ -176,4 +176,15 @@ TEXTOS.va = {
   "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "El text complet: aptes de cria, figures, edats, encreuaments entre varietats i barems.",
   "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "Les proves exigides i els seus resultats vàlids: malucs, colzes, LVT, genètica i ADN.",
   "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "Allò que la plataforma aplica sobre cada fitxa, en el seu text original. Per a llegir-lo o endur-te'l.",
+
+  /* Cuando el correo no consta en el censo */
+  "Tu correo no consta en el censo": "El teu correu no consta en el cens",
+  "Has entrado con": "Has entrat amb",
+  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "i eixe correu no figura en la fitxa de cap soci del club. El Llibre de Cria és d'ús intern: fins que el teu compte no estiga lligat a una fitxa del cens no s'obri.",
+  "Dos motivos suele haber:": "Sol haver-hi dos motius:",
+  "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "La secretaria té un altre correu teu. Escriu-li i el canvia, o entra amb aquell.",
+  "Todavía no eres socio del club.": "Encara no eres soci del club.",
+  "¿Cuál de estas fichas es la tuya?": "Quina d'estes fitxes és la teua?",
+  "En el censo hay varias fichas con tu mismo correo, que es lo normal en una familia. Elige la tuya: sólo se ata una vez, así que asegúrate.": "En el cens hi ha diverses fitxes amb el teu mateix correu, cosa normal en una família. Tria la teua: només es lliga una vegada, així que assegura-te'n.",
+  "Si ninguna es la tuya, escribe a la secretaría del club.": "Si cap no és la teua, escriu a la secretaria del club.",
 };

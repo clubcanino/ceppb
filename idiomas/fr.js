@@ -178,4 +178,15 @@ TEXTOS.fr = {
   "El texto completo: aptos de cría, figuras, edades, cruces intervariedades y baremos.": "Le texte complet : aptitudes à l'élevage, catégories, âges, accouplements entre variétés et barèmes.",
   "Las pruebas exigidas y sus resultados válidos: caderas, codos, LVT, genética y ADN.": "Les tests exigés et leurs résultats valables : hanches, coudes, LVT, génétique et ADN.",
   "Lo que la plataforma aplica sobre cada ficha, en su texto original. Para leerlo o llevártelo.": "Ce que la plateforme applique à chaque fiche, dans son texte d'origine. À lire ou à emporter.",
+
+  /* Cuando el correo no consta en el censo */
+  "Tu correo no consta en el censo": "Votre adresse ne figure pas au fichier des membres",
+  "Has entrado con": "Vous vous êtes connecté avec",
+  "y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre.": "et cette adresse ne figure sur la fiche d'aucun membre du club. Le Livre d'Élevage est à usage interne : tant que votre compte n'est pas rattaché à une fiche du fichier, il reste fermé.",
+  "Dos motivos suele haber:": "Il y a généralement deux raisons :",
+  "La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél.": "Le secrétariat a une autre adresse pour vous. Écrivez-lui pour la changer, ou connectez-vous avec celle-là.",
+  "Todavía no eres socio del club.": "Vous n'êtes pas encore membre du club.",
+  "¿Cuál de estas fichas es la tuya?": "Laquelle de ces fiches est la vôtre ?",
+  "En el censo hay varias fichas con tu mismo correo, que es lo normal en una familia. Elige la tuya: sólo se ata una vez, así que asegúrate.": "Plusieurs fiches du fichier portent votre adresse, ce qui est normal dans une famille. Choisissez la vôtre : le rattachement ne se fait qu'une fois, alors soyez sûr.",
+  "Si ninguna es la tuya, escribe a la secretaría del club.": "Si aucune n'est la vôtre, écrivez au secrétariat du club.",
 };

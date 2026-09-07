@@ -1137,3 +1137,63 @@ test("la pantalla de altas dice de verdad quién ha entrado", () => {
   /* y saca a la luz las cuentas que no están atadas a ninguna ficha */
   assert.match(junta, /Cuentas sin ficha de socio/);
 });
+
+/* ============================================================
+   Sólo entra quien está en el censo, y entra en su ficha.
+
+   Antes bastaba con crearse una cuenta con cualquier correo: la
+   plataforma daba por socio a todo el que se autenticaba. Cuatro
+   personas del censo entraron sin quedar atadas a su propia ficha
+   porque nunca se había enviado una invitación.
+   ============================================================ */
+test("ser socio es tener ficha, no haberse registrado", () => {
+  const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
+  const mig = readFileSync(new URL("../db/migraciones/2026-09-07-solo-el-censo.sql", import.meta.url), "utf8");
+  assert.match(mig, /create or replace function es_socio\(\)[\s\S]*?select exists \(select 1 from socios where auth_user_id = auth\.uid\(\)\)/);
+  /* y de ahí cuelga lo que se ve: el libro es para socios */
+  assert.match(sql, /visibilidad = 'socios' and es_socio\(\)/);
+});
+
+test("la vinculación comprueba el correo, la confirmación y que nadie se adelantó", () => {
+  const mig = readFileSync(new URL("../db/migraciones/2026-09-07-solo-el-censo.sql", import.meta.url), "utf8");
+  const f = mig.slice(mig.indexOf("function vincular_a_mi_ficha"));
+  assert.match(f, /lower\(s\.email\) = lower\(u\.email\)/);
+  assert.match(f, /s\.auth_user_id is null/);
+  assert.match(f, /u\.email_confirmed_at is not null/);
+  assert.match(f, /Tu cuenta ya está atada a una ficha/);
+});
+
+test("una sola ficha se ata sola; varias, se preguntan", () => {
+  const ses = readFileSync(new URL("../js/sesion.js", import.meta.url), "utf8");
+  assert.match(ses, /if \(l\.length === 1\)/);
+  assert.match(ses, /else if \(l\.length > 1\)/);
+  assert.match(ses, /SESION\.fichasPosibles/);
+});
+
+test("quien no está en el censo no ve el libro", () => {
+  const ctx = montar();
+  vm.runInContext(`SESION.rol="sin-ficha"; SESION.esAdmin=false;
+    SESION.usuario={id:"u1", email:"dequien@ejemplo.test"}; SESION.socio=null;
+    SESION.fichasPosibles=[]; S.listo=true; S.error=null; pintarNav();`, ctx);
+  const html = vm.runInContext("String(V.muro(''))", ctx);
+  assert.match(html, /no consta en el censo/i);
+  assert.match(html, /dequien@ejemplo\.test/);
+  /* ni una sección del libro en su menú */
+  const nav = vm.runInContext('$("#nav").innerHTML', ctx);
+  for (const r of ["#/perros", "#/socios", "#/aptos", "#/cruce", "#/camadas", "#/eventos"])
+    assert.equal(nav.includes(`href="${r}"`), false, "le ofrece " + r);
+});
+
+test("a la familia se le pregunta cuál de las fichas es la suya", () => {
+  const ctx = montar();
+  vm.runInContext(`SESION.rol="sin-ficha"; SESION.esAdmin=false;
+    SESION.usuario={id:"u1", email:"familia@ejemplo.test"}; SESION.socio=null;
+    SESION.fichasPosibles=[{id:"s1",numero:336,nombre:"Ricardo Salazar"},
+                           {id:"s2",numero:382,nombre:"Núria García"}];
+    S.listo=true; S.error=null;`, ctx);
+  const html = vm.runInContext("String(V.muro(''))", ctx);
+  assert.match(html, /data-vincular="s1"/);
+  assert.match(html, /data-vincular="s2"/);
+  assert.match(html, /Ricardo Salazar/);
+  assert.match(html, /336/);
+});

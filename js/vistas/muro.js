@@ -12,6 +12,10 @@ V.muro = function(){
      esto y qué podrá hacer, y se le abre la puerta. */
   if (!SESION.usuario) return portadaPublica();
 
+  /* Y quien ha entrado con un correo que no consta en el censo
+     tampoco ve el libro: el libro es de los socios del club. */
+  if (SESION.rol === "sin-ficha") return sinFichaEnElCenso();
+
   const socios = C("socios");
   const perros = perrosVisibles();
   const res    = C("resultados");
@@ -244,4 +248,44 @@ function portadaPublica(){
       <a class="btn" href="${esc(CONFIG.WEB_ALTA)}" target="_blank" rel="noopener noreferrer">${esc(t("Hazte socio"))}</a>
     </div></div>
   </div>`;
+}
+
+/* ============================================================
+   Ha entrado, pero su correo no consta en el censo.
+
+   O no es socio del club, o secretaría tiene otro correo suyo. No
+   se le echa: se le explica y se le dan las dos salidas.
+   ============================================================ */
+function sinFichaEnElCenso(){
+  const varias = (SESION.fichasPosibles || []).length > 1;
+  const correo = (SESION.usuario && SESION.usuario.email) || "";
+
+  if (varias) return `
+    <div class="card" style="max-width:560px"><div class="card-h">
+      <h3>${esc(t("¿Cuál de estas fichas es la tuya?"))}</h3></div>
+      <div class="card-b">
+        <p class="dim" style="margin-bottom:14px">${esc(t("En el censo hay varias fichas con tu mismo correo, que es lo normal en una familia. Elige la tuya: sólo se ata una vez, así que asegúrate."))}</p>
+        ${SESION.fichasPosibles.map(f => `<div style="margin-bottom:8px">
+          <button class="btn" data-vincular="${esc(f.id)}">${esc(f.nombre)} · nº ${esc(f.numero)}</button>
+        </div>`).join("")}
+        <div class="mini" style="margin-top:12px">${esc(t("Si ninguna es la tuya, escribe a la secretaría del club."))}</div>
+      </div></div>`;
+
+  return `
+    <div class="card" style="max-width:560px"><div class="card-h">
+      <h3>${esc(t("Tu correo no consta en el censo"))}</h3></div>
+      <div class="card-b">
+        <div class="note warn" style="margin-bottom:14px">
+          ${esc(t("Has entrado con"))} <b>${esc(correo)}</b>, ${esc(t("y ese correo no figura en la ficha de ningún socio del club. El Libro de Cría es de uso interno: hasta que tu cuenta esté atada a una ficha del censo no se abre."))}
+        </div>
+        <p class="dim">${esc(t("Dos motivos suele haber:"))}</p>
+        <ul class="pasos-instalar">
+          <li>${esc(t("La secretaría tiene otro correo tuyo. Escríbele y lo cambia, o entra con aquél."))}</li>
+          <li>${esc(t("Todavía no eres socio del club."))}</li>
+        </ul>
+        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+          <a class="btn brand" href="${esc(CONFIG.WEB_ALTA)}" target="_blank" rel="noopener noreferrer">${esc(t("Hazte socio"))}</a>
+          <button class="btn" id="salir">${esc(t("Salir"))}</button>
+        </div>
+      </div></div>`;
 }

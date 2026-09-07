@@ -103,7 +103,31 @@ SESION.refrescar = async function(){
   /* deFila() lo deja en el mismo formato que el resto de la aplicación */
   SESION.socio = socio ? deFila(socio, "socios") : null;
 
-  SESION.rol = SESION.esAdmin ? "admin" : "socio";
+  /* Si el correo consta en el censo y esa ficha no tiene dueño, se
+     ata sola: es la misma garantía que daba la invitación —que la
+     persona controla ese buzón, y el buzón lo puso la secretaría—.
+     Cuando hay más de una ficha con el mismo correo, que son las
+     familias, no se adivina: se le pregunta cuál es la suya. */
+  SESION.fichasPosibles = [];
+  if (!SESION.socio){
+    const { data: fichas } = await SESION.sb.rpc("fichas_para_mi_correo");
+    const l = fichas || [];
+    if (l.length === 1){
+      const { error } = await SESION.sb.rpc("vincular_a_mi_ficha", { p_socio: l[0].socio_id });
+      if (!error){
+        const { data: socio } = await SESION.sb.from("socios")
+          .select("*").eq("auth_user_id", SESION.usuario.id).maybeSingle();
+        SESION.socio = socio ? deFila(socio, "socios") : null;
+      }
+    } else if (l.length > 1){
+      SESION.fichasPosibles = l.map(f => ({
+        id: f.socio_id, numero: f.numero, nombre: f.nombre_completo }));
+    }
+  }
+
+  /* Socio es quien tiene ficha en el censo. Quien entra con un correo
+     que no consta no es socio: no ve el libro. */
+  SESION.rol = SESION.esAdmin ? "admin" : (SESION.socio ? "socio" : "sin-ficha");
 
   /* Cada socio ve la plataforma en su idioma, esté donde esté */
   if (typeof ponerIdioma === "function") ponerIdioma(idiomaDe(SESION.socio));
