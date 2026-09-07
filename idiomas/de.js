@@ -211,4 +211,12 @@ TEXTOS.de = {
   "Desde la ficha de un socio o de un ejemplar puedes escribir a su propietario.": "Von der Karteikarte eines Mitglieds oder eines Hundes aus können Sie dem Eigentümer schreiben.",
   "Los socios se escriben aquí dentro, sin darse el correo. Si quieres darle el tuyo a alguien, se lo dices tú en el mensaje.": "Die Mitglieder schreiben sich hier, ohne E-Mail-Adressen auszutauschen. Wenn Sie jemandem Ihre geben wollen, sagen Sie es in der Nachricht.",
   "Nada con ese nombre": "Nichts unter diesem Namen",
+
+  /* Títulos, niveles y hermanos */
+  "Títulos y niveles": "Titel und Stufen",
+  "sin validar": "noch nicht bestätigt",
+  "No cuentan hasta que la junta los coteja": "Sie zählen nicht, bis der Vorstand sie geprüft hat",
+  "Distinciones en concurso": "Auszeichnungen auf Ausstellungen",
+  "Todavía no hay ninguno validado por la junta.": "Noch keiner vom Vorstand bestätigt.",
+  "Hermanos": "Geschwister",
 };

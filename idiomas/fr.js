@@ -211,4 +211,12 @@ TEXTOS.fr = {
   "Desde la ficha de un socio o de un ejemplar puedes escribir a su propietario.": "Depuis la fiche d'un membre ou d'un chien, vous pouvez écrire à son propriétaire.",
   "Los socios se escriben aquí dentro, sin darse el correo. Si quieres darle el tuyo a alguien, se lo dices tú en el mensaje.": "Les membres s'écrivent ici, sans échanger d'adresses. Si vous voulez donner la vôtre à quelqu'un, dites-le dans le message.",
   "Nada con ese nombre": "Rien à ce nom",
+
+  /* Títulos, niveles y hermanos */
+  "Títulos y niveles": "Titres et niveaux",
+  "sin validar": "en attente de validation",
+  "No cuentan hasta que la junta los coteja": "Ils ne comptent pas tant que le comité ne les a pas vérifiés",
+  "Distinciones en concurso": "Distinctions en exposition",
+  "Todavía no hay ninguno validado por la junta.": "Aucun validé par le comité pour le moment.",
+  "Hermanos": "Frères et sœurs",
 };

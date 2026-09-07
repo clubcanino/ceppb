@@ -96,7 +96,7 @@ V.perro = function(id){
   if(!perroVisible(p)) return `<div class="empty"><b>Ficha reservada</b>Su propietario no ha compartido este ejemplar.</div>`;
   const res = C("resultados"), rs = R.res(id, res, true), figs = R.figurasDe(p, res), aptos = figs.filter(f=>f.cumple);
   const puedo = SESION.esAdmin || esYo(p.propietarioId);
-  const tabs = [["resumen","Resumen"],["salud","Salud y genética"],["aptos","Aptos de cría"],["resultados","Resultados"],["pedigri","Pedigrí"],["progenie","Descendencia"],["galeria","Fotos y vídeos"]];
+  const tabs = [["resumen","Resumen"],["salud","Salud y genética"],["aptos","Aptos de cría"],["resultados","Resultados"],["pedigri","Pedigrí"],["familia","Hermanos"],["progenie","Descendencia"],["galeria","Fotos y vídeos"]];
   let cuerpo = "";
   if(tabPerro === "resumen"){
     const prop = byId(C("socios"), p.propietarioId), cria = byId(C("socios"), p.criadorId);
@@ -128,6 +128,7 @@ V.perro = function(id){
         <button class="btn brand" data-sol="autorizada|${esc(trasp.id)}">Autorizar traspaso</button>
         <button class="btn danger" data-sol="denegada|${esc(trasp.id)}">Denegar</button></div>`:""}</div>`:""}
     <div class="cols23"><div class="grid">
+      ${tarjetaTitulos(p, res)}
       <div class="card"><div class="card-h"><h3>Identificación</h3></div><div class="card-b"><dl class="kv">
         <dt>Nombre registrado</dt><dd>${esc(p.nombre)}${p.afijo?` <span class="dim">${esc(p.afijo)}</span>`:""}</dd>
         <dt>Afijo del criadero</dt><dd>${afijoChip(p)}</dd>
@@ -236,6 +237,40 @@ V.perro = function(id){
   if(tabPerro === "pedigri"){
     cuerpo = pedigriDe(p, puedo);
   }
+  if(tabPerro === "familia"){
+    ponerCenso(C("perros"));
+    const h = hermanosDe(id);
+    const padre = p.padreId ? byId(C("perros"), p.padreId) : null;
+    const madre = p.madreId ? byId(C("perros"), p.madreId) : null;
+
+    const bloque = (titulo, l, nota, chip) => `
+      <div class="card" style="margin-bottom:14px">
+        <div class="card-h"><h3>${esc(titulo)}</h3>
+          ${chip ? `<span class="chip">${esc(chip)}</span>` : ""}
+          <span class="spacer"></span><span class="hint">${l.length}</span></div>
+        <div class="card-b" style="padding:0">
+          ${l.length ? tablaPerrosMini(l.filter(perroVisible))
+            : `<div class="empty" style="padding:26px">${esc(nota)}</div>`}
+        </div></div>`;
+
+    cuerpo = (!padre && !madre)
+      ? `<div class="card"><div class="empty" style="padding:34px">
+          <b>Sin padre ni madre en el libro</b>
+          No se puede saber quiénes son sus hermanos hasta que se sepa de quién es hijo.
+          ${puedo ? `<div style="margin-top:14px"><button class="btn brand" data-form="perro|${esc(p.id)}">Completar su pedigrí</button></div>` : ""}
+        </div></div>`
+      : `<div class="note" style="margin-bottom:14px">
+          Hermanos <b>completos</b> son los del mismo padre y la misma madre: comparten la mitad de su herencia.
+          Los <b>medio hermanos</b>, la cuarta parte. Una línea se lee mejor en el conjunto que en un solo ejemplar.
+        </div>
+        ${bloque("Hermanos completos", h.completos,
+            "Ninguno registrado en el libro", "Mismo padre y madre")}
+        ${padre ? bloque(`Medio hermanos por ${esc(padre.nombre)}`, h.porPadre,
+            "Ninguno registrado en el libro", "Por vía paterna") : ""}
+        ${madre ? bloque(`Medio hermanos por ${esc(madre.nombre)}`, h.porMadre,
+            "Ninguno registrado en el libro", "Por vía materna") : ""}`;
+  }
+
   if(tabPerro === "progenie"){
     const hijos = C("perros").filter(x => x.padreId === id || x.madreId === id);
     const rsup = R.reproductorSuperior(p, C("perros"), res);
@@ -399,4 +434,64 @@ function botonEscribirAlPropietario(p){
   if (!SESION.socio || !p.propietarioId || esYo(p.propietarioId)) return "";
   return `<button class="btn sm" data-escribir="${esc(p.propietarioId)}|${esc(p.id)}">
     ${esc(t("Escribir a su propietario"))}</button>`;
+}
+
+/* ============================================================
+   El palmarés del ejemplar, de un vistazo.
+
+   Los niveles de adiestramiento agrupados por disciplina y las
+   distinciones de belleza aparte, con cuántas veces se han
+   conseguido. Lo que la junta no ha validado se dice, porque
+   hasta entonces no cuenta para nada.
+   ============================================================ */
+function tarjetaTitulos(p, res){
+  const mios = res.filter(r => r.perroId === p.id);
+  const val = mios.filter(r => r.validado === "validado");
+  const pend = mios.length - val.length;
+
+  /* Los títulos de trabajo, cada uno con las veces que lo sacó. */
+  const titulos = {};
+  val.filter(r => r.tipo === "trabajo" && r.titulo)
+     .forEach(r => titulos[r.titulo] = (titulos[r.titulo] || 0) + 1);
+
+  /* Y a qué disciplina pertenece cada uno, para agruparlos. */
+  const grupoDe = t => {
+    const limpio = String(t).replace(/\s+/g, "").toUpperCase();
+    const g = NIVELES_ADIESTRAMIENTO.find(x =>
+      x.t.some(y => String(y).replace(/\s+/g, "").toUpperCase() === limpio ||
+                    String(y).split(" ·")[0].replace(/\s+/g, "").toUpperCase() === limpio));
+    return g ? g.d : "Otros";
+  };
+  const porDisciplina = {};
+  Object.keys(titulos).forEach(t => {
+    (porDisciplina[grupoDe(t)] = porDisciplina[grupoDe(t)] || []).push(t);
+  });
+
+  /* Las distinciones de belleza, contadas. */
+  const dist = {};
+  val.filter(r => r.distincion).forEach(r => dist[r.distincion] = (dist[r.distincion] || 0) + 1);
+
+  const hayTitulos = Object.keys(titulos).length, hayDist = Object.keys(dist).length;
+  if (!hayTitulos && !hayDist && !pend) return "";
+
+  return `<div class="card"><div class="card-h">
+      <h3>${esc(t("Títulos y niveles"))}</h3>
+      <span class="spacer"></span>
+      ${pend ? `<span class="chip warn" title="${esc(t("No cuentan hasta que la junta los coteja"))}">${pend} ${esc(t("sin validar"))}</span>` : ""}
+    </div><div class="card-b">
+      ${hayTitulos ? Object.entries(porDisciplina).map(([d, l]) => `
+        <div style="margin-bottom:11px">
+          <div class="eyebrow" style="margin-bottom:5px">${esc(d)}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">${l.map(x =>
+            `<span class="chip ok">${esc(x)}${titulos[x] > 1 ? ` <b>×${titulos[x]}</b>` : ""}</span>`).join("")}</div>
+        </div>`).join("") : ""}
+
+      ${hayDist ? `<div style="${hayTitulos ? "margin-top:14px;padding-top:12px;border-top:1px solid var(--line)" : ""}">
+        <div class="eyebrow" style="margin-bottom:5px">${esc(t("Distinciones en concurso"))}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${Object.entries(dist).map(([d, n]) =>
+          `<span class="chip">${esc(d)}${n > 1 ? ` <b>×${n}</b>` : ""}</span>`).join("")}</div>
+      </div>` : ""}
+
+      ${!hayTitulos && !hayDist ? `<div class="mini">${esc(t("Todavía no hay ninguno validado por la junta."))}</div>` : ""}
+    </div></div>`;
 }

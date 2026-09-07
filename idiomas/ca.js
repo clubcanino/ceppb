@@ -206,4 +206,12 @@ TEXTOS.ca = {
   "Desde la ficha de un socio o de un ejemplar puedes escribir a su propietario.": "Des de la fitxa d'un soci o d'un exemplar pots escriure al seu propietari.",
   "Los socios se escriben aquí dentro, sin darse el correo. Si quieres darle el tuyo a alguien, se lo dices tú en el mensaje.": "Els socis s'escriuen aquí dins, sense donar-se el correu. Si vols donar el teu a algú, digue-l'hi al missatge.",
   "Nada con ese nombre": "Res amb aquest nom",
+
+  /* Títulos, niveles y hermanos */
+  "Títulos y niveles": "Títols i nivells",
+  "sin validar": "sense validar",
+  "No cuentan hasta que la junta los coteja": "No compten fins que la junta els coteja",
+  "Distinciones en concurso": "Distincions en concurs",
+  "Todavía no hay ninguno validado por la junta.": "Encara no n'hi ha cap validat per la junta.",
+  "Hermanos": "Germans",
 };

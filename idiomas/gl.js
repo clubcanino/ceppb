@@ -207,4 +207,12 @@ TEXTOS.gl = {
   "Desde la ficha de un socio o de un ejemplar puedes escribir a su propietario.": "Desde a ficha dun socio ou dun exemplar podes escribir ao seu propietario.",
   "Los socios se escriben aquí dentro, sin darse el correo. Si quieres darle el tuyo a alguien, se lo dices tú en el mensaje.": "Os socios escríbense aquí dentro, sen darse o correo. Se queres darlle o teu a alguén, dislle na mensaxe.",
   "Nada con ese nombre": "Nada con ese nome",
+
+  /* Títulos, niveles y hermanos */
+  "Títulos y niveles": "Títulos e niveis",
+  "sin validar": "sen validar",
+  "No cuentan hasta que la junta los coteja": "Non contan ata que a xunta os coteja",
+  "Distinciones en concurso": "Distincións en concurso",
+  "Todavía no hay ninguno validado por la junta.": "Aínda non hai ningún validado pola xunta.",
+  "Hermanos": "Irmáns",
 };

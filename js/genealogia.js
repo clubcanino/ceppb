@@ -220,3 +220,57 @@ function juzgarConsanguinidad(f){
   return {nivel:"block", t:"Consanguinidad muy alta",
           d:"Del orden de padres con hijos o hermanos entre sí. Desaconsejado: sube la carga de enfermedades recesivas"};
 }
+
+/* ============================================================
+   Hermanos.
+
+   Completos: mismo padre Y misma madre. Comparten la mitad de su
+   herencia, igual que padre e hijo.
+
+   Medio hermanos: uno de los dos progenitores. Comparten la
+   cuarta parte. Un criador los mira porque dicen mucho más de una
+   línea que un solo ejemplar: si tres hermanos tienen las caderas
+   mal, el problema no es del perro, es del cruce.
+
+   Sin padre ni madre conocidos no hay hermandad que valga: dos
+   perros sin pedigrí no son hermanos por no tenerlo.
+   ============================================================ */
+function hermanosDe(perroId){
+  const yo = perroDe(perroId);
+  const vacio = { completos: [], porPadre: [], porMadre: [] };
+  if (!yo || (!yo.padreId && !yo.madreId)) return vacio;
+
+  const completos = [], porPadre = [], porMadre = [];
+  for (const otro of (CENSO ? CENSO.values() : [])){
+    if (!otro || otro.id === perroId) continue;
+    const mismoPadre = !!yo.padreId && otro.padreId === yo.padreId;
+    const mismaMadre = !!yo.madreId && otro.madreId === yo.madreId;
+    if (mismoPadre && mismaMadre) completos.push(otro);
+    else if (mismoPadre) porPadre.push(otro);
+    else if (mismaMadre) porMadre.push(otro);
+  }
+
+  /* Los de la misma camada juntos: por fecha de nacimiento y, a
+     igualdad, por nombre. */
+  const ordenar = l => l.sort((a, b) =>
+    String(a.fechaNacimiento || "9999").localeCompare(String(b.fechaNacimiento || "9999")) ||
+    String(a.nombre).localeCompare(String(b.nombre), "es"));
+
+  return { completos: ordenar(completos),
+           porPadre: ordenar(porPadre),
+           porMadre: ordenar(porMadre) };
+}
+
+/* Cuánta herencia comparten dos perros por ser hermanos. No es el
+   parentesco completo —eso lo calcula parentesco()—, sino el grado
+   de hermandad, que es lo que se nombra al hablar de una línea. */
+function gradoDeHermandad(aId, bId){
+  const a = perroDe(aId), b = perroDe(bId);
+  if (!a || !b || a.id === b.id) return null;
+  const mismoPadre = !!a.padreId && a.padreId === b.padreId;
+  const mismaMadre = !!a.madreId && a.madreId === b.madreId;
+  if (mismoPadre && mismaMadre) return "completos";
+  if (mismoPadre) return "porPadre";
+  if (mismaMadre) return "porMadre";
+  return null;
+}

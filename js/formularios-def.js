@@ -207,7 +207,10 @@ const FORMS = {
       {t:"Resultado — carácter / trabajo", f:[
         {k:"modalidad", l:"Prueba de carácter", tipo:"select", op:[["","—"],["TS","Test simple (sociabilidad + estrés acústico)"],["TC","Test completo (+ coraje)"]], wide:true},
         {k:"resultado", l:"Calificación", tipo:"select", op:[["","—"],["APTO","APTO"],["NO APTO","NO APTO"]]},
-        {k:"titulo", l:"Título de trabajo", tipo:"select", op:TIT_TRABAJO},
+        {k:"titulo", l:"Título o nivel de adiestramiento", tipo:"select", wide:true,
+         op:[["", "— ninguno —"]].concat(
+           NIVELES_ADIESTRAMIENTO.flatMap(g => g.t.map(x => [x, g.d + " · " + x]))),
+         h:"IGP, mondioring, agility, obediencia, rastro, salvamento, pastoreo, carácter…"},
         {k:"puntos", l:"Puntos", tipo:"number", v:"", h:"Sobre 300 en IGP"},
         {k:"guia", l:"Guía", v:"", h:"Quien condujo al perro, si no fue el propietario"},
       ]},

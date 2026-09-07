@@ -206,4 +206,12 @@ TEXTOS.eu = {
   "Desde la ficha de un socio o de un ejemplar puedes escribir a su propietario.": "Bazkide baten edo ale baten fitxatik bere jabeari idatz diezaiokezu.",
   "Los socios se escriben aquí dentro, sin darse el correo. Si quieres darle el tuyo a alguien, se lo dices tú en el mensaje.": "Bazkideek hemen barruan idazten diote elkarri, helbiderik eman gabe. Norbaiti zurea eman nahi badiozu, mezuan esan.",
   "Nada con ese nombre": "Ezer ez izen horrekin",
+
+  /* Títulos, niveles y hermanos */
+  "Títulos y niveles": "Tituluak eta mailak",
+  "sin validar": "balioztatu gabe",
+  "No cuentan hasta que la junta los coteja": "Ez dute balio zuzendaritzak egiaztatu arte",
+  "Distinciones en concurso": "Erakusketetako sariak",
+  "Todavía no hay ninguno validado por la junta.": "Oraindik ez dago zuzendaritzak balioztatutakorik.",
+  "Hermanos": "Anai-arrebak",
 };

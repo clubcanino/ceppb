@@ -16,8 +16,73 @@ const ED_OK = ["0","1"], ED_TODOS = ["0","1","2","3"];
 const EST_GEN = ["", "libre", "portador", "afectado"];
 const CALIF = ["EXC","MB","B","SUF","NR","DESC"];
 const CAL_RANK = {EXC:4, MB:3, B:2, SUF:1, NR:0, DESC:0};
-const DISTINCIONES = ["","CAC","CACIB","RCAC","RCACIB","CCPB","RCCPB","Rappel CAC","BOB"];
-const TIT_TRABAJO = ["","IGP1","IGP2","IGP3","IGP-FH","MR1","MR2","MR3"];
+/* ============================================================
+   Los certificados de la FCI, por si sirve de recordatorio:
+
+   · CAC y CACIB son de belleza; el internacional es el que lleva
+     la I. CACT y CACIT, de trabajo. Cada disciplina tiene el suyo:
+     agility CACIAG, obediencia CACIOB.
+   · La «R» delante es la reserva: quien lo tendría si el primero
+     no pudiera acreditarlo.
+   · CCPB y RCCPB son del propio CEPPB (Cap. 7).
+
+   Sólo puntúan en el baremo del club los que están en
+   R.puntosResultado; el resto se guardan porque forman parte del
+   palmarés del ejemplar y se imprimen en su certificado.
+   ============================================================ */
+const DISTINCIONES = ["",
+  /* belleza, nacional e internacional */
+  "CAC", "RCAC", "CACIB", "RCACIB", "Rappel CAC",
+  /* belleza, del club */
+  "CCPB", "RCCPB",
+  /* certificados de clase */
+  "CCJ", "RCCJ", "CCV", "RCCV",
+  /* trabajo */
+  "CACT", "RCACT", "CACIT", "RCACIT",
+  "CACIAG", "RCACIAG", "CACIOB", "RCACIOB",
+  /* mejores del día */
+  "BOB", "BOS", "BOG", "BIS", "Mejor Joven", "Mejor Cachorro",
+  "Mejor Muy Cachorro", "Mejor Veterano",
+];
+
+/* ============================================================
+   Niveles de adiestramiento, por disciplina.
+
+   Lo que de verdad se ve en las fichas de los perros del club
+   —264 consultadas en working-dog— más lo que reconoce la FCI.
+   Los nombres antiguos se conservan porque están en los papeles:
+   IPO fue IGP hasta 2019, y quien lo tiene lo tiene con ese
+   nombre.
+   ============================================================ */
+const NIVELES_ADIESTRAMIENTO = [
+  {d:"IGP · trabajo", t:["BH-VT","IBGH 1","IBGH 2","IBGH 3",
+      "IGP-V","IGP 1","IGP 2","IGP 3",
+      "IPO 1","IPO 2","IPO 3",
+      "UPr 1","UPr 2","UPr 3","FPr 1","FPr 2","FPr 3","SPr 1","SPr 2","SPr 3",
+      "AD · resistencia"]},
+  {d:"Rastro", t:["FH 1","FH 2","IFH-V","IFH 1","IFH 2","IGP-FH","IPO-FH",
+      "StPr 1","StPr 2","StPr 3"]},
+  {d:"Mondioring", t:["Brevet","MR 1","MR 2","MR 3"]},
+  {d:"Ring francés", t:["CSAU","Brevet Ring","Ring 1","Ring 2","Ring 3"]},
+  {d:"Campagne", t:["Brevet Campagne","Campagne 1","Campagne 2","Campagne 3"]},
+  {d:"Obediencia FCI", t:["Clase Iniciación","Clase 1","Clase 2","Clase 3","Clase Internacional"]},
+  {d:"Agility FCI", t:["Grado 1","Grado 2","Grado 3","Jumping","Agility Open"]},
+  {d:"Salvamento · IRO/FCI-RH", t:["RH-E · iniciación",
+      "RH-F A","RH-F B","RH-T A","RH-T B","RH-FL A","RH-FL B","RH-W A","RH-W B","RH-L A","RH-L B"]},
+  {d:"Pastoreo", t:["NHAT · aptitud natural","HWT · test de aptitud","IHT 1","IHT 2","IHT 3"]},
+  {d:"Detección y servicio", t:["Perro de detección","Perro policía","Perro de asistencia",
+      "Perro de terapia","Perro sanitario"]},
+  {d:"Carácter y sociabilidad", t:["TAN · aptitudes naturales","Test social",
+      "ZTP · prueba de aptitud","MH · descripción de carácter",
+      "TS · test simple CEPPB","TC · test completo CEPPB"]},
+];
+
+/* En plano y sin repetir, para los desplegables. Los del reglamento
+   primero: son los que conceden aptos de cría, y hay que poder
+   elegirlos con el nombre exacto que el motor reconoce. */
+const TIT_TRABAJO = [""].concat(
+  [...new Set(["IGP1","IGP2","IGP3","IGP-FH","MR1","MR2","MR3"]
+    .concat(NIVELES_ADIESTRAMIENTO.flatMap(g => g.t)))]);
 const DISCIPLINAS = ["IGP","Mondioring","Agility","Obediencia","Pastoreo","Mushing","Salvamento y rescate","Búsqueda y detección","Canicross","Belleza","Perro de asistencia y terapia"];
 /* Figuras del club reconocidas en el Cap. 5 del reglamento */
 const ROLES_CLUB = ["Junta Directiva","Comisión de Cría","Delegación de Trabajo","Delegado de zona",

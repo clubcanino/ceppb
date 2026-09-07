@@ -211,4 +211,12 @@ TEXTOS.en = {
   "Desde la ficha de un socio o de un ejemplar puedes escribir a su propietario.": "From a member's profile or a dog's record you can message the owner.",
   "Los socios se escriben aquí dentro, sin darse el correo. Si quieres darle el tuyo a alguien, se lo dices tú en el mensaje.": "Members write to each other in here, without exchanging email addresses. If you want to give someone yours, say so in the message.",
   "Nada con ese nombre": "Nothing by that name",
+
+  /* Títulos, niveles y hermanos */
+  "Títulos y niveles": "Titles and levels",
+  "sin validar": "awaiting validation",
+  "No cuentan hasta que la junta los coteja": "They do not count until the committee checks them",
+  "Distinciones en concurso": "Show awards",
+  "Todavía no hay ninguno validado por la junta.": "None validated by the committee yet.",
+  "Hermanos": "Siblings",
 };
