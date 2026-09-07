@@ -346,7 +346,9 @@ begin
       propietario_id = new.a_socio_id,
       historial_titularidad = historial_titularidad || jsonb_build_object(
         'de', old.de_socio_id, 'a', new.a_socio_id, 'tipo', new.tipo,
-        'fecha', coalesce(new.fecha_efecto, current_date), 'documento', new.documento)
+        'fecha', coalesce(new.fecha_efecto, current_date),
+        'documento', new.documento,
+        'resolucion', new.resolucion)
     where id = new.perro_id;
   end if;
   return new;
@@ -473,6 +475,13 @@ create policy solicitudes_alta on solicitudes for insert with check (
   es_admin() or solicitante_id = mi_socio_id() or criador_id = mi_socio_id());
 drop policy if exists solicitudes_resolucion on solicitudes;
 create policy solicitudes_resolucion on solicitudes for update using (es_admin());
+/* Un expediente abierto por error tiene que poder retirarse. Denegarlo
+   no vale: dejaría en la ficha del perro constancia de una reclamación
+   que nunca debió existir. Sólo la junta, y sólo mientras esté
+   pendiente: lo ya resuelto es el registro de lo que pasó y se queda. */
+drop policy if exists solicitudes_borrado on solicitudes;
+create policy solicitudes_borrado on solicitudes for delete
+  using (es_admin() and estado = 'pendiente');
 
 -- MEDIA: sigue la visibilidad del ejemplar
 drop policy if exists media_lectura on media;

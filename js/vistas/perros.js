@@ -111,9 +111,10 @@ V.perro = function(id){
       ${esc(byId(C("socios"),recl.aSocioId)?.nombreCompleto||"Un socio")} dice que este ejemplar es suyo, el ${fmtF(recl.fecha)}${recl.documento?` · ${esc(recl.documento)}`:""}.
       ${recl.deSocioId?"La ficha sigue a nombre de su titular actual hasta que la junta resuelva.":"La ficha no cambia de manos hasta que la junta resuelva."}
       ${recl.motivo?`<div class="mini" style="margin-top:8px">${esc(recl.motivo)}</div>`:""}
-      ${SESION.esAdmin?`<div style="margin-top:10px;display:flex;gap:8px">
+      ${SESION.esAdmin?`<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn brand" data-sol="autorizada|${esc(recl.id)}">Reconocer la titularidad</button>
-        <button class="btn danger" data-sol="denegada|${esc(recl.id)}">Denegar</button></div>`:""}</div>`:""}
+        <button class="btn danger" data-sol="denegada|${esc(recl.id)}">Denegar</button>
+        <button class="btn sm" data-retirar="${esc(recl.id)}">Retirar por error</button></div>`:""}</div>`:""}
     ${puedoReclamar?`<div class="note" style="margin-bottom:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
       <div style="flex:1;min-width:240px">${p.propietarioId
         ? "Si crees que esta ficha debería estar a tu nombre, dilo y la junta lo comprobará con su titular actual."

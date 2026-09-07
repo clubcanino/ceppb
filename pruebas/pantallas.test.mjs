@@ -1036,3 +1036,24 @@ test("los reglamentos se pueden descargar desde la plataforma", () => {
   assert.match(bienvenida, /download/);
   assert.match(bienvenida, /target="_blank" rel="noopener noreferrer"/);
 });
+
+test("un expediente abierto por error se puede retirar; uno resuelto no", () => {
+  const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
+  assert.match(sql, /create policy solicitudes_borrado on solicitudes for delete\s*\n\s*using \(es_admin\(\) and estado = 'pendiente'\)/);
+  /* y sólo la junta tiene el botón */
+  const perros = readFileSync(new URL("../js/vistas/perros.js", import.meta.url), "utf8");
+  const i = perros.indexOf('data-retirar=');
+  assert.ok(i > 0, "falta el botón de retirar");
+  assert.ok(perros.slice(0, i).lastIndexOf("SESION.esAdmin") >
+            perros.slice(0, i).lastIndexOf("</div>"), "el botón debe ir dentro del bloque de la junta");
+  /* y avisa de que denegar es lo normal */
+  const ev = readFileSync(new URL("../js/eventos.js", import.meta.url), "utf8");
+  assert.match(ev, /deniégala/);
+});
+
+test("la resolución de la junta queda escrita en la ficha del perro", () => {
+  const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
+  assert.match(sql, /'resolucion', new\.resolucion/);
+  assert.match(sql, /'documento', new\.documento/);
+  assert.match(sql, /'tipo', new\.tipo/);
+});

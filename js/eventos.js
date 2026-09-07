@@ -102,6 +102,19 @@ document.addEventListener("change", async ev => {
 });
 
 document.addEventListener("click", async ev => {
+  /* Retirar un expediente abierto por error. Denegarlo dejaría en la
+     ficha del perro constancia de una reclamación que nunca debió
+     existir; esto lo quita de en medio sin dejar rastro. */
+  const rt = ev.target.closest("[data-retirar]");
+  if(rt){
+    if(!confirm("¿Retirar este expediente? Se borra sin dejar constancia.\n\nHazlo sólo si se abrió por error. Si la reclamación existió y no procede, deniégala: así queda registrada la resolución.")) return;
+    const { error } = await S.sb.from("solicitudes").delete().eq("id", rt.dataset.retirar);
+    if(error) return avisarError(error);
+    await recargar();
+    toast("Expediente retirado");
+    render(); return;
+  }
+
   const sb = ev.target.closest("[data-sol]");
   if(sb){
     const [estado, id] = sb.dataset.sol.split("|");

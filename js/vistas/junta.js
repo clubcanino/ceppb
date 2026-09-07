@@ -91,7 +91,8 @@ V.validar = function(){
                 <div class="mini">${esc(x.documento||"")}${x.motivo?` · ${esc(String(x.motivo).slice(0,90))}`:""}</div></td>
               <td style="text-align:right;white-space:nowrap">
                 <button class="btn sm" data-sol="autorizada|${esc(x.id)}">Reconocer</button>
-                <button class="btn sm danger" data-sol="denegada|${esc(x.id)}">✕</button></td></tr>`;}).join("")}</table>`
+                <button class="btn sm danger" data-sol="denegada|${esc(x.id)}">✕</button>
+                <button class="btn sm" data-retirar="${esc(x.id)}" title="Se abrió por error: se borra sin dejar constancia">⌫</button></td></tr>`;}).join("")}</table>`
               : `<div class="empty" style="padding:34px">Sin reclamaciones pendientes</div>`;})()}
         </div></div>
       <div class="card"><div class="card-h"><h3>Cambios de titularidad</h3><span class="hint">${C("solicitudes").filter(x=>x.tipo==="traspaso"&&x.estado==="pendiente").length} por autorizar</span></div>
