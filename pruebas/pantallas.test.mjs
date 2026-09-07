@@ -12,7 +12,7 @@ import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
 const ARCHIVOS = [
-  "js/config.js", "js/util.js", "js/idiomas.js", "idiomas/en.js", "idiomas/fr.js", "idiomas/de.js", "js/reglamento.js", "js/genealogia.js", "js/privacidad.js",
+  "js/config.js", "js/util.js", "js/idiomas.js", "idiomas/ca.js", "idiomas/va.js", "idiomas/gl.js", "idiomas/eu.js", "idiomas/en.js", "idiomas/fr.js", "idiomas/de.js", "js/reglamento.js", "js/genealogia.js", "js/privacidad.js",
   "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js", "js/media.js", "js/exportar.js", "js/directo.js",
   "js/formularios.js", "js/formularios-def.js",
   "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
@@ -471,9 +471,13 @@ test("la web trae todos los perros, no solo los mil primeros", () => {
 /* ============================================================
    Idiomas
    ============================================================ */
-test("cuatro idiomas: castellano, inglés, francés y alemán", () => {
+/* Todas las que no son el castellano: el castellano es la clave, no
+   una traducción. */
+const OTRAS_LENGUAS = ["ca", "va", "gl", "eu", "en", "fr", "de"];
+
+test("ocho idiomas: castellano, las cuatro cooficiales y las tres extranjeras", () => {
   const cs = JSON.parse(vm.runInContext('JSON.stringify(IDIOMAS.map(i => i.c))', ctx));
-  assert.equal(cs.join(","), "es,en,fr,de");
+  assert.equal(cs.join(","), "es,ca,va,gl,eu,en,fr,de");
 });
 
 test("lo que no está traducido sale en castellano, nunca en blanco", () => {
@@ -486,7 +490,7 @@ test("lo que no está traducido sale en castellano, nunca en blanco", () => {
 });
 
 test("los términos del reglamento no se traducen", () => {
-  for (const idioma of ["en", "fr", "de"]){
+  for (const idioma of OTRAS_LENGUAS){
     const tabla = JSON.parse(vm.runInContext(`JSON.stringify(TEXTOS.${idioma})`, ctx));
     const traducidos = Object.keys(tabla);
     for (const termino of ["ACE", "ACES", "ACU", "ACUS", "ACSS", "Anexo A",
@@ -497,9 +501,9 @@ test("los términos del reglamento no se traducen", () => {
   }
 });
 
-test("las tres lenguas traducen lo mismo, sin huecos entre ellas", () => {
+test("todas las lenguas traducen lo mismo, sin huecos entre ellas", () => {
   const en = Object.keys(JSON.parse(vm.runInContext('JSON.stringify(TEXTOS.en)', ctx)));
-  for (const idioma of ["fr", "de"]){
+  for (const idioma of OTRAS_LENGUAS.filter(l => l !== "en")){
     const otro = Object.keys(JSON.parse(vm.runInContext(`JSON.stringify(TEXTOS.${idioma})`, ctx)));
     const faltan = en.filter(k => !otro.includes(k));
     assert.equal(faltan.length, 0,
@@ -513,8 +517,24 @@ test("ninguna traducción se ha quedado igual que el castellano por descuido", (
     fr: ["Pedigree", "Public", "Privé", "Photo", "Invitations", "Administration",
          "La plateforme", "Actualités"],
     de: ["Foto", "Privat"],
+    /* Palabras que en catalán, valenciano, gallego o euskera se
+       escriben igual que en castellano. No están sin traducir: es que
+       coinciden. */
+    ca: ["La plataforma", "Socios", "Pedigrí", "Tema", "Foto", "Privat",
+         "Correu", "Idioma", "Palmarés", "Junta directiva", "Visitant"],
+    va: ["La plataforma", "Socios", "Pedigrí", "Tema", "Foto", "Privat",
+         "Correu", "Idioma", "Palmarés", "Junta directiva", "Visitant"],
+    gl: ["Cría", "Aptos de cría", "Socios", "Camadas", "Eventos", "Pedigrí",
+         "Resultados", "Administración", "Diagnóstico", "Macho", "Socio",
+         "Visitante", "Cancelar", "Editar", "Borrar", "Publicar", "Entrar",
+         "Tema", "Público", "Privado", "Correo", "Foto", "Libro de Cría",
+         "Guía rápida", "Idioma", "Palmarés", "Detalles prácticos",
+         "Acceso de socios", "EN DIRECTO", "Pedigrí completo",
+         "aplicado ficha por ficha", "Vídeos por publicar", "Vinculación de altas",
+         "Administradores", "Descendencia", "Validado", "Completo"],
+    eu: ["Palmaresa"],
   };
-  for (const idioma of ["en", "fr", "de"]){
+  for (const idioma of OTRAS_LENGUAS){
     const tabla = JSON.parse(vm.runInContext(`JSON.stringify(TEXTOS.${idioma})`, ctx));
     const sospechosos = Object.entries(tabla)
       .filter(([es, tr]) => es === tr)

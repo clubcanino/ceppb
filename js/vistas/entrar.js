@@ -21,7 +21,7 @@ function formContrasena(){
   const invitacion = hayInvitacionGuardada();
   return `<div class="card" style="max-width:460px"><div class="card-b">
     ${invitacion ? `<div class="note ok" style="margin-bottom:14px">
-      Tienes una invitación de secretaría preparada. Entra por
+      Tienes una invitación del club preparada. Entra por
       <b>«Es mi primera vez»</b> para vincular tu cuenta y elegir contraseña.</div>` : ""}
     <h3>Acceso de socios</h3>
     <div class="f wide" style="margin:14px 0 10px">
@@ -52,19 +52,39 @@ function formOlvidada(){
              placeholder="nombre@ejemplo.com" value="${esc(modoEntrar.correo)}">
     </div>
     <button class="btn brand" id="pedir-enlace">Enviarme el enlace</button>
-    <div style="margin-top:18px"><a class="linkish" id="ir-clave">Volver</a></div>
+    <div class="note warn" style="margin-top:16px">El correo puede caerte en
+    <b>Spam</b> o <b>Correo no deseado</b>. Míralo ahí antes de volver a pedirlo:
+    busca <b>CEPPB</b>.</div>
+    <div style="margin-top:14px"><a class="linkish" id="ir-clave">Volver</a></div>
     <p class="dim" style="margin-top:16px">Si el club no tiene tu correo —hay 18 socios en ese
     caso— escribe a secretaría: reclamarás tu ficha a mano con tu número de socio, DNI y teléfono.</p>
   </div></div>`;
 }
 
+/* El aviso del correo no deseado va en grande y con instrucciones,
+   no como una coletilla al final: es la razón número uno por la que un
+   socio se queda fuera creyendo que el enlace no le ha llegado. */
+function avisoSpam(){
+  return `<div class="note warn">
+    <b>Si no lo ves en dos minutos, mira en Spam o Correo no deseado.</b>
+    Es lo que pasa la mayoría de las veces. Busca <b>CEPPB</b> en el buscador de tu correo:
+    todos los mensajes del club lo llevan en el asunto.
+    <div style="margin-top:8px">Cuando lo encuentres ahí, marca
+    <b>«No es spam»</b> y añade el remitente a tus contactos. Así los siguientes
+    llegarán a la bandeja de entrada.</div>
+  </div>`;
+}
+
 function avisoCorreoEnviado(){
-  return `<div class="card" style="max-width:460px"><div class="card-b">
+  return `<div class="card" style="max-width:520px"><div class="card-b">
     <div class="note ok" style="margin-bottom:14px">Enlace enviado</div>
     <h3>Mira tu correo</h3>
-    <p>Hemos enviado un enlace a <b>${esc(modoEntrar.correo)}</b>. Ábrelo desde este mismo
-    dispositivo. Revisa el correo no deseado si tarda.</p>
-    <button class="btn" id="ir-clave">Volver</button>
+    <p style="margin-bottom:12px">Hemos enviado un enlace a <b>${esc(modoEntrar.correo)}</b>.
+    Ábrelo desde este mismo dispositivo y desde este mismo navegador.</p>
+    ${avisoSpam()}
+    <p class="dim" style="margin-top:12px">El enlace sirve una sola vez y caduca en una hora.
+    Si caduca, vuelve aquí y pide otro.</p>
+    <button class="btn" id="ir-clave" style="margin-top:14px">Volver</button>
   </div></div>`;
 }
 

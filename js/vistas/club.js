@@ -109,6 +109,13 @@ V.invitaciones = function(){
     enviada:`<span class="chip warn">Invitada ${fmtF((s.invitacion||{}).fecha)}</span>`,
     aceptada:`<span class="chip ok">Perfil reclamado</span>`})[est(s)];
   return `<div class="note" style="margin-bottom:16px">Cada invitación lleva un <b>enlace personal de un solo uso</b>: es lo que ata la cuenta al número de socio y evita que nadie reclame un perfil ajeno. Envíalas de una en una mientras pruebas; el estado de cada una queda registrado aquí.</div>
+    <div class="note warn" style="margin-bottom:16px"><b>Advierte a los socios de que miren en Spam.</b>
+    Un correo automático que llega por primera vez cae en el buzón de no deseado más veces
+    de las que llega a la bandeja de entrada, y el socio da por hecho que no le ha llegado.
+    Dile que busque <b>CEPPB</b> en el buscador de su correo, que marque el mensaje como
+    <b>«No es spam»</b> y que añada el remitente a sus contactos: así los siguientes ya
+    entran bien. Un socio que aparece como <b>Invitada</b> desde hace días y no ha
+    reclamado su perfil casi siempre tiene el correo en esa carpeta.</div>
     <div class="stats" style="margin-bottom:16px">
       <div class="stat"><div class="k">Invitables</div><div class="v">${conEmail.length}</div><div class="n">Con correo en secretaría</div></div>
       <div class="stat"><div class="k">Enviadas</div><div class="v">${grupos.enviadas.length}</div><div class="n">Esperando que entren</div></div>

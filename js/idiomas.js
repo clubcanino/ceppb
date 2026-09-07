@@ -15,6 +15,14 @@
 
 const IDIOMAS = [
   {c:"es", n:"Castellano", propio:"Castellano"},
+  /* Las cuatro lenguas cooficiales del Estado, que es donde vive la
+     inmensa mayoría del club. El valenciano lleva código propio «va»
+     porque en la plataforma se elige a mano; los navegadores no lo
+     distinguen del catalán y quien lo quiera lo pone él. */
+  {c:"ca", n:"Catalán",    propio:"Català"},
+  {c:"va", n:"Valenciano", propio:"Valencià"},
+  {c:"gl", n:"Gallego",    propio:"Galego"},
+  {c:"eu", n:"Euskera",    propio:"Euskara"},
   {c:"en", n:"Inglés",     propio:"English"},
   {c:"fr", n:"Francés",    propio:"Français"},
   {c:"de", n:"Alemán",     propio:"Deutsch"},
