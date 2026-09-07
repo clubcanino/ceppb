@@ -211,9 +211,9 @@ V.perro = function(id){
            está en la escala de aptos de cría: se enseña, pero no se
            traduce a ninguna calificación del club. */
         if(r.tipo==="estructura") return `<span class="chip ${r.calificacion==="EXC"?"ok":""}">${esc(r.calificacion||r.calificacionOrigen||"—")}</span>${r.distincion?` <span class="chip">${esc(r.distincion)}</span>`:""}${r.titulo?` <span class="chip">${esc(r.titulo)}</span>`:""}${r.puesto?` <span class="num">${r.puesto}º</span>`:""}${r.clase?`<div class="mini">Clase ${esc(String(r.clase).toLowerCase())}</div>`:""}`;
-        if(r.tipo==="trabajo") return `${r.titulo?`<span class="chip ok">${esc(r.titulo)}</span> `:""}${r.calificacion?`<span class="chip">${esc(r.calificacion)}</span>`:""}${r.puntos!=null&&!(r.calificacion==="DESC"&&!r.puntos)?` <span class="num" title="${r.puntosSobre?"Sobre "+r.puntosSobre:""}">${r.puntos}${r.puntosSobre?"/"+r.puntosSobre:""} pts</span>`:""}${r.puesto?` <span class="num">${r.puesto}º</span>`:""}${!r.titulo&&!r.calificacion&&r.puntos==null&&!r.puesto?`<span class="chip">—</span>`:""}`;
+        if(r.tipo==="trabajo") return `${r.titulo?`<span class="chip ok">${esc(r.titulo)}</span> `:""}${r.calificacion?`<span class="chip">${esc(r.calificacion)}</span>`:""}${r.puntos!=null&&!(r.calificacion==="DESC"&&!r.puntos)?` <span class="num" title="${r.puntosSobre?"Sobre "+r.puntosSobre:""}">${r.puntos}${r.puntosSobre?"/"+r.puntosSobre:""} pts</span>`:""}${r.puesto?` <span class="num">${r.puesto}º</span>`:""}${!r.titulo&&!r.calificacion&&r.puntos==null&&!r.puesto?`<span class="chip">—</span>`:""}${r.clase?`<div class="mini">${esc(r.clase)}</div>`:""}`;
         return `<span class="chip ${r.resultado==="APTO"?"ok":"block"}">${esc(r.modalidad?r.modalidad+" · ":"")}${esc(r.resultado||"—")}</span>`;}},
-      {t:"Guía", s:r=>r.guia||"", r:r=>esc(r.guia||"—")},
+      {t:"Guía", s:r=>r.guia||"", r:r=>`${esc(r.guia||"—")}${r.equipo?`<div class="mini">${esc(r.equipo)}</div>`:""}`},
       {t:"Juez", s:r=>r.juez||"", r:r=>esc(r.juez||"—")},
       {t:"Validación", s:r=>r.validado||"pendiente", r:r=>chipVal(r.validado) +
         (SESION.esAdmin && r.validado!=="validado" ? ` <button class="btn sm" data-val="res|validado|${esc(r.id)}">Validar</button>` : "") +

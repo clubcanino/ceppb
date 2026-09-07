@@ -169,6 +169,8 @@ create table if not exists resultados (
   tipo_evento text, juez text, organizado_ceppb boolean default false,
   calificacion text,      -- EXC · MB · B · SUF
   clase text,             -- cachorro · junior · intermedia · abierta · trabajo · campeones · veteranos
+                          -- o el grado, en mondioring
+  equipo text,            -- grupo de trabajo con el que compite el guía
   puesto integer,
   distincion text,        -- CAC · CACIB · RCAC · RCACIB · CCPB · RCCPB · BOB
   modalidad text,         -- TS · TC

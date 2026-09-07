@@ -97,7 +97,7 @@ function resultadosDeEventos(){
     {t:t("Ejemplar"), s:r=>{const p=byId(C("perros"),r.perroId); return p?p.nombre:"";},
      r:r=>{const p=byId(C("perros"),r.perroId);
        return p?`<span class="nm">${esc(p.nombre)}</span>${r.clase?`<div class="mini">Clase ${esc(String(r.clase).toLowerCase())}</div>`:""}`:`<span class="dim">—</span>`;}},
-    {t:t("Guía"), s:r=>r.guia||"", r:r=>esc(r.guia||"—")},
+    {t:t("Guía"), s:r=>r.guia||"", r:r=>`${esc(r.guia||"—")}${r.equipo?`<div class="mini">${esc(r.equipo)}</div>`:""}`},
     {t:t("Puntos"), s:r=>r.puntos==null?-1:r.puntos,
      r:r=>r.puntos==null?`<span class="dim">—</span>`
         :`<span class="num">${r.puntos}${r.puntosSobre?"/"+r.puntosSobre:""}</span>`},

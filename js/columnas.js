@@ -137,6 +137,7 @@ const COLUMNAS = {
     "anio",
     "calificacion_origen",
     "puntos_sobre",
+    "equipo",
     "validado",
     "validado_por",
     "validado_fecha",

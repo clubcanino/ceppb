@@ -1,0 +1,526 @@
+{
+ "evento": {
+  "nombre": "Campeonato Nacional de Mondioring 2026 · Quer",
+  "tipo": "CNM",
+  "lugar": "Quer (Guadalajara)",
+  "fecha": "2026-02-07",
+  "fecha_fin": "2026-02-08",
+  "jueces": "Antonio Crava · David Vargas Fernández",
+  "organizado_ceppb": true,
+  "id": "1180714b-4eb2-57b9-b383-99efcdcfd3ab"
+ },
+ "perros": [
+  {
+   "id": "c09e13ab-d471-5618-ac9d-fcd7cd0b920e",
+   "nombre": "Vida de Duques Negros",
+   "variedad": "Malinois",
+   "loe": "LOE 2760987",
+   "chip": "620098201341133"
+  },
+  {
+   "id": "8c168e02-e392-53ad-9278-e79b4ccc9f3b",
+   "nombre": "Río",
+   "variedad": "Malinois",
+   "loe": "RRC 0198323",
+   "chip": "941010000662851"
+  },
+  {
+   "id": "81fc112d-378a-5b22-82d6-d4c2fb1aa2fa",
+   "nombre": "Ron des Deux Sabres",
+   "variedad": "Malinois",
+   "loe": "LOE 2714221",
+   "chip": "250269300134702"
+  },
+  {
+   "id": "adc5ca14-36f4-51aa-91d7-8fa68c6e639e",
+   "nombre": "Sirius",
+   "variedad": "Malinois",
+   "loe": "RRC 0195156",
+   "chip": "992000001041334"
+  },
+  {
+   "id": "e3d5a8d8-a485-5ea5-bed4-42b66fa42e46",
+   "nombre": "Rhaegar de Alrasican",
+   "variedad": "Malinois",
+   "loe": "LOE 2588052",
+   "chip": "992000003744254"
+  },
+  {
+   "id": "8f9ed7d3-37dc-5abb-af9d-f4fbf1cbfb47",
+   "nombre": "Noa de Secrica",
+   "variedad": "Malinois",
+   "loe": "LOE 2668082",
+   "chip": "620098102321771"
+  },
+  {
+   "id": "f6434145-6f99-50d7-acf3-48baeba66ccf",
+   "nombre": "Nois",
+   "variedad": "Malinois",
+   "loe": "RRC 0198415",
+   "chip": "941000029411914"
+  },
+  {
+   "id": "05f94694-8249-5f5b-b944-72b27a5e7da3",
+   "nombre": "Txakur-Bai Ntxistu",
+   "variedad": "Malinois",
+   "loe": "LOE 2595648",
+   "chip": "941000026627446"
+  },
+  {
+   "id": "7661ccdf-8591-5523-88e7-013a0e04a4ac",
+   "nombre": "Zodiac Killer Versión Malinés",
+   "variedad": "Malinois",
+   "loe": "LOE 2549976",
+   "chip": "900113002402780"
+  },
+  {
+   "id": "05961c80-8370-5227-ae06-a73a0662ae87",
+   "nombre": "Kafre de Chacalcan",
+   "variedad": "Malinois",
+   "loe": "LOE 2626153",
+   "chip": "992000001226865"
+  },
+  {
+   "id": "5433f2fc-061f-5984-97da-730ef9b2d32f",
+   "nombre": "Boston",
+   "variedad": "Malinois",
+   "loe": "LOE 2591423",
+   "chip": "941000026607491"
+  },
+  {
+   "id": "5fc0294b-a267-5018-9226-ae3e6da89dff",
+   "nombre": "Loki",
+   "variedad": "Malinois",
+   "loe": "RRC 0194542",
+   "chip": "528210006932088"
+  },
+  {
+   "id": "7e47f32f-a4db-53c5-8899-1eecf1bb7501",
+   "nombre": "Txakur-Bai Rtsurtur",
+   "variedad": "Malinois",
+   "loe": "LOE 2514852",
+   "chip": "978101082006824"
+  },
+  {
+   "id": "2d224d19-6a57-5060-96f7-3d67a5a87097",
+   "nombre": "Rex Miniaturas Granada",
+   "variedad": "Malinois",
+   "loe": "LOE 2730868",
+   "chip": "941000030675534"
+  },
+  {
+   "id": "4d9b1b09-7fea-5800-bfad-7b368403b474",
+   "nombre": "Armani von Leiderschap",
+   "variedad": "Malinois",
+   "loe": "LOE 2523106",
+   "chip": "985113004160178"
+  },
+  {
+   "id": "3e08873a-0a9c-52c2-ade0-6303e7399063",
+   "nombre": "Enzo de Alrasican",
+   "variedad": "Malinois",
+   "loe": "LOE 2702961",
+   "chip": "992000003270661"
+  },
+  {
+   "id": "23f5e0f8-22f4-5fff-980f-fb94f34bb3cf",
+   "nombre": "Elton Canem du Fire",
+   "variedad": "Malinois",
+   "loe": "RRC 0183173",
+   "chip": "941000026503908"
+  },
+  {
+   "id": "ecf362c2-6438-555e-a0d9-35d5b676f1b8",
+   "nombre": "Txakur-Bai Kg'dino",
+   "variedad": "Malinois",
+   "loe": "LOE 2596886",
+   "chip": "985113006179353"
+  },
+  {
+   "id": "dcdb602f-4c2b-5c9f-8b83-b0a364a3aaf9",
+   "nombre": "Uma des Filii Cradle",
+   "variedad": "Malinois",
+   "loe": "LOE 2726296",
+   "chip": "620090000074932"
+  },
+  {
+   "id": "26ca6860-5273-58ab-bf54-7ce213f80733",
+   "nombre": "Río de Miniaturas Granada",
+   "variedad": "Malinois",
+   "loe": "LOE 2650046",
+   "chip": "941010000524611"
+  },
+  {
+   "id": "cbb3a94b-d90e-5801-af51-c38c1d4ac44d",
+   "nombre": "Domitila de Harás del Oeste",
+   "variedad": "Malinois",
+   "loe": "RRC 0183692",
+   "chip": "941000026505060"
+  },
+  {
+   "id": "8e30e33c-d686-5770-97d4-40f8dc789f44",
+   "nombre": "Pandora I de Akilkan de Ditak",
+   "variedad": "Malinois",
+   "loe": "LOE 2524734",
+   "chip": "941000025401488"
+  },
+  {
+   "id": "793ef8d0-5d99-5872-af83-5cb6544c6f06",
+   "nombre": "Tauro de los Guardianes",
+   "variedad": "Malinois",
+   "loe": "LOE 2523283",
+   "chip": "941000025360512"
+  },
+  {
+   "id": "8c7454d4-3dc0-524a-b943-36e0eaebe17c",
+   "nombre": "B. Terrible de Bocadura",
+   "variedad": "Malinois",
+   "loe": "LOE 2610808",
+   "chip": "978101083934364"
+  },
+  {
+   "id": "fad931c3-dbe2-5423-bf77-728371e03d3f",
+   "nombre": "A'río",
+   "variedad": "Malinois",
+   "loe": "RRC 0176043",
+   "chip": "941000025231545"
+  },
+  {
+   "id": "5a2de36e-bd0d-5d29-9b56-849b583acc4b",
+   "nombre": "Zulú de Corralet",
+   "variedad": "Malinois",
+   "loe": "LOE 2511969",
+   "chip": "941000024845202"
+  },
+  {
+   "id": "6280f107-c74a-5552-8a9f-a88fa0cf6ebb",
+   "nombre": "Ricard du Calvaire aux Acacias",
+   "variedad": "Malinois",
+   "loe": null,
+   "chip": "925026850183359"
+  },
+  {
+   "id": "823255de-69cc-561d-a235-1c1c6e34fa0d",
+   "nombre": "Odin Canem du Fire",
+   "variedad": "Malinois",
+   "loe": "LOE 2728481",
+   "chip": "992000001904612"
+  },
+  {
+   "id": "3cb3bcbc-b298-5412-9136-c61f80fc3949",
+   "nombre": "Trooper D'hélitesport",
+   "variedad": "Malinois",
+   "loe": "LOE 2639383",
+   "chip": "941010000340708"
+  },
+  {
+   "id": "99d6da77-536b-5258-95b4-af2171974cf2",
+   "nombre": "Ambar",
+   "variedad": "Malinois",
+   "loe": "RRC 0176042",
+   "chip": "985113003978217"
+  }
+ ],
+ "resultados": [
+  {
+   "id": "483a24a5-b9c3-57ef-b6d6-0b083f9636a4",
+   "perro": "c09e13ab-d471-5618-ac9d-fcd7cd0b920e",
+   "clase": "Mondioring grado 1",
+   "sobre": 200,
+   "puesto": 1,
+   "puntos": 193,
+   "guia": "Francisco José Estévez Morales",
+   "equipo": "Can Zafra"
+  },
+  {
+   "id": "a2a888ed-20d9-5bdb-8727-bc35b045b79d",
+   "perro": "8c168e02-e392-53ad-9278-e79b4ccc9f3b",
+   "clase": "Mondioring grado 1",
+   "sobre": 200,
+   "puesto": 2,
+   "puntos": 186,
+   "guia": "Javier Escudero de Santos",
+   "equipo": "Siete Flechas"
+  },
+  {
+   "id": "63fa86cd-b8aa-5576-815c-a5cf921c2055",
+   "perro": "81fc112d-378a-5b22-82d6-d4c2fb1aa2fa",
+   "clase": "Mondioring grado 1",
+   "sobre": 200,
+   "puesto": 3,
+   "puntos": 182,
+   "guia": "Juan José García Ruiz",
+   "equipo": "Lor-K9"
+  },
+  {
+   "id": "31661d4b-f506-5f3b-bfd4-1edc294ac05a",
+   "perro": "adc5ca14-36f4-51aa-91d7-8fa68c6e639e",
+   "clase": "Mondioring grado 1",
+   "sobre": 200,
+   "puesto": 4,
+   "puntos": 165,
+   "guia": "Abraham Palmero Romero",
+   "equipo": "Unioncan"
+  },
+  {
+   "id": "5f49bb12-bd4f-5ed7-82dc-050eb837c6fe",
+   "perro": "e3d5a8d8-a485-5ea5-bed4-42b66fa42e46",
+   "clase": "Mondioring grado 1",
+   "sobre": 200,
+   "puesto": 5,
+   "puntos": 74.5,
+   "guia": "Alejandra Morato Aguilar",
+   "equipo": "Kangú"
+  },
+  {
+   "id": "055f48e3-6d6b-5eef-8b92-f88a028b50f0",
+   "perro": "8f9ed7d3-37dc-5abb-af9d-f4fbf1cbfb47",
+   "clase": "Mondioring grado 1",
+   "sobre": 200,
+   "puesto": 6,
+   "puntos": 45.5,
+   "guia": "Daniel Sobrino Pérez",
+   "equipo": "Unioncan"
+  },
+  {
+   "id": "6a7d3d17-3cda-5316-82cb-914322d23802",
+   "perro": "f6434145-6f99-50d7-acf3-48baeba66ccf",
+   "clase": "Mondioring grado 2",
+   "sobre": 300,
+   "puesto": 1,
+   "puntos": 255,
+   "guia": "Roberto Almohalla Fernández",
+   "equipo": "Lupus Shadow"
+  },
+  {
+   "id": "f2f725af-48de-50f9-bf01-f56d4194ef8e",
+   "perro": "05f94694-8249-5f5b-b944-72b27a5e7da3",
+   "clase": "Mondioring grado 2",
+   "sobre": 300,
+   "puesto": 2,
+   "puntos": 247.5,
+   "guia": "Iñaki Olaeta Larrauri",
+   "equipo": "Txakur-Bai"
+  },
+  {
+   "id": "c88e7626-8593-5325-bdbf-dd35bcdee20f",
+   "perro": "7661ccdf-8591-5523-88e7-013a0e04a4ac",
+   "clase": "Mondioring grado 2",
+   "sobre": 300,
+   "puesto": 3,
+   "puntos": 232,
+   "guia": "Joaquín Rodríguez Portela",
+   "equipo": "Siete Flechas"
+  },
+  {
+   "id": "53150c97-5256-5d2d-9f59-042fec2ab59a",
+   "perro": "05961c80-8370-5227-ae06-a73a0662ae87",
+   "clase": "Mondioring grado 2",
+   "sobre": 300,
+   "puesto": 4,
+   "puntos": 207.5,
+   "guia": "Rubén Acosta de Haro",
+   "equipo": "Chacalcan"
+  },
+  {
+   "id": "c7e8970c-f456-53d4-8f27-9a2f6122180b",
+   "perro": "5433f2fc-061f-5984-97da-730ef9b2d32f",
+   "clase": "Mondioring grado 2",
+   "sobre": 300,
+   "puesto": 5,
+   "puntos": 207,
+   "guia": "José Antonio Núñez López",
+   "equipo": "Canem du Fire"
+  },
+  {
+   "id": "925fed67-c26e-5aa7-b0fe-6b7b6b77b9cc",
+   "perro": "5fc0294b-a267-5018-9226-ae3e6da89dff",
+   "clase": "Mondioring grado 2",
+   "sobre": 300,
+   "puesto": 6,
+   "puntos": 202.5,
+   "guia": "Giorgia Ossola",
+   "equipo": "Evolución 83'"
+  },
+  {
+   "id": "05969893-4551-5ff9-9bdc-2c0a18963079",
+   "perro": "7e47f32f-a4db-53c5-8899-1eecf1bb7501",
+   "clase": "Mondioring grado 2",
+   "sobre": 300,
+   "puesto": 7,
+   "puntos": 161,
+   "guia": "Eneko Etxebarria Goikoetxea",
+   "equipo": "Txakur-Bai"
+  },
+  {
+   "id": "9edc5fad-4dd5-522a-91ae-858d19bf45c5",
+   "perro": "2d224d19-6a57-5060-96f7-3d67a5a87097",
+   "clase": "Mondioring grado 2",
+   "sobre": 300,
+   "puesto": null,
+   "puntos": null,
+   "guia": "Juan Antonio Urbano Rodríguez",
+   "equipo": "MG"
+  },
+  {
+   "id": "6b2c5d61-9908-5927-92b8-455adfe86205",
+   "perro": "4d9b1b09-7fea-5800-bfad-7b368403b474",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 264,
+   "guia": "Yanira Stratermans Bisan-Etame",
+   "equipo": "Canem du Fire"
+  },
+  {
+   "id": "e5efd006-818f-50a1-96ee-ec659ce5854f",
+   "perro": "3e08873a-0a9c-52c2-ade0-6303e7399063",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 228.5,
+   "guia": "Víctor Luján Rueda Fagúndez",
+   "equipo": "Siete Flechas"
+  },
+  {
+   "id": "c487cb57-5b52-591d-80ed-1029d3b7065e",
+   "perro": "23f5e0f8-22f4-5fff-980f-fb94f34bb3cf",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 287,
+   "guia": "Ramón Jorge Ortega Delgado",
+   "equipo": "Bocallena"
+  },
+  {
+   "id": "4b3c9471-b003-5d41-b9c0-d4a2452843b6",
+   "perro": "ecf362c2-6438-555e-a0d9-35d5b676f1b8",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 300,
+   "guia": "Mihai Razvan Ciotina",
+   "equipo": "Kalekan"
+  },
+  {
+   "id": "c23a0572-4fee-5127-9b8a-4e09ce132029",
+   "perro": "dcdb602f-4c2b-5c9f-8b83-b0a364a3aaf9",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 357.5,
+   "guia": "Juan Francisco Sánchez Rodal",
+   "equipo": "Unioncan"
+  },
+  {
+   "id": "0966493d-dcb7-54b8-b3d0-b39db1157624",
+   "perro": "26ca6860-5273-58ab-bf54-7ce213f80733",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 328.5,
+   "guia": "Juan Antonio Urbano Rodríguez",
+   "equipo": "MG"
+  },
+  {
+   "id": "8731866f-d573-5a86-aeed-3dbbd6297b8f",
+   "perro": "cbb3a94b-d90e-5801-af51-c38c1d4ac44d",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 262.5,
+   "guia": "Juan Navarro Pajares",
+   "equipo": "Canem du Fire"
+  },
+  {
+   "id": "3d1f3386-3be6-551b-8d33-e02ac5c0c7c0",
+   "perro": "8e30e33c-d686-5770-97d4-40f8dc789f44",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 176,
+   "guia": "José Amezcua Hervás",
+   "equipo": "MG"
+  },
+  {
+   "id": "43560f38-c54f-5085-9d7d-46260ee6a446",
+   "perro": "793ef8d0-5d99-5872-af83-5cb6544c6f06",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 250,
+   "guia": "Janet Correa Dernoncourt",
+   "equipo": "Los Guardianes"
+  },
+  {
+   "id": "f45447fc-68f1-563c-986e-7915ae355de9",
+   "perro": "8c7454d4-3dc0-524a-b943-36e0eaebe17c",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 265,
+   "guia": "Gabriel Gallego Arenas",
+   "equipo": "Siete Flechas"
+  },
+  {
+   "id": "e0699733-7337-53de-8803-0a6f88cf8a88",
+   "perro": "fad931c3-dbe2-5423-bf77-728371e03d3f",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": null,
+   "guia": "Fco. Javier Herrera Villanueva",
+   "equipo": "Bocallena"
+  },
+  {
+   "id": "c7a3ebdf-e992-5913-bc8b-b2a3f6bfba8a",
+   "perro": "5a2de36e-bd0d-5d29-9b56-849b583acc4b",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 232.5,
+   "guia": "Francisco González Otero",
+   "equipo": "Lor-K9"
+  },
+  {
+   "id": "d8521941-f808-5f45-b443-9f377a6f3d38",
+   "perro": "6280f107-c74a-5552-8a9f-a88fa0cf6ebb",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 303.5,
+   "guia": "Jean Marie Julien de Ville",
+   "equipo": "Vinaros"
+  },
+  {
+   "id": "9b021044-0bb6-58b3-8fb3-22bf27f092f4",
+   "perro": "823255de-69cc-561d-a235-1c1c6e34fa0d",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 308,
+   "guia": "David Ramos Martínez",
+   "equipo": "Canem du Fire"
+  },
+  {
+   "id": "28919881-8e08-5f5d-9c18-01c6ed807f2e",
+   "perro": "3cb3bcbc-b298-5412-9136-c61f80fc3949",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 292,
+   "guia": "Cristian del Río Rementería",
+   "equipo": "Mond. Cantabria"
+  },
+  {
+   "id": "7e73d79b-0988-519a-8c3b-140a3dbc4aa4",
+   "perro": "99d6da77-536b-5258-95b4-af2171974cf2",
+   "clase": "Mondioring grado 3",
+   "sobre": 400,
+   "puesto": null,
+   "puntos": 296.5,
+   "guia": "Albert Casaled Marcos",
+   "equipo": "Kalekan"
+  }
+ ]
+}
