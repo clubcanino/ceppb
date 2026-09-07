@@ -591,3 +591,24 @@ test("la exportación con datos reservados va aparte y avisa", () => {
   assert.match(ev, /confirm\(/, "hay que confirmar antes de sacar DNI e IBAN del sistema");
   assert.match(ev, /sin cifrar/, "y decir claramente lo que eso significa");
 });
+
+/* ============================================================
+   El listado de ejemplares nace ordenado por nombre.
+
+   Son más de mil perros: sin un orden, encontrar uno es imposible.
+   Y el orden tiene que ser el español, con la eñe en su sitio.
+   ============================================================ */
+test("los ejemplares salen por orden alfabético español", () => {
+  const ctx = montar();
+  const tabla = vm.runInContext("tabla", ctx);
+  const orden = vm.runInContext("ordenTabla", ctx);
+  assert.equal(orden.per && orden.per.c, 0, "la tabla «per» debe nacer ordenada por la primera columna");
+  assert.equal(orden.per && orden.per.d, false, "y de la A a la Z");
+
+  const cols = [{t:"Ejemplar", s:p => p.nombre, r:p => p.nombre}];
+  const html = tabla("per", cols, [
+    {nombre:"Zorro"}, {nombre:"ábaco"}, {nombre:"Ñu"}, {nombre:"Alan"}, {nombre:"ozone"},
+  ]);
+  const salida = [...html.matchAll(/<td data-col="Ejemplar">([^<]*)</g)].map(m => m[1]);
+  assert.deepEqual(salida, ["ábaco", "Alan", "Ñu", "ozone", "Zorro"]);
+});

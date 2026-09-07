@@ -104,7 +104,29 @@ function render(){
   const [r, arg] = rutaActual();
   const vista = V[r] ? r : "muro";
 
+  /* Quien acaba de entrar se queda en «#/entrar», que es una pantalla
+     sólo para visitantes: la plataforma le echaba de ella justo
+     después de dejarle pasar, con un cartel diciéndole que preguntara
+     en secretaría. Se le lleva a su sitio. */
+  if (vista === "entrar" && SESION.usuario){
+    location.hash = SESION.socio ? "#/yo" : "#/muro";
+    return;
+  }
+
   const def = VISTAS.find(v => v.r === vista);
+
+  /* Todavía no se sabe quién entra: no es momento de cerrarle la
+     puerta a nadie. A un socio de la junta le salía «esta sección no
+     está abierta a tu perfil» en la primera décima de segundo, antes
+     de que Supabase contestara. */
+  if (def && !SESION.resuelta && !def.v.includes(SESION.rol)){
+    $("#tt").textContent = t(TITULOS_VISTA[vista] ? TITULOS_VISTA[vista][0] : vista);
+    $("#ts").textContent = "";
+    $("#vista").innerHTML = `<div class="empty"><b>Un momento…</b>Comprobando tu perfil.</div>`;
+    pintarNav(); pintarAcciones();
+    return;
+  }
+
   if (def && !def.v.includes(SESION.rol)){
     $("#tt").textContent = "Sección no disponible";
     $("#ts").textContent = "";

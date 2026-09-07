@@ -70,3 +70,28 @@ test("si el correo devuelve un error, se le dice al socio", () => {
   assert.match(app, /error_description/,
     "un enlace caducado tiene que explicarse, no dejar una pantalla vacía");
 });
+
+/* ============================================================
+   Entrar no puede terminar en un cartel de puerta cerrada.
+
+   «#/entrar» es una pantalla sólo para visitantes. Quien metía su
+   contraseña se quedaba ahí dentro con el rol ya cambiado, y la
+   plataforma le contestaba «esta sección no está abierta a tu
+   perfil, dilo en secretaría» justo después de dejarle pasar.
+   ============================================================ */
+import { readFileSync as leerApp } from "node:fs";
+const app = leerApp(new URL("../js/app.js", import.meta.url), "utf8");
+const ses = leerApp(new URL("../js/sesion.js", import.meta.url), "utf8");
+
+test("quien ya ha entrado no se queda en la pantalla de entrar", () => {
+  assert.match(app, /vista === "entrar" && SESION\.usuario/,
+    "render() debe sacar de #/entrar a quien ya tiene sesión");
+});
+
+test("no se niega el acceso antes de saber quién entra", () => {
+  assert.match(ses, /resuelta: false/, "SESION debe decir si ya sabe quién entra");
+  assert.match(app, /!SESION\.resuelta && !def\.v\.includes\(SESION\.rol\)/,
+    "render() debe esperar a saber el rol antes de cerrar una sección");
+  /* y la bandera tiene que levantarse, o nadie entraría nunca */
+  assert.match(ses, /SESION\.resuelta = true/);
+});

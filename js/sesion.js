@@ -13,6 +13,13 @@ const SESION = {
   socio: null,       // ficha del socio atada a esa cuenta (o null)
   esAdmin: false,    // pertenece a la junta directiva
   rol: "visitante",  // visitante | socio | admin
+
+  /* Mientras esto sea falso todavía no se sabe quién entra: preguntar
+     a Supabase lleva su tiempo. Hasta entonces el rol dice «visitante»
+     porque hay que decir algo, no porque se haya comprobado. Quien
+     mire ese rol antes de tiempo le suelta a un socio de la junta que
+     la sección no está abierta a su perfil. */
+  resuelta: false,
 };
 
 /* Guardamos el token de invitación mientras el usuario va al correo
@@ -45,6 +52,7 @@ SESION.iniciar = async function(sb){
     } else {
       SESION.socio = null; SESION.esAdmin = false; SESION.rol = "visitante";
     }
+    SESION.resuelta = true;
     render();
   });
 
@@ -53,6 +61,7 @@ SESION.iniciar = async function(sb){
     await SESION.refrescar();
     SESION.avisarSiFaltaContrasena();
   }
+  SESION.resuelta = true;
 };
 
 /* Quien entró por el enlace del correo y no tiene contraseña propia se

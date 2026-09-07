@@ -34,7 +34,7 @@ V.muro = function(){
            Sin esto el muro anunciaba «Título undefined». */
         ? (r.titulo
             ? `Título ${r.titulo}${r.calificacion?" ("+r.calificacion+")":""}`
-            : `${r.puesto?r.puesto+"º":"Participación"}${r.puntos!=null?" con "+r.puntos+" puntos":""}${r.calificacion?" ("+r.calificacion+")":""} en ${r.evento||r.tipoEvento||"evento"}`)
+            : `${r.puesto?r.puesto+"º":"Participación"}${r.puntos!=null&&!(r.calificacion==="DESC"&&!r.puntos)?" con "+r.puntos+" puntos":""}${r.calificacion?" ("+r.calificacion+")":""} en ${r.evento||r.tipoEvento||"evento"}`)
       : r.tipo === "caracter"
         ? `Prueba de carácter ${r.modalidad}: ${r.resultado}`
         : `Confirmación: ${r.resultado}`;

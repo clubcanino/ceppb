@@ -37,7 +37,12 @@ function barras(pares, color){
       <span class="tr"><span class="fl" style="width:${(v/max*100).toFixed(1)}%${cl?`;background:var(--${color||"ink-2"})`:""}"></span></span>
       <span class="vl">${v}</span></div>`).join("") + `</div>`;
 }
-let ordenTabla = {soc:{c:0, d:false}, alt:{c:0, d:false}, cob:{c:0, d:false}};
+/* Orden con el que nace cada tabla. Sin esto salían en el orden en que
+   los devuelve la base de datos, que no es ningún orden: el listado de
+   ejemplares son más de mil perros y hay que poder buscarlos por la
+   letra. Pulsando una cabecera se reordena por otra columna. */
+let ordenTabla = {soc:{c:0, d:false}, alt:{c:0, d:false}, cob:{c:0, d:false},
+                  per:{c:0, d:false}};
 function tabla(key, cols, filas, onClick){
   const o = ordenTabla[key] || {};
   if(o.c != null){
