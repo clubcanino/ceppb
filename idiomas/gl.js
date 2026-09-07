@@ -144,4 +144,10 @@ TEXTOS.gl = {
   "Calendario del CEPPB": "Calendario do CEPPB",
   "Abrir en una pestaña nueva": "Abrir nunha lapela nova",
   "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Isto é a páxina de eventos da web do club, tal cal. As inscricións fanse alí.",
+  "Resultados de los eventos": "Resultados dos eventos",
+  "Puesto": "Posto",
+  "Ejemplar": "Exemplar",
+  "Guía": "Guía",
+  "Puntos": "Puntos",
+  "Calificación": "Cualificación",
 };

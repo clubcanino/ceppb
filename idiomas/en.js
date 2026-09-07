@@ -148,4 +148,10 @@ TEXTOS.en = {
   "Calendario del CEPPB": "CEPPB calendar",
   "Abrir en una pestaña nueva": "Open in a new tab",
   "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "This is the club website's events page as it is. Entries are made there.",
+  "Resultados de los eventos": "Event results",
+  "Puesto": "Place",
+  "Ejemplar": "Dog",
+  "Guía": "Handler",
+  "Puntos": "Points",
+  "Calificación": "Grade",
 };

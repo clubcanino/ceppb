@@ -531,7 +531,8 @@ test("ninguna traducción se ha quedado igual que el castellano por descuido", (
          "Guía rápida", "Idioma", "Palmarés", "Detalles prácticos",
          "Acceso de socios", "EN DIRECTO", "Pedigrí completo",
          "aplicado ficha por ficha", "Vídeos por publicar", "Vinculación de altas",
-         "Administradores", "Descendencia", "Validado", "Completo"],
+         "Administradores", "Descendencia", "Validado", "Completo",
+         "Guía", "Puntos"],
     eu: ["Palmaresa"],
   };
   for (const idioma of OTRAS_LENGUAS){
@@ -801,8 +802,46 @@ test("eventos ofrece las convocatorias del libro y el calendario del club", () =
   vm.runInContext('tabEventos = "web"', ctx);
   assert.match(club, /data-tabev="club"/);
   assert.match(club, /data-tabev="web"/);
-  assert.equal(club.includes("<iframe"), false, "la pestaña del libro no empotra nada");
+  assert.equal(club.includes("<iframe"), false, "la pestaña de resultados no empotra nada");
   assert.match(web, /<iframe[^>]+src="https:\/\/www\.ceppb\.info\/eventos"/);
   /* y siempre una salida por si el marco no carga */
   assert.match(web, /target="_blank" rel="noopener noreferrer"/);
+});
+
+test("los resultados se ven evento por evento, con su clasificación", () => {
+  const ctx = montar();
+  vm.runInContext(`
+    SESION.rol="socio"; SESION.esAdmin=false; SESION.usuario={id:"u1"};
+    SESION.socio={id:"s1", numero:1}; S.listo=true; S.error=null;
+    S.data.eventos = [
+      {id:"e1", nombre:"XXII CNI 2021 (CEPPB)", tipo:"trabajo", organizadoCEPPB:true},
+      {id:"e2", nombre:"FMBB World Championship 2024 (IGP)", tipo:"trabajo", organizadoCEPPB:false},
+    ];
+    S.data.perros = [{id:"p1", nombre:"Ozone van het Dreiland", visibilidad:"socios"},
+                     {id:"p2", nombre:"Haddock vom Esadera", visibilidad:"socios"}];
+    S.data.resultados = [
+      {id:"r1", perroId:"p1", eventoId:"e1", anio:2021, puesto:1, puntos:277, puntosSobre:300,
+       calificacion:"MB", guia:"Un guía", validado:"validado", tipo:"trabajo", tipoEvento:"IGP"},
+      {id:"r2", perroId:"p2", eventoId:"e1", anio:2021, puesto:2, puntos:275, puntosSobre:300,
+       calificacion:"MB", guia:"Otro guía", validado:"validado", tipo:"trabajo", tipoEvento:"IGP"},
+    ];
+    tabEventos = "club"; eventoElegido = "";
+  `, ctx);
+  const html = vm.runInContext("String(V.eventos(''))", ctx);
+  vm.runInContext('tabEventos = "web"', ctx);
+
+  /* se puede elegir el evento, y salen los dos */
+  assert.match(html, /id="elegir-evento"/);
+  assert.match(html, /XXII CNI 2021/);
+  assert.match(html, /FMBB World Championship 2024/);
+  /* y la clasificación del elegido, en orden de puesto */
+  assert.ok(html.indexOf("Ozone van het Dreiland") < html.indexOf("Haddock vom Esadera"),
+    "la clasificación debe ir por puesto");
+  assert.match(html, /277\/300/);
+  assert.match(html, /Un guía/);
+  /* un evento ajeno se marca como tal: no cuenta para el reglamento */
+  vm.runInContext('tabEventos="club"; eventoElegido="e2"', ctx);
+  const fmbb = vm.runInContext("String(V.eventos(''))", ctx);
+  vm.runInContext('tabEventos="web"; eventoElegido=""', ctx);
+  assert.match(fmbb, /Organiza otra entidad/);
 });

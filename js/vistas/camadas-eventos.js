@@ -27,24 +27,20 @@ V.camadas = function(){
 };
 
 /* --- Eventos --- */
-/* Dos cosas distintas bajo el mismo nombre: las convocatorias que el
-   club lleva en esta plataforma —con sus inscripciones y sus
-   resultados— y el calendario que publica en su web. Se enseñan las
-   dos, cada una en su sitio, sin copiar la una en la otra.
-
-   Se abre por el calendario de la web, que es lo que un socio viene
-   buscando cuando entra en «Eventos»; las convocatorias del libro,
-   con su botón de convocar, están en la otra pestaña. */
+/* Dos cosas distintas bajo el mismo nombre: lo que viene —el
+   calendario que el club publica en su web, con sus inscripciones— y
+   lo que ya pasó: la clasificación de cada campeonato. Se abre por el
+   calendario, que es lo que se viene buscando. */
 let tabEventos = "web";
 
 V.eventos = function(){
-  const pestanas = [["club", "Convocatorias del libro"], ["web", "Calendario del CEPPB"]];
+  const pestanas = [["web", "Calendario del CEPPB"], ["club", "Resultados de los eventos"]];
   const cabecera = `<div class="tabs" style="margin-bottom:16px">${pestanas.map(([k, n]) =>
     `<button data-tabev="${k}" class="${tabEventos === k ? "on" : ""}">${esc(t(n))}</button>`).join("")}</div>`;
 
   if (tabEventos === "web") return cabecera + calendarioDelClub();
 
-  return cabecera + eventosDelLibro();
+  return cabecera + resultadosDeEventos();
 };
 
 /* El calendario de la web del club, dentro de la plataforma. */
@@ -66,42 +62,83 @@ function calendarioDelClub(){
   </div>`;
 }
 
-function eventosDelLibro(){
-  const evs = C("eventos").slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha)));
-  const fut = evs.filter(e=>e.fecha>=hoy()), pas = evs.filter(e=>e.fecha<hoy()).reverse();
-  const mias = C("inscripciones").filter(i => SESION.esAdmin || i.socioId===miSocioId());
-  const tarjeta = e => {
-    const ins = C("inscripciones").filter(i=>i.eventoId===e.id);
-    const yoIns = ins.filter(i=>i.socioId===miSocioId());
-    return `<div class="card"><div class="card-h"><h3>${esc(e.nombre)}</h3>
-        ${eventoEnDirecto(e) ? `<span class="chip block" style="margin-left:8px">EN DIRECTO</span>` : ""}
-        <span class="hint">${fmtF(e.fecha)}</span>
-        ${SESION.esAdmin ? `<span class="spacer"></span><button class="btn sm" data-form="evento|${esc(e.id)}">Editar</button>` : ""}</div>
-      ${eventoEnDirecto(e) ? `<div class="card-b" style="padding:14px 16px 0">${reproductorDirecto(e)}</div>` : ""}
-      ${!eventoEnDirecto(e) && e.directoUrl ? `<div class="card-b" style="padding:14px 16px 0">
-        <a class="btn sm" href="${esc(e.directoUrl)}" target="_blank" rel="noopener noreferrer">Ver la grabación</a></div>` : ""}
-      <div class="card-b"><dl class="kv">
-        <dt>Tipo</dt><dd><span class="chip">${esc(e.tipo||"—")}</span>${e.organizadoCEPPB?` <span class="chip ok">Organiza CEPPB</span>`:""}</dd>
-        <dt>Lugar</dt><dd>${esc(e.lugar||"—")}</dd>
-        ${e.juez?`<dt>Juez</dt><dd>${esc(e.juez)}</dd>`:""}
-        <dt>Inscritos</dt><dd class="num">${ins.length}</dd>
-        ${e.cierre?`<dt>Cierre de inscripción</dt><dd>${fmtF(e.cierre)}</dd>`:""}
-      </dl>
-      ${e.fecha>=hoy()&&SESION.rol==="socio"?`<div style="margin-top:12px">${yoIns.length?`<span class="chip ok">Inscrito con ${yoIns.length} ejemplar(es)</span> `:""}<button class="btn ${yoIns.length?"":"primary"} sm" data-form="inscripcion|${esc(e.id)}">Inscribir ejemplar</button></div>`:""}
-      ${e.fecha>=hoy()&&e.tipo==="Prueba de carácter CEPPB"?`<div class="note" style="margin-top:10px">Las solicitudes se presentan con <b>30 días naturales</b> de antelación a la Comisión de Cría (Cap. 5.4).</div>`:""}
-      </div></div>`;
+/* La clasificación de un campeonato: quién quedó dónde, con qué
+   puntos y con qué guía. Es lo que se busca de un evento pasado.
+
+   Las convocatorias y las inscripciones viven en la web del club, en
+   la otra pestaña; aquí está lo que ya se ha corrido. */
+let eventoElegido = "";
+
+function resultadosDeEventos(){
+  const evs = C("eventos").slice();
+  const res = C("resultados");
+  const cuantos = e => res.filter(r => r.eventoId === e.id).length;
+
+  /* Ordenados del más reciente al más antiguo. Los campeonatos
+     importados no traen día, sólo año: se ordena por lo que haya. */
+  const anioDe = e => {
+    const r = res.find(x => x.eventoId === e.id);
+    return String(e.fecha || (r && r.anio) || "").slice(0, 4);
   };
-  return `${SESION.esAdmin?`<div style="margin-bottom:14px"><button class="btn primary" data-form="evento|">Convocar evento</button></div>`:""}
-    <h3 style="margin-bottom:11px">Próximas convocatorias</h3>
-    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-bottom:24px">
-      ${fut.length?fut.map(tarjeta).join(""):`<div class="card"><div class="empty">Sin convocatorias abiertas</div></div>`}</div>
-    ${mias.length&&SESION.rol!=="visitante"?`<div class="card" style="margin-bottom:24px"><div class="card-h"><h3>${SESION.esAdmin?"Todas las inscripciones":"Mis inscripciones"}</h3></div>
-      <div class="card-b" style="padding:0"><table>${mias.map(i=>{const e=byId(C("eventos"),i.eventoId),p=byId(C("perros"),i.perroId),s=byId(C("socios"),i.socioId);
-        return `<tr><td>${esc(e?.nombre||"—")}<div class="mini">${fmtF(e?.fecha)}</div></td><td>${esc(p?.nombre||"—")}</td>
-        ${SESION.esAdmin?`<td>${esc(s?.nombreCompleto||"—")}</td>`:""}<td><span class="chip">${esc(i.clase||i.modalidad||"—")}</span></td>
-        <td style="text-align:right"><span class="chip ${i.estado==="confirmada"?"ok":"warn"}">${esc(i.estado||"pendiente")}</span></td></tr>`;}).join("")}</table></div></div>`:""}
-    ${pas.length?`<h3 style="margin-bottom:11px">Celebrados</h3>
-      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${pas.slice(0,6).map(tarjeta).join("")}</div>`:""}`;
-};
+  evs.sort((a, b) => String(anioDe(b) + (b.nombre||"")).localeCompare(anioDe(a) + (a.nombre||""), "es"));
+
+  if (!evs.length) return `<div class="card"><div class="empty">
+    <b>Todavía no hay eventos registrados</b>
+    ${SESION.esAdmin ? `Convócalos desde aquí y sus resultados aparecerán en esta página.
+      <div style="margin-top:14px"><button class="btn brand" data-form="evento|">Convocar evento</button></div>` : ""}
+  </div></div>`;
+
+  const e = byId(evs, eventoElegido) || evs.find(x => cuantos(x)) || evs[0];
+  const suyos = res.filter(r => r.eventoId === e.id)
+    .sort((a, b) => (a.puesto || 9999) - (b.puesto || 9999));
+
+  const cols = [
+    {t:t("Puesto"), s:r=>r.puesto||9999, r:r=>r.puesto?`<span class="num">${r.puesto}º</span>`:`<span class="dim">—</span>`},
+    {t:t("Ejemplar"), s:r=>{const p=byId(C("perros"),r.perroId); return p?p.nombre:"";},
+     r:r=>{const p=byId(C("perros"),r.perroId); return p?`<span class="nm">${esc(p.nombre)}</span>`:`<span class="dim">—</span>`;}},
+    {t:t("Guía"), s:r=>r.guia||"", r:r=>esc(r.guia||"—")},
+    {t:t("Puntos"), s:r=>r.puntos==null?-1:r.puntos,
+     r:r=>r.puntos==null?`<span class="dim">—</span>`
+        :`<span class="num">${r.puntos}${r.puntosSobre?"/"+r.puntosSobre:""}</span>`},
+    {t:t("Calificación"), s:r=>r.calificacion||r.calificacionOrigen||"",
+     r:r=>r.calificacion?`<span class="chip ${r.calificacion==="EXC"?"ok":r.calificacion==="DESC"?"block":""}">${esc(r.calificacion)}</span>`
+        :r.calificacionOrigen?`<span class="chip">${esc(r.calificacionOrigen)}</span>`:`<span class="dim">—</span>`},
+  ];
+
+  const opcion = x => `<option value="${esc(x.id)}" ${x.id===e.id?"selected":""}>${
+    esc(x.nombre)}${cuantos(x)?` — ${cuantos(x)} participantes`:" — sin resultados"}</option>`;
+
+  return `<div class="filters" style="margin-bottom:16px">
+      <select class="inp" id="elegir-evento" style="min-width:min(420px,100%)">
+        ${evs.map(opcion).join("")}</select>
+      <span class="spacer"></span>
+      ${SESION.esAdmin?`<button class="btn sm" data-form="evento|${esc(e.id)}">Editar evento</button>
+        <button class="btn primary" data-form="evento|">Convocar evento</button>`:""}
+    </div>
+
+    <div class="card"><div class="card-h"><h3>${esc(e.nombre)}</h3>
+      ${eventoEnDirecto(e)?`<span class="chip block" style="margin-left:8px">${esc(t("EN DIRECTO"))}</span>`:""}
+      <span class="spacer"></span>
+      ${e.organizadoCEPPB?`<span class="chip ok">Organiza CEPPB</span>`:`<span class="chip">Organiza otra entidad</span>`}
+      ${e.fecha?`<span class="hint">${fmtF(e.fecha)}</span>`:""}</div>
+      ${eventoEnDirecto(e)?`<div class="card-b" style="padding:14px 16px 0">${reproductorDirecto(e)}</div>`:""}
+      ${!eventoEnDirecto(e)&&e.directoUrl?`<div class="card-b" style="padding:14px 16px 0">
+        <a class="btn sm" href="${esc(e.directoUrl)}" target="_blank" rel="noopener noreferrer">Ver la grabación</a></div>`:""}
+      ${e.lugar||e.juez?`<div class="card-b" style="padding-bottom:0"><dl class="kv">
+        ${e.lugar?`<dt>Lugar</dt><dd>${esc(e.lugar)}</dd>`:""}
+        ${e.juez?`<dt>Juez</dt><dd>${esc(e.juez)}</dd>`:""}</dl></div>`:""}
+      <div class="card-b" style="padding:0">
+        ${suyos.length ? tabla("cls", cols, suyos, r => "perro/" + r.perroId)
+          : `<div class="empty" style="padding:34px"><b>Sin resultados todavía</b>
+             ${e.fecha && e.fecha >= hoy()
+               ? "El evento aún no se ha celebrado. Las inscripciones se hacen en la web del club."
+               : "Cuando se publiquen aparecerán aquí."}</div>`}
+      </div>
+      ${suyos.length?`<div class="card-b" style="border-top:1px solid var(--line)">
+        <div class="mini">${suyos.length} participaciones${
+          e.organizadoCEPPB?"":" · Este evento no lo organiza el CEPPB, así que no cuenta para las figuras de apto de cría que exigen prueba propia del club"}</div>
+      </div>`:""}
+    </div>`;
+}
 
 /* --- Mi perfil --- */

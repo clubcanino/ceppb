@@ -143,4 +143,10 @@ TEXTOS.ca = {
   "Calendario del CEPPB": "Calendari del CEPPB",
   "Abrir en una pestaña nueva": "Obre en una pestanya nova",
   "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Això és la pàgina d'esdeveniments del web del club, tal qual. Les inscripcions es fan allà.",
+  "Resultados de los eventos": "Resultats dels esdeveniments",
+  "Puesto": "Posició",
+  "Ejemplar": "Exemplar",
+  "Guía": "Guia",
+  "Puntos": "Punts",
+  "Calificación": "Qualificació",
 };

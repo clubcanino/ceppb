@@ -148,4 +148,10 @@ TEXTOS.de = {
   "Calendario del CEPPB": "CEPPB-Kalender",
   "Abrir en una pestaña nueva": "In neuem Tab öffnen",
   "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Das ist die Veranstaltungsseite der Vereinswebsite, so wie sie ist. Die Anmeldungen laufen dort.",
+  "Resultados de los eventos": "Veranstaltungsergebnisse",
+  "Puesto": "Platz",
+  "Ejemplar": "Hund",
+  "Guía": "Hundeführer",
+  "Puntos": "Punkte",
+  "Calificación": "Bewertung",
 };

@@ -148,4 +148,10 @@ TEXTOS.fr = {
   "Calendario del CEPPB": "Calendrier du CEPPB",
   "Abrir en una pestaña nueva": "Ouvrir dans un nouvel onglet",
   "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Voici la page des événements du site du club, telle quelle. Les inscriptions s'y font.",
+  "Resultados de los eventos": "Résultats des événements",
+  "Puesto": "Place",
+  "Ejemplar": "Chien",
+  "Guía": "Conducteur",
+  "Puntos": "Points",
+  "Calificación": "Qualificatif",
 };

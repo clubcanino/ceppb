@@ -146,4 +146,10 @@ TEXTOS.va = {
   "Calendario del CEPPB": "Calendari del CEPPB",
   "Abrir en una pestaña nueva": "Obri en una pestanya nova",
   "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Açò és la pàgina d'esdeveniments del web del club, tal qual. Les inscripcions es fan ahí.",
+  "Resultados de los eventos": "Resultats dels esdeveniments",
+  "Puesto": "Posició",
+  "Ejemplar": "Exemplar",
+  "Guía": "Guia",
+  "Puntos": "Punts",
+  "Calificación": "Qualificació",
 };

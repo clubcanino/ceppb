@@ -393,6 +393,13 @@ document.addEventListener("click", ev => {
   render();
 });
 
+/* --- elegir de qué evento se ven los resultados --- */
+document.addEventListener("change", ev => {
+  if (ev.target.id !== "elegir-evento") return;
+  eventoElegido = ev.target.value;
+  render();
+});
+
 /* --- pestañas de la pantalla de eventos --- */
 document.addEventListener("click", ev => {
   const b = ev.target.closest("[data-tabev]");

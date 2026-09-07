@@ -143,4 +143,10 @@ TEXTOS.eu = {
   "Calendario del CEPPB": "CEPPBren egutegia",
   "Abrir en una pestaña nueva": "Ireki fitxa berri batean",
   "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Hau klubaren webguneko ekitaldien orria da, dagoen bezala. Izen-emateak han egiten dira.",
+  "Resultados de los eventos": "Ekitaldien emaitzak",
+  "Puesto": "Postua",
+  "Ejemplar": "Alea",
+  "Guía": "Gidaria",
+  "Puntos": "Puntuak",
+  "Calificación": "Kalifikazioa",
 };
