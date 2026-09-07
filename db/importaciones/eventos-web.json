@@ -1,0 +1,155 @@
+{
+ "nuevos": [
+  {
+   "fecha": "2023-09-17",
+   "lugar": "Quijorna",
+   "titulo": "Examen y selección de figurantes IGP CEPPB",
+   "tarifas": 1,
+   "nombre": "Examen y selección de figurantes IGP CEPPB · Quijorna",
+   "id": "fab658c4-1c8c-5877-a216-e6763dd70e92",
+   "tipo": "Otro"
+  },
+  {
+   "fecha": "2024-02-03",
+   "lugar": "Cártama",
+   "titulo": "Campeonato Nacional de Mondioring 2024",
+   "tarifas": 1,
+   "nombre": "Campeonato Nacional de Mondioring 2024 · Cártama",
+   "id": "2b30356b-b5ae-58ce-a078-ed47c5b28adb",
+   "tipo": "CNM"
+  },
+  {
+   "fecha": "2024-03-09",
+   "lugar": "Campo de Fútbol Miguel Reina",
+   "titulo": "Campeonato Nacional de Obediencia FCI 2024",
+   "tarifas": 1,
+   "nombre": "Campeonato Nacional de Obediencia FCI 2024 · Campo de Fútbol Miguel Reina",
+   "id": "6ac7bac2-46a8-5c17-b0a5-2a838b040ed4",
+   "tipo": "Otro"
+  },
+  {
+   "fecha": "2024-08-30",
+   "lugar": "Granada",
+   "titulo": "Summer Camp Mondioring CEPPB",
+   "tarifas": 1,
+   "nombre": "Summer Camp Mondioring CEPPB · Granada",
+   "id": "09fd3b9e-33a7-58f0-af34-32c2f834bac1",
+   "tipo": "Otro"
+  },
+  {
+   "fecha": "2024-09-07",
+   "lugar": "Prádena",
+   "titulo": "Examen y selección de figurantes IGP CEPPB, temporada 2024/25",
+   "tarifas": 1,
+   "nombre": "Examen y selección de figurantes IGP CEPPB, temporada 2024/25 · Prádena",
+   "id": "ecdec0d0-eeaa-54ab-8e56-7351535d15ea",
+   "tipo": "Otro"
+  },
+  {
+   "fecha": "2024-10-26",
+   "lugar": "Puerto Real",
+   "titulo": "Work Shop Agility Ricardo Martínez",
+   "tarifas": 1,
+   "nombre": "Work Shop Agility Ricardo Martínez · Puerto Real",
+   "id": "0b0f6f02-1024-571f-a7c4-089a45d64b6f",
+   "tipo": "Otro"
+  },
+  {
+   "fecha": "2024-11-02",
+   "lugar": "Navarra",
+   "titulo": "Especial Nacional de Cría CEPPB 2024",
+   "tarifas": 3,
+   "nombre": "Especial Nacional de Cría CEPPB 2024 · Navarra",
+   "id": "cfb8273f-5d70-5dd8-a1e4-129ceee5ec50",
+   "tipo": "Especial de Cría"
+  },
+  {
+   "fecha": "2024-11-23",
+   "lugar": "Castelldans",
+   "titulo": "Monográfica Castelldans",
+   "tarifas": 3,
+   "nombre": "Monográfica Castelldans · Castelldans",
+   "id": "40963a0b-324c-5b7b-afc4-8cfc0ffe345f",
+   "tipo": "Concurso monográfico CEPPB"
+  },
+  {
+   "fecha": "2025-02-01",
+   "lugar": "Palafrugell",
+   "titulo": "Monográfica Palafrugell",
+   "tarifas": 3,
+   "nombre": "Monográfica Palafrugell · Palafrugell",
+   "id": "e6e4b922-1ae6-5771-a829-766d34f652c7",
+   "tipo": "Concurso monográfico CEPPB"
+  },
+  {
+   "fecha": "2025-02-01",
+   "lugar": "Palafrugell",
+   "titulo": "Campeonato Nacional de Mondioring 2025",
+   "tarifas": 1,
+   "nombre": "Campeonato Nacional de Mondioring 2025 · Palafrugell",
+   "id": "cf3aa3ca-6b9c-5ba5-a629-8f14ff4643e7",
+   "tipo": "CNM"
+  },
+  {
+   "fecha": "2025-11-22",
+   "lugar": "Pedro Bernardo",
+   "titulo": "Monográfica Pedro Bernardo",
+   "tarifas": 3,
+   "nombre": "Monográfica Pedro Bernardo · Pedro Bernardo",
+   "id": "3fbbf954-9b13-5139-a37f-00a28f2a9a41",
+   "tipo": "Concurso monográfico CEPPB"
+  },
+  {
+   "fecha": "2026-02-07",
+   "lugar": "Quer",
+   "titulo": "Campeonato Nacional de Mondioring 2026",
+   "tarifas": 1,
+   "nombre": "Campeonato Nacional de Mondioring 2026 · Quer",
+   "id": "1180714b-4eb2-57b9-b383-99efcdcfd3ab",
+   "tipo": "CNM"
+  },
+  {
+   "fecha": "2026-10-24",
+   "lugar": "Igea",
+   "titulo": "Especial Nacional de Cría CEPPB 2026",
+   "tarifas": 2,
+   "nombre": "Especial Nacional de Cría CEPPB 2026 · Igea",
+   "id": "afcd5f60-feb9-58c1-8f74-387dbd177069",
+   "tipo": "Especial de Cría"
+  }
+ ],
+ "completados": [
+  {
+   "fecha": "2023-11-24",
+   "lugar": "Medina-Sidonia",
+   "titulo": "Campeonato Nacional de IGP 2023",
+   "tarifas": 1,
+   "nombre": "XXIV CNI 2023 (CEPPB)",
+   "id": "d274e6d7-c7b9-5fc0-a94a-1163dec2f0c5"
+  },
+  {
+   "fecha": "2024-11-22",
+   "lugar": "Castelldans",
+   "titulo": "Campeonato Nacional de IGP 2024",
+   "tarifas": 1,
+   "nombre": "Campeonato Nacional 2024 (CEPPB)",
+   "id": "fc30d24c-0c12-5160-b90e-399669730b62"
+  },
+  {
+   "fecha": "2025-11-08",
+   "lugar": "Igea",
+   "titulo": "Especial Nacional de Cría CEPPB 2025",
+   "tarifas": 3,
+   "nombre": "Especial Nacional de Cría CEPPB 2025 · Igea",
+   "id": "a866144e-e190-58ee-ab5a-78fe2e667f53"
+  },
+  {
+   "fecha": "2025-11-21",
+   "lugar": "Pedro Bernardo",
+   "titulo": "Campeonato Nacional de IGP 2025",
+   "tarifas": 1,
+   "nombre": "C.N.I. Campeonato Nacional IGP 2025 (CEPPB)",
+   "id": "6b64d39a-2104-58f6-9437-8b05318d068d"
+  }
+ ]
+}
