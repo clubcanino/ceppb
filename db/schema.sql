@@ -233,6 +233,35 @@ create table if not exists solicitudes (
 );
 create index if not exists solicitudes_estado_idx on solicitudes(tipo, estado);
 
+-- ---------- me gusta ----------
+/* Un socio, un perro, una vez. Sirve para que un criador vea qué
+   ejemplares suyos gustan; no cuenta para nada del reglamento. */
+create table if not exists megusta (
+  perro_id uuid not null references perros(id) on delete cascade,
+  socio_id uuid not null references socios(id) on delete cascade,
+  creado   timestamptz default now(),
+  primary key (perro_id, socio_id)
+);
+create index if not exists megusta_perro_idx on megusta(perro_id);
+
+-- ---------- mensajes entre socios ----------
+/* Sin enseñar el correo de nadie. La regla del club es que un socio no
+   ve los datos de otro salvo que ese otro los haya abierto; si para
+   escribirle hubiera que darle su correo, esa regla se caería por la
+   puerta de atrás. Los mensajes se quedan aquí dentro. */
+create table if not exists mensajes (
+  id       uuid primary key default gen_random_uuid(),
+  de_id    uuid not null references socios(id) on delete cascade,
+  para_id  uuid not null references socios(id) on delete cascade,
+  perro_id uuid references perros(id) on delete set null,
+  asunto   text,
+  cuerpo   text not null,
+  leido    timestamptz,
+  creado   timestamptz default now()
+);
+create index if not exists mensajes_para_idx on mensajes(para_id, leido);
+create index if not exists mensajes_de_idx   on mensajes(de_id);
+
 -- ---------- cuotas ----------
 create table if not exists pagos (
   id uuid primary key default gen_random_uuid(),
@@ -393,6 +422,8 @@ alter table pagos           enable row level security;
 alter table solicitudes     enable row level security;
 alter table media           enable row level security;
 alter table invitaciones    enable row level security;
+alter table megusta         enable row level security;
+alter table mensajes        enable row level security;
 alter table admins          enable row level security;
 
 create or replace function mi_socio_id() returns uuid
@@ -494,6 +525,46 @@ create policy media_escritura on media for all using (
   with check (
   es_admin() or socio_id = mi_socio_id()
   or exists (select 1 from perros p where p.id = perro_id and p.propietario_id = mi_socio_id()));
+
+-- ME GUSTA: cuántos tiene un perro lo ve cualquier socio; el propio,
+-- sólo lo pone y lo quita su dueño.
+drop policy if exists megusta_lectura on megusta;
+create policy megusta_lectura on megusta for select using (es_socio() or es_admin());
+drop policy if exists megusta_propio on megusta;
+create policy megusta_propio on megusta for insert with check (socio_id = mi_socio_id());
+drop policy if exists megusta_quitar on megusta;
+create policy megusta_quitar on megusta for delete using (socio_id = mi_socio_id() or es_admin());
+
+-- MENSAJES: los ven dos personas, quien escribe y quien recibe. La
+-- junta no lee el correo de los socios.
+drop policy if exists mensajes_lectura on mensajes;
+create policy mensajes_lectura on mensajes for select
+  using (de_id = mi_socio_id() or para_id = mi_socio_id());
+drop policy if exists mensajes_envio on mensajes;
+create policy mensajes_envio on mensajes for insert
+  with check (de_id = mi_socio_id() and para_id <> mi_socio_id());
+drop policy if exists mensajes_leido on mensajes;
+create policy mensajes_leido on mensajes for update using (para_id = mi_socio_id());
+drop policy if exists mensajes_borrado on mensajes;
+create policy mensajes_borrado on mensajes for delete
+  using (para_id = mi_socio_id() or de_id = mi_socio_id());
+
+/* Lo dicho, dicho está: marcar como leído es lo único que se puede
+   cambiar de un mensaje enviado. */
+create or replace function proteger_mensaje() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if new.cuerpo is distinct from old.cuerpo
+     or new.asunto is distinct from old.asunto
+     or new.de_id is distinct from old.de_id
+     or new.para_id is distinct from old.para_id then
+    raise exception 'Un mensaje enviado no se puede reescribir';
+  end if;
+  return new;
+end; $$;
+drop trigger if exists trg_proteger_mensaje on mensajes;
+create trigger trg_proteger_mensaje before update on mensajes
+  for each row execute function proteger_mensaje();
 
 -- INVITACIONES y ADMINS: sólo la junta
 drop policy if exists invitaciones_pol on invitaciones;

@@ -333,6 +333,8 @@ function pedigriDe(p, puedo){
       </div>
       <span class="spacer"></span>
       ${p.workingdogUrl ? `<a class="btn sm" href="${esc(enlaceWorkingDog(p))}" target="_blank" rel="noopener noreferrer">En working-dog</a>` : ""}
+      ${botonMeGusta(p)}
+      ${botonEscribirAlPropietario(p)}
       ${puedo ? `<button class="btn sm" data-form="perro|${esc(p.id)}">Editar padres</button>` : ""}
     </div>
 
@@ -364,4 +366,37 @@ function pedigriDe(p, puedo){
       </div>
     </div>` : ""}
   </div>`;
+}
+
+/* ============================================================
+   Aplaudir un ejemplar.
+
+   Un socio, un perro, una vez. Sirve para que un criador vea qué
+   ejemplares suyos gustan; no cuenta para nada del reglamento y no
+   es una votación del club.
+   ============================================================ */
+function meGustaDe(perroId){
+  return C("megusta").filter(m => m.perroId === perroId);
+}
+function leDiMeGusta(perroId){
+  const yo = miSocioId();
+  return !!yo && meGustaDe(perroId).some(m => m.socioId === yo);
+}
+function botonMeGusta(p){
+  if (!SESION.socio) return "";
+  const n = meGustaDe(p.id).length;
+  const mio = leDiMeGusta(p.id);
+  return `<button class="btn sm ${mio ? "megusta-on" : ""}" data-megusta="${esc(p.id)}"
+    title="${esc(mio ? t("Ya te gusta. Púlsalo otra vez para quitarlo") : t("Dile al propietario que te gusta"))}">
+    ${mio ? "♥" : "♡"} ${esc(t("Me gusta"))}${n ? ` <span class="num">${n}</span>` : ""}</button>`;
+}
+
+/* Escribir al propietario sin que nadie enseñe su correo: el mensaje
+   se queda dentro de la plataforma. La regla del club es que un socio
+   no ve los datos de otro salvo que ese otro los haya abierto, y por
+   aquí no se va a caer. */
+function botonEscribirAlPropietario(p){
+  if (!SESION.socio || !p.propietarioId || esYo(p.propietarioId)) return "";
+  return `<button class="btn sm" data-escribir="${esc(p.propietarioId)}|${esc(p.id)}">
+    ${esc(t("Escribir a su propietario"))}</button>`;
 }

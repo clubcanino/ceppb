@@ -112,3 +112,80 @@ function sinFichaVinculada(){
       </div>`}
   </div></div>`;
 }
+
+/* ============================================================
+   La bandeja de mensajes.
+
+   Sin correos por medio: un socio escribe a otro desde su ficha o
+   desde la de su perro, y el mensaje se queda aquí. Así los
+   perfiles siguen siendo reservados y aun así la gente puede
+   hablarse.
+   ============================================================ */
+V.mensajes = function(){
+  const yo = miSocioId();
+  if (!yo) return sinFichaVinculada();
+
+  const todos = C("mensajes");
+  const recibidos = todos.filter(m => m.paraId === yo)
+    .sort((a, b) => String(b.creado).localeCompare(String(a.creado)));
+  const enviados = todos.filter(m => m.deId === yo)
+    .sort((a, b) => String(b.creado).localeCompare(String(a.creado)));
+  const sinLeer = recibidos.filter(m => !m.leido).length;
+
+  const quien = id => {
+    const s = byId(C("socios"), id);
+    return s ? s.nombreCompleto : "Un socio";
+  };
+  const cuando = f => {
+    if (!f) return "";
+    const d = String(f).slice(0, 10);
+    return fmtF(d) + " · " + String(f).slice(11, 16);
+  };
+
+  const tarjeta = (m, mio) => {
+    const p = m.perroId ? byId(C("perros"), m.perroId) : null;
+    return `<div class="card ${!mio && !m.leido ? "lift" : ""}" style="margin-bottom:10px">
+      <div class="card-h">
+        <h3>${esc(m.asunto || t("Sin asunto"))}</h3>
+        ${!mio && !m.leido ? `<span class="chip warn">${esc(t("Sin leer"))}</span>` : ""}
+        <span class="spacer"></span>
+        <span class="hint">${esc(cuando(m.creado))}</span>
+      </div>
+      <div class="card-b">
+        <div class="mini" style="margin-bottom:8px">
+          ${mio ? esc(t("Para")) : esc(t("De"))}
+          <b>${esc(quien(mio ? m.paraId : m.deId))}</b>
+          ${p ? ` · <a class="linkish" href="#/perro/${esc(p.id)}">${esc(p.nombre)}</a>` : ""}
+        </div>
+        <div style="white-space:pre-wrap;font-size:13px;line-height:1.55">${esc(m.cuerpo)}</div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          ${!mio ? `<button class="btn sm" data-escribir="${esc(m.deId)}|${esc(m.perroId || "")}">${esc(t("Responder"))}</button>` : ""}
+          ${!mio && !m.leido ? `<button class="btn sm" data-leido="${esc(m.id)}">${esc(t("Marcar leído"))}</button>` : ""}
+          <button class="btn sm danger" data-borrar-mensaje="${esc(m.id)}">${esc(t("Borrar"))}</button>
+        </div>
+      </div></div>`;
+  };
+
+  return `
+    <div class="note" style="margin-bottom:16px">
+      ${esc(t("Los socios se escriben aquí dentro, sin darse el correo. Si quieres darle el tuyo a alguien, se lo dices tú en el mensaje."))}
+    </div>
+    <div class="cols2">
+      <div>
+        <h3 style="margin-bottom:11px">${esc(t("Recibidos"))}${sinLeer ? ` <span class="chip warn">${sinLeer}</span>` : ""}</h3>
+        ${recibidos.length ? recibidos.map(m => tarjeta(m, false)).join("")
+          : `<div class="card"><div class="empty" style="padding:30px">
+              <b>${esc(t("No tienes mensajes"))}</b>
+              ${esc(t("Cuando otro socio te escriba desde tu perfil o desde la ficha de uno de tus perros, aparecerá aquí."))}
+             </div></div>`}
+      </div>
+      <div>
+        <h3 style="margin-bottom:11px">${esc(t("Enviados"))}</h3>
+        ${enviados.length ? enviados.map(m => tarjeta(m, true)).join("")
+          : `<div class="card"><div class="empty" style="padding:30px">
+              <b>${esc(t("No has escrito a nadie todavía"))}</b>
+              ${esc(t("Desde la ficha de un socio o de un ejemplar puedes escribir a su propietario."))}
+             </div></div>`}
+      </div>
+    </div>`;
+};

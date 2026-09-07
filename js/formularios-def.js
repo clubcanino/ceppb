@@ -389,6 +389,36 @@ const FORMS = {
      entrega. Si el ejemplar ya tiene titular, lo que hace falta no es
      una reclamación sino un traspaso, con el consentimiento de quien lo
      tiene: eso se avisa aquí y se resuelve en la junta. */
+  /* Escribir a otro socio. Ni quien escribe ve el correo del otro ni
+     al revés: el mensaje se queda dentro de la plataforma, que es lo
+     que permite que los perfiles sigan siendo reservados. */
+  mensaje(par){
+    const [paraId, perroId] = String(par).split("|");
+    const para = byId(C("socios"), paraId);
+    const perro = perroId ? byId(C("perros"), perroId) : null;
+    if(!para) return toast("No encuentro a ese socio");
+    if(!miSocioId()) return toast("Sólo los socios pueden escribirse");
+    if(esYo(paraId)) return toast("Ése eres tú");
+
+    abrirForm(`Escribir a ${para.nombreCompleto}`, [
+      {t:"Mensaje",
+       d:`Le llega a su área de la plataforma. Ni tú ves su correo ni él el tuyo: si quiere dártelo, te contestará.`,
+       f:[
+        {k:"asunto", l:"Asunto", wide:true,
+         v: perro ? `Sobre ${perro.nombre}` : "",
+         ph:"De qué le escribes"},
+        {k:"cuerpo", l:"Mensaje", tipo:"textarea", wide:true,
+         ph:"Escríbele lo que quieras contarle."},
+      ]},
+    ], async d => {
+      if(!String(d.cuerpo||"").trim()) return toast("Escribe algo antes de enviarlo");
+      await guardar("mensajes", null, {deId:miSocioId(), paraId,
+        perroId: perroId || null, asunto:d.asunto, cuerpo:d.cuerpo});
+      toast("Mensaje enviado");
+      render();
+    });
+  },
+
   reclamacion(perroId){
     const p = byId(C("perros"), perroId); if(!p) return;
     const yo = miSocioId();

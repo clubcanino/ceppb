@@ -515,15 +515,17 @@ test("ninguna traducción se ha quedado igual que el castellano por descuido", (
   const sonIguales = {
     en: ["Pedigrí", "Público", "Privado", "Foto", "Invitaciones", "Administración"],
     fr: ["Pedigree", "Public", "Privé", "Photo", "Invitations", "Administration",
-         "La plateforme", "Actualités"],
-    de: ["Foto", "Privat"],
+         "La plateforme", "Actualités", "De", "Messages"],
+    de: ["Foto", "Privat", "Messages"],
     /* Palabras que en catalán, valenciano, gallego o euskera se
        escriben igual que en castellano. No están sin traducir: es que
        coinciden. */
     ca: ["La plataforma", "Socios", "Pedigrí", "Tema", "Foto", "Privat",
-         "Correu", "Idioma", "Palmarés", "Junta directiva", "Visitant"],
+         "Correu", "Idioma", "Palmarés", "Junta directiva", "Visitant",
+         "De", "Missatges", "Enviats"],
     va: ["La plataforma", "Socios", "Pedigrí", "Tema", "Foto", "Privat",
-         "Correu", "Idioma", "Palmarés", "Junta directiva", "Visitant"],
+         "Correu", "Idioma", "Palmarés", "Junta directiva", "Visitant",
+         "De", "Missatges", "Enviats"],
     gl: ["Cría", "Aptos de cría", "Socios", "Camadas", "Eventos", "Pedigrí",
          "Resultados", "Administración", "Diagnóstico", "Macho", "Socio",
          "Visitante", "Cancelar", "Editar", "Borrar", "Publicar", "Entrar",
@@ -532,7 +534,8 @@ test("ninguna traducción se ha quedado igual que el castellano por descuido", (
          "Acceso de socios", "EN DIRECTO", "Pedigrí completo",
          "aplicado ficha por ficha", "Vídeos por publicar", "Vinculación de altas",
          "Administradores", "Descendencia", "Validado", "Completo",
-         "Guía", "Puntos", "Descargar"],
+         "Guía", "Puntos", "Descargar", "De", "Para", "Responder", "Borrar",
+         "Mensaxes", "Sen asunto"],
     eu: ["Palmaresa"],
   };
   for (const idioma of OTRAS_LENGUAS){
@@ -1196,4 +1199,61 @@ test("a la familia se le pregunta cuál de las fichas es la suya", () => {
   assert.match(html, /data-vincular="s2"/);
   assert.match(html, /Ricardo Salazar/);
   assert.match(html, /336/);
+});
+
+/* ============================================================
+   El buscador de arriba, «me gusta» y los mensajes.
+   ============================================================ */
+test("el buscador busca de verdad, y sólo entre lo que se puede ver", () => {
+  const ctx = montar();
+  vm.runInContext(`
+    SESION.rol="socio"; SESION.esAdmin=false; SESION.usuario={id:"u1"};
+    SESION.socio={id:"s1", numero:1, nombreCompleto:"Ana Ruiz"};
+    S.listo=true; S.error=null;
+    S.data.socios=[{id:"s1", numero:1, nombreCompleto:"Ana Ruiz", perfilPublico:"socios"},
+                   {id:"s2", numero:2, nombreCompleto:"Bruno Soler", perfilPublico:"oculto"}];
+    S.data.perros=[{id:"p1", nombre:"Ozone van het Dreiland", visibilidad:"socios", loe:"LOE 123"},
+                   {id:"p2", nombre:"Rania de Scofos", visibilidad:"privado"}];
+  `, ctx);
+  const buscar = vm.runInContext("buscarEnElClub", ctx);
+
+  /* hace falta escribir algo: no se vuelca el libro entero */
+  assert.equal(buscar("o").length, 0, "con una letra no se vuelca el libro");
+  const r = buscar("ozone");
+  assert.equal(r.length, 1);
+  assert.equal(r[0].ir, "perro/p1");
+
+  /* un perfil cerrado no sale, aunque se escriba su nombre entero */
+  assert.equal(buscar("Bruno Soler").length, 0, "un perfil cerrado no sale");
+  /* el propio, sí */
+  assert.equal(buscar("Ana Ruiz").length, 1);
+  /* y se busca también por LOE */
+  assert.equal(buscar("LOE 123").length, 1);
+});
+
+test("«me gusta»: uno por socio y perro, y sólo si eres socio", () => {
+  const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
+  assert.match(sql, /primary key \(perro_id, socio_id\)/, "no se puede votar dos veces");
+  assert.match(sql, /create policy megusta_propio on megusta for insert with check \(socio_id = mi_socio_id\(\)\)/,
+    "nadie da «me gusta» en nombre de otro");
+  const perros = readFileSync(new URL("../js/vistas/perros.js", import.meta.url), "utf8");
+  assert.match(perros, /if \(!SESION\.socio\) return "";/);
+});
+
+test("los mensajes no enseñan el correo de nadie", () => {
+  const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
+  /* sólo los ven los dos implicados: ni la junta */
+  assert.match(sql, /create policy mensajes_lectura on mensajes for select\s*\n\s*using \(de_id = mi_socio_id\(\) or para_id = mi_socio_id\(\)\)/);
+  assert.equal(/mensajes_lectura[^;]*es_admin\(\)/.test(sql), false,
+    "la junta no lee el correo de los socios");
+  /* se escribe en nombre propio y no a uno mismo */
+  assert.match(sql, /with check \(de_id = mi_socio_id\(\) and para_id <> mi_socio_id\(\)\)/);
+  /* y lo dicho, dicho está */
+  assert.match(sql, /Un mensaje enviado no se puede reescribir/);
+});
+
+test("la bandeja está en Mi área y cuenta los sin leer", () => {
+  const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
+  assert.match(app, /\{r:"mensajes", n:"Mensajes"/);
+  assert.match(app, /m\.paraId === miSocioId\(\) && !m\.leido/);
 });

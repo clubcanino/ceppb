@@ -145,6 +145,21 @@ const COLUMNAS = {
     "registrado_por",
     "creado"
   ],
+  megusta: [
+    "perro_id",
+    "socio_id",
+    "creado"
+  ],
+  mensajes: [
+    "id",
+    "de_id",
+    "para_id",
+    "perro_id",
+    "asunto",
+    "cuerpo",
+    "leido",
+    "creado"
+  ],
   inscripciones: [
     "id",
     "evento_id",

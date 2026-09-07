@@ -128,3 +128,61 @@ document.addEventListener("input", ev => {
     if (typeof f === "function") f(oculto.value);
   }
 });
+
+/* ============================================================
+   El buscador de la barra de arriba.
+
+   Busca a la vez en el censo y en el libro, y sólo entre lo que
+   quien busca tiene derecho a ver: los perfiles que su titular ha
+   abierto y los ejemplares que le corresponden. Nada más.
+   ============================================================ */
+const BUSCA_MINIMO = 2;
+const BUSCA_MAX = 8;
+
+function buscarEnElClub(texto){
+  const q = norm(texto || "");
+  if (q.length < BUSCA_MINIMO) return [];
+
+  const perros = (typeof perrosVisibles === "function" ? perrosVisibles() : C("perros"))
+    .filter(p => norm([p.nombre, p.afijo, p.loe, p.chip].join(" ")).includes(q))
+    .slice(0, BUSCA_MAX)
+    .map(p => ({
+      ir: "perro/" + p.id, titulo: p.nombre,
+      pie: [p.variedad, p.loe, p.sexo === "M" ? "♂" : p.sexo === "H" ? "♀" : ""]
+             .filter(Boolean).join(" · "),
+      grupo: "Ejemplares",
+    }));
+
+  const socios = C("socios")
+    .filter(s => (typeof perfilVisible !== "function" || perfilVisible(s)) &&
+                 norm([s.nombreCompleto, s.afijo, s.numero, s.poblacion, s.provincia].join(" ")).includes(q))
+    .slice(0, BUSCA_MAX)
+    .map(s => ({
+      ir: "socio/" + s.id, titulo: s.nombreCompleto,
+      pie: ["nº " + s.numero, s.afijo, s.provincia].filter(Boolean).join(" · "),
+      grupo: "Socios",
+    }));
+
+  return socios.concat(perros);
+}
+
+function pintarBusqueda(texto){
+  const caja = document.getElementById("busca-caidas");
+  if (!caja) return;
+  const l = buscarEnElClub(texto);
+
+  if (!texto || norm(texto).length < BUSCA_MINIMO){ caja.innerHTML = ""; caja.hidden = true; return; }
+  if (!l.length){
+    caja.innerHTML = `<div class="busca-vacio">${esc(t("Nada con ese nombre"))}</div>`;
+    caja.hidden = false; return;
+  }
+
+  let grupo = "";
+  caja.innerHTML = l.map(x => {
+    const cabecera = x.grupo !== grupo ? `<div class="busca-grupo">${esc(t(x.grupo))}</div>` : "";
+    grupo = x.grupo;
+    return cabecera + `<a class="busca-fila" data-go="${esc(x.ir)}" href="#/${esc(x.ir)}">
+      <b>${esc(x.titulo)}</b>${x.pie ? `<span class="mini">${esc(x.pie)}</span>` : ""}</a>`;
+  }).join("");
+  caja.hidden = false;
+}

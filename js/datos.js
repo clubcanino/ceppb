@@ -14,7 +14,10 @@
 const COLS = ["socios","socios_privado","perros","camadas","eventos",
               "resultados","inscripciones","pagos","solicitudes","media",
               /* solo las ve la junta: a un socio le llegan vacías y ya está */
-              "admins","invitaciones"];
+              "admins","invitaciones",
+              /* de estas dos, cada socio recibe lo suyo: sus mensajes y
+                 los «me gusta» de todos, que no son secreto */
+              "megusta","mensajes"];
 
 /* La clave primaria de socios_privado es socio_id, no id */
 const PK = { socios_privado: "socio_id", admins: "email", invitaciones: "token" };

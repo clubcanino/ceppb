@@ -300,6 +300,24 @@ img.avatar{display:block}
 .abrir-menu:hover{background:var(--surface-2)}
 .tapa-menu{display:none}
 
+/* Cuando ya le has dado a «me gusta» */
+.btn.megusta-on{color:var(--brand);border-color:color-mix(in srgb,var(--brand) 40%,var(--line));
+  background:color-mix(in srgb,var(--brand) 10%,var(--surface))}
+
+/* El panel del buscador de la barra de arriba */
+.search{position:relative}
+.busca-caidas{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:40;
+  max-height:min(60vh,420px);overflow:auto;
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--sh-2);padding:5px}
+.busca-grupo{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);padding:8px 10px 4px}
+.busca-fila{display:flex;flex-direction:column;gap:1px;padding:7px 10px;
+  border-radius:var(--r-sm);text-decoration:none;color:inherit}
+.busca-fila:hover{background:var(--surface-2)}
+.busca-fila b{font-size:13px;font-weight:600}
+.busca-vacio{padding:14px 12px;color:var(--muted);font-size:12.5px}
+
 /* El distintivo de los documentos descargables */
 .doc-ico{flex:none;display:inline-flex;align-items:center;justify-content:center;
   width:38px;height:44px;border-radius:5px;background:var(--brand);color:#fff;

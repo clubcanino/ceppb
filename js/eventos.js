@@ -454,6 +454,64 @@ document.addEventListener("change", ev => {
   render();
 });
 
+/* --- escribir a otro socio --- */
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-escribir]");
+  if (b) FORMS.mensaje(b.dataset.escribir);
+});
+
+/* --- marcar un mensaje como leído, o borrarlo --- */
+document.addEventListener("click", async ev => {
+  const l = ev.target.closest("[data-leido]");
+  if (l){
+    await guardar("mensajes", l.dataset.leido, {leido:new Date().toISOString()});
+    await recargar(); render(); return;
+  }
+  const b = ev.target.closest("[data-borrar-mensaje]");
+  if (b){
+    if(!confirm("¿Borrar este mensaje de tu bandeja?")) return;
+    const { error } = await S.sb.from("mensajes").delete().eq("id", b.dataset.borrarMensaje);
+    if (error) return avisarError(error);
+    await recargar(); toast("Mensaje borrado"); render();
+  }
+});
+
+/* --- me gusta --- */
+document.addEventListener("click", async ev => {
+  const b = ev.target.closest("[data-megusta]");
+  if (!b) return;
+  const yo = miSocioId();
+  if (!yo) return toast("Sólo los socios pueden hacerlo");
+  const perroId = b.dataset.megusta;
+  b.disabled = true;
+  const { error } = leDiMeGusta(perroId)
+    ? await S.sb.from("megusta").delete().eq("perro_id", perroId).eq("socio_id", yo)
+    : await S.sb.from("megusta").insert({ perro_id: perroId, socio_id: yo });
+  if (error){ b.disabled = false; return avisarError(error); }
+  await recargar();
+  render();
+});
+
+/* --- el buscador de la barra de arriba --- */
+document.addEventListener("input", ev => {
+  if (ev.target.id !== "q") return;
+  pintarBusqueda(ev.target.value);
+});
+document.addEventListener("click", ev => {
+  /* Al elegir un resultado se va a su ficha y se recoge el panel. */
+  const f = ev.target.closest(".busca-fila");
+  if (f){
+    const q = $("#q"); if (q) q.value = "";
+    pintarBusqueda("");
+    return;
+  }
+  /* Y al pinchar fuera, también se recoge. */
+  if (!ev.target.closest(".search")) pintarBusqueda("");
+});
+document.addEventListener("keydown", ev => {
+  if (ev.key === "Escape" && ev.target.id === "q"){ ev.target.value = ""; pintarBusqueda(""); }
+});
+
 /* --- elegir cuál de las fichas de la familia es la mía --- */
 document.addEventListener("click", async ev => {
   const b = ev.target.closest("[data-vincular]");

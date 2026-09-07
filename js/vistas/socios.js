@@ -79,7 +79,10 @@ V.socio = function(id){
       </div>
       ${s.bio&&visible(s,"bio")?`<p style="max-width:60ch;margin:12px 0 0;color:var(--ink-2)">${esc(s.bio)}</p>`:""}
     </div>
-    ${yo?`<div style="display:flex;gap:8px;align-items:center">${botonFoto("avatar","socio",id,s.avatar?"Cambiar foto":"Subir foto")}<button class="btn brand" data-form="socio|${esc(id)}">Editar perfil</button></div>`:""}
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      ${yo?`${botonFoto("avatar","socio",id,s.avatar?"Cambiar foto":"Subir foto")}<button class="btn brand" data-form="socio|${esc(id)}">Editar perfil</button>`:""}
+      ${!yo && SESION.socio ? `<button class="btn" data-escribir="${esc(id)}|">${esc(t("Escribirle"))}</button>` : ""}
+    </div>
   </div>
   <div class="cols23">
     <div class="grid">

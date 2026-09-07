@@ -28,6 +28,8 @@ const VISTAS = [
      ahí, así que no se le ofrece. «Mi cuenta» sí: la contraseña y la
      foto las tiene todo el mundo. */
   {r:"yo",       n:"Mi perfil",        v:["socio","admin"], si:()=>!!SESION.socio},
+  {r:"mensajes", n:"Mensajes",         v:["socio","admin"], si:()=>!!SESION.socio,
+   ct:()=>C("mensajes").filter(m => m.paraId === miSocioId() && !m.leido).length || null},
   {r:"ajustes",  n:"Mi cuenta",        v:["socio","admin","sin-ficha"]},
   {r:"cuenta",   n:"Cuota y pagos",    v:["socio","admin"], si:()=>!!SESION.socio},
 
@@ -62,6 +64,7 @@ const TITULOS_VISTA = {
   eventos:  ["Eventos", "Convocatorias e inscripciones"],
   cargos:   ["Cargos y jueces", "Listados oficiales del club"],
   yo:       ["Mi perfil", "Tus datos, tus perros y qué comparte cada uno"],
+  mensajes: ["Mensajes", "Lo que te escriben otros socios del club"],
   ajustes:  ["Mi cuenta", "Tu contraseña, tu foto y quién te ve"],
   diagnostico: ["Diagnóstico", "Estado de la conexión y de tu sesión"],
   cuenta:   ["Cuota y pagos", "Tu situación con la tesorería del club"],
