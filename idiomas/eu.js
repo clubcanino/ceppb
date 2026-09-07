@@ -214,4 +214,10 @@ TEXTOS.eu = {
   "Distinciones en concurso": "Erakusketetako sariak",
   "Todavía no hay ninguno validado por la junta.": "Oraindik ez dago zuzendaritzak balioztatutakorik.",
   "Hermanos": "Anai-arrebak",
+  "Escribir a un socio": "Idatzi bazkide bati",
+  "socios del club aceptan mensajes": "klubeko bazkidek mezuak onartzen dituzte",
+  "Que me escriban": "Idatz diezadaten",
+  "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "Beste bazkide batzuek plataformatik idatz diezazukete. Ez dute zure helbide elektronikoa ez zure beste daturik ikusten: zure izena bakarrik, zuregana zuzendu ahal izateko.",
+  "Sí, que me escriban": "Bai, idatz diezadatela",
+  "Prefiero que no": "Nahiago dut ezetz",
 };

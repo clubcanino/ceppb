@@ -83,6 +83,10 @@ create table if not exists socios (
   roles           text[] default '{}',
   -- consentimiento
   perfil_publico  text default 'oculto' check (perfil_publico in ('oculto','socios','publico')),
+  -- Que otros socios puedan escribirle desde la plataforma. Escribir a
+  -- alguien no es ver sus datos: quien recibe no enseña ni su correo ni
+  -- nada más que su nombre. Aun así, cada uno decide.
+  acepta_mensajes boolean not null default true,
   priv            jsonb default '{}'::jsonb,
   avatar_url      text,
   idioma          text default 'es'
@@ -542,7 +546,12 @@ create policy mensajes_lectura on mensajes for select
   using (de_id = mi_socio_id() or para_id = mi_socio_id());
 drop policy if exists mensajes_envio on mensajes;
 create policy mensajes_envio on mensajes for insert
-  with check (de_id = mi_socio_id() and para_id <> mi_socio_id());
+  with check (
+    de_id = mi_socio_id()
+    and para_id <> mi_socio_id()
+    /* y no se escribe a quien ha dicho que no */
+    and exists (select 1 from socios s
+                 where s.id = para_id and s.acepta_mensajes and s.fecha_baja is null));
 drop policy if exists mensajes_leido on mensajes;
 create policy mensajes_leido on mensajes for update using (para_id = mi_socio_id());
 drop policy if exists mensajes_borrado on mensajes;

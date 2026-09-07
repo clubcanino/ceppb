@@ -21,6 +21,7 @@ const COLUMNAS = {
     "id",
     "numero",
     "auth_user_id",
+    "acepta_mensajes",
     "nombre",
     "apellidos",
     "email",

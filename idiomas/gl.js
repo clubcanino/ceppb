@@ -215,4 +215,10 @@ TEXTOS.gl = {
   "Distinciones en concurso": "Distincións en concurso",
   "Todavía no hay ninguno validado por la junta.": "Aínda non hai ningún validado pola xunta.",
   "Hermanos": "Irmáns",
+  "Escribir a un socio": "Escribir a un socio",
+  "socios del club aceptan mensajes": "socios do club aceptan mensaxes",
+  "Que me escriban": "Que me escriban",
+  "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "Outros socios poden escribirche desde a plataforma. Non ven o teu correo nin ningún outro dato teu: só o teu nome, para poder dirixirse a ti.",
+  "Sí, que me escriban": "Si, que me escriban",
+  "Prefiero que no": "Prefiro que non",
 };

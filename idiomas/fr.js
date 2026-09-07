@@ -219,4 +219,10 @@ TEXTOS.fr = {
   "Distinciones en concurso": "Distinctions en exposition",
   "Todavía no hay ninguno validado por la junta.": "Aucun validé par le comité pour le moment.",
   "Hermanos": "Frères et sœurs",
+  "Escribir a un socio": "Écrire à un membre",
+  "socios del club aceptan mensajes": "membres du club acceptent les messages",
+  "Que me escriban": "Qu'on m'écrive",
+  "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "D'autres membres peuvent vous écrire depuis la plateforme. Ils ne voient ni votre adresse ni aucune autre de vos données : seulement votre nom, pour pouvoir s'adresser à vous.",
+  "Sí, que me escriban": "Oui, qu'on m'écrive",
+  "Prefiero que no": "Je préfère que non",
 };

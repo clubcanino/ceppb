@@ -19,6 +19,14 @@ V.yo = function(){
           <div class="seg">${PERFIL_NIV.map(([k,n])=>`<button data-perfil="${esc(s.id)}|${k}" class="${(s.perfilPublico||"oculto")===k?"on":""}">${esc(n)}</button>`).join("")}</div>
           ${(s.perfilPublico||"oculto")==="oculto"?`<div class="note warn" style="margin-top:11px">Ahora mismo no apareces en el directorio. Los ajustes de abajo no tendrán efecto hasta que te des a conocer.</div>`:""}
         </div></div>
+        <div class="card"><div class="card-h"><h3>${esc(t("Que me escriban"))}</h3></div><div class="card-b">
+          <div class="mini" style="margin-bottom:10px">${esc(t("Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti."))}</div>
+          <div class="seg">
+            <button data-mensajes-si="1" class="${s.aceptaMensajes !== false ? "on" : ""}">${esc(t("Sí, que me escriban"))}</button>
+            <button data-mensajes-si="0" class="${s.aceptaMensajes === false ? "on" : ""}">${esc(t("Prefiero que no"))}</button>
+          </div>
+        </div></div>
+
         <div class="card"><div class="card-h"><h3>Qué comparto</h3><span class="hint">Sólo si apareces en el directorio</span></div><div class="card-b">
           ${Object.keys(PRIV_DEF).map(k => `<div class="req"><div class="tx" style="flex:1"><b>${esc({email:"Correo electrónico",telefono:"Teléfono",poblacion:"Localidad",provincia:"Provincia",afijo:"Afijo de criador",disciplinas:"Disciplinas",bio:"Presentación",web:"Web / redes",fechaAlta:"Antigüedad como socio"}[k]||k)}</b></div>
             <div class="seg">${NIVELES.map(([v,n])=>`<button data-priv="${esc(s.id)}|${k}|${v}" class="${nivelDe(s,k)===v?"on":""}">${esc(n)}</button>`).join("")}</div></div>`).join("")}
@@ -167,9 +175,11 @@ V.mensajes = function(){
   };
 
   return `
-    <div class="note" style="margin-bottom:16px">
-      ${esc(t("Los socios se escriben aquí dentro, sin darse el correo. Si quieres darle el tuyo a alguien, se lo dices tú en el mensaje."))}
+    <div style="margin-bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn brand" id="nuevo-mensaje">${esc(t("Escribir a un socio"))}</button>
+      <span class="mini">${(S.escribibles||[]).length} ${esc(t("socios del club aceptan mensajes"))}</span>
     </div>
+
     <div class="cols2">
       <div>
         <h3 style="margin-bottom:11px">${esc(t("Recibidos"))}${sinLeer ? ` <span class="chip warn">${sinLeer}</span>` : ""}</h3>

@@ -395,15 +395,36 @@ const FORMS = {
   /* Escribir a otro socio. Ni quien escribe ve el correo del otro ni
      al revés: el mensaje se queda dentro de la plataforma, que es lo
      que permite que los perfiles sigan siendo reservados. */
+  /* Elegir a quién escribir de entre los socios que lo aceptan. No se
+     enseña de ellos más que el nombre. */
+  nuevoMensaje(){
+    if(!miSocioId()) return toast("Sólo los socios pueden escribirse");
+    const l = S.escribibles || [];
+    if(!l.length) return toast("Ahora mismo no hay a quién escribir");
+    abrirForm("Escribir a un socio", [
+      {t:"Destinatario", d:"Escribe tres letras de su nombre o apellido.", f:[
+        {k:"paraId", l:"Socio", tipo:"buscarId", wide:true,
+         op: l.map(x => [x.id, `${x.nombre} (nº ${x.numero})`]),
+         ph:"Escribe tres letras del apellido…"},
+      ]},
+    ], async d => {
+      if(!d.paraId) return toast("Elige a quién escribes");
+      cerrarForm();
+      setTimeout(() => FORMS.mensaje(d.paraId + "|"), 120);
+    });
+  },
+
   mensaje(par){
     const [paraId, perroId] = String(par).split("|");
-    const para = byId(C("socios"), paraId);
+    const para = byId(C("socios"), paraId)
+      || (S.escribibles||[]).find(x => x.id === paraId);
     const perro = perroId ? byId(C("perros"), perroId) : null;
     if(!para) return toast("No encuentro a ese socio");
     if(!miSocioId()) return toast("Sólo los socios pueden escribirse");
     if(esYo(paraId)) return toast("Ése eres tú");
 
-    abrirForm(`Escribir a ${para.nombreCompleto}`, [
+    const suNombre = para.nombreCompleto || para.nombre;
+    abrirForm(`Escribir a ${suNombre}`, [
       {t:"Mensaje",
        d:`Le llega a su área de la plataforma. Ni tú ves su correo ni él el tuyo: si quiere dártelo, te contestará.`,
        f:[

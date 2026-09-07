@@ -929,7 +929,7 @@ test("los campos de socio y de ejemplar se buscan, no se despliegan", () => {
       assert.equal(m[0].includes(prohibido), false,
         "sigue habiendo un desplegable con fichas dentro: " + m[0].slice(0, 70));
   /* y los que había son ahora buscadores */
-  assert.equal((sinComentarios.match(/tipo:"buscarId"/g) || []).length, 6);
+  assert.equal((sinComentarios.match(/tipo:"buscarId"/g) || []).length, 7);
 });
 
 test("el simulador de cruce tampoco despliega los tres mil ejemplares", () => {
@@ -1246,8 +1246,9 @@ test("los mensajes no enseñan el correo de nadie", () => {
   assert.match(sql, /create policy mensajes_lectura on mensajes for select\s*\n\s*using \(de_id = mi_socio_id\(\) or para_id = mi_socio_id\(\)\)/);
   assert.equal(/mensajes_lectura[^;]*es_admin\(\)/.test(sql), false,
     "la junta no lee el correo de los socios");
-  /* se escribe en nombre propio y no a uno mismo */
-  assert.match(sql, /with check \(de_id = mi_socio_id\(\) and para_id <> mi_socio_id\(\)\)/);
+  /* se escribe en nombre propio, no a uno mismo, y no a quien dijo que no */
+  assert.match(sql, /de_id = mi_socio_id\(\)\s*\n\s*and para_id <> mi_socio_id\(\)/);
+  assert.match(sql, /s\.id = para_id and s\.acepta_mensajes/);
   /* y lo dicho, dicho está */
   assert.match(sql, /Un mensaje enviado no se puede reescribir/);
 });
@@ -1256,4 +1257,22 @@ test("la bandeja está en Mi área y cuenta los sin leer", () => {
   const app = readFileSync(new URL("../js/app.js", import.meta.url), "utf8");
   assert.match(app, /\{r:"mensajes", n:"Mensajes"/);
   assert.match(app, /m\.paraId === miSocioId\(\) && !m\.leido/);
+});
+
+test("se puede escribir a cualquier socio que lo acepte, sin ver sus datos", () => {
+  const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
+  const mig = readFileSync(new URL("../db/migraciones/2026-09-07-poder-escribirse.sql", import.meta.url), "utf8");
+
+  /* la lista sale de una función que devuelve el nombre y nada más */
+  const f = mig.slice(mig.indexOf("function socios_a_los_que_escribir"));
+  const cabecera = f.slice(0, f.indexOf("$$", f.indexOf("$$") + 2));
+  for (const dato of ["email", "telefono", "direccion", "iban", "dni"])
+    assert.equal(new RegExp("s\\." + dato).test(cabecera), false,
+      "la lista de destinatarios filtra " + dato);
+  assert.match(cabecera, /s\.nombre_completo/);
+  /* y sólo la ven los socios */
+  assert.match(cabecera, /where es_socio\(\)/);
+
+  /* quien no quiere, lo apaga; por defecto está encendido */
+  assert.match(sql, /acepta_mensajes boolean not null default true/);
 });

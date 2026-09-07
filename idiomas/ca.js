@@ -214,4 +214,10 @@ TEXTOS.ca = {
   "Distinciones en concurso": "Distincions en concurs",
   "Todavía no hay ninguno validado por la junta.": "Encara no n'hi ha cap validat per la junta.",
   "Hermanos": "Germans",
+  "Escribir a un socio": "Escriu a un soci",
+  "socios del club aceptan mensajes": "socis del club accepten missatges",
+  "Que me escriban": "Que m'escriguin",
+  "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "Altres socis et poden escriure des de la plataforma. No veuen el teu correu ni cap altra dada teva: només el teu nom, per poder adreçar-se a tu.",
+  "Sí, que me escriban": "Sí, que m'escriguin",
+  "Prefiero que no": "Prefereixo que no",
 };

@@ -219,4 +219,10 @@ TEXTOS.en = {
   "Distinciones en concurso": "Show awards",
   "Todavía no hay ninguno validado por la junta.": "None validated by the committee yet.",
   "Hermanos": "Siblings",
+  "Escribir a un socio": "Write to a member",
+  "socios del club aceptan mensajes": "club members accept messages",
+  "Que me escriban": "Letting people write to me",
+  "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "Other members can write to you from the platform. They do not see your email or any other detail of yours: only your name, so they can address you.",
+  "Sí, que me escriban": "Yes, let them write",
+  "Prefiero que no": "I would rather not",
 };

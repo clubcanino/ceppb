@@ -454,10 +454,25 @@ document.addEventListener("change", ev => {
   render();
 });
 
+/* --- que me escriban, o no --- */
+document.addEventListener("click", async ev => {
+  const b = ev.target.closest("[data-mensajes-si]");
+  if (!b) return;
+  const s = SESION.socio; if (!s) return;
+  await guardar("socios", s.id, {aceptaMensajes: b.dataset.mensajesSi === "1"});
+  await SESION.refrescar();
+  await recargar();
+  toast(b.dataset.mensajesSi === "1"
+    ? "Los socios del club pueden escribirte"
+    : "Ya no te llegarán mensajes de otros socios");
+  render();
+});
+
 /* --- escribir a otro socio --- */
 document.addEventListener("click", ev => {
   const b = ev.target.closest("[data-escribir]");
-  if (b) FORMS.mensaje(b.dataset.escribir);
+  if (b) return FORMS.mensaje(b.dataset.escribir);
+  if (ev.target.id === "nuevo-mensaje") FORMS.nuevoMensaje();
 });
 
 /* --- marcar un mensaje como leído, o borrarlo --- */

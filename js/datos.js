@@ -154,6 +154,7 @@ async function recargar(){
      Si falla, la plataforma sigue: es información de gestión, no
      algo sin lo que no se pueda trabajar. */
   try { await cargarAccesos(); } catch(e){ S.accesos = []; }
+  try { await cargarEscribibles(); } catch(e){ S.escribibles = []; }
 }
 
 /* ---------- lectura ---------- */
@@ -195,6 +196,18 @@ async function cargarAccesos(){
     correoConfirmado: a.correo_confirmado,
   }));
   return S.accesos;
+}
+
+/* A quién puedo escribir. Sale de una función de la base de datos que
+   devuelve sólo el nombre: escribir a alguien no es ver sus datos, y
+   por aquí no sale ni uno. */
+S.escribibles = [];
+async function cargarEscribibles(){
+  if (!SESION.socio){ S.escribibles = []; return S.escribibles; }
+  const { data, error } = await SESION.sb.rpc("socios_a_los_que_escribir");
+  S.escribibles = error ? [] : (data || []).map(x => ({
+    id: x.socio_id, nombre: x.nombre_completo, numero: x.numero }));
+  return S.escribibles;
 }
 
 /* Los mensajes que devuelven los triggers del club están escritos en

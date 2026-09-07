@@ -219,4 +219,10 @@ TEXTOS.de = {
   "Distinciones en concurso": "Auszeichnungen auf Ausstellungen",
   "Todavía no hay ninguno validado por la junta.": "Noch keiner vom Vorstand bestätigt.",
   "Hermanos": "Geschwister",
+  "Escribir a un socio": "Einem Mitglied schreiben",
+  "socios del club aceptan mensajes": "Vereinsmitglieder nehmen Nachrichten an",
+  "Que me escriban": "Dass man mir schreibt",
+  "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "Andere Mitglieder können Ihnen über die Plattform schreiben. Sie sehen weder Ihre E-Mail-Adresse noch sonst etwas von Ihnen: nur Ihren Namen, um Sie ansprechen zu können.",
+  "Sí, que me escriban": "Ja, man darf mir schreiben",
+  "Prefiero que no": "Lieber nicht",
 };
