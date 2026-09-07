@@ -47,7 +47,10 @@ function campo(f){
     <input class="inp" type="${f.tipo||"text"}" name="${f.k}" value="${esc(v)}" placeholder="${esc(f.ph||"")}">${f.h?`<span class="hint2">${esc(f.h)}</span>`:""}</div>`;
 }
 function grupos(gs){
-  return gs.map(g => `<fieldset class="fset"><legend>${esc(g.t)}</legend>${g.d?`<div class="note" style="margin-bottom:11px">${g.d}</div>`:""}
+  /* `plano` deja la descripción sin la caja de nota: la usa la lista
+     de coincidencias del cotejo, que ya trae sus propias fichas y
+     dentro de una nota parecería un aviso y no una lista. */
+  return gs.map(g => `<fieldset class="fset"><legend>${esc(g.t)}</legend>${g.d?`<div class="${g.plano?"cotejo-lista":"note"}" style="margin-bottom:11px">${g.d}</div>`:""}
     <div class="fgrid">${g.f.map(campo).join("")}</div></fieldset>`).join("");
 }
 function abrirForm(titulo, gs, onOk){

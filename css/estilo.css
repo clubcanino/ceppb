@@ -566,3 +566,21 @@ img.avatar{display:block}
 @supports not (background: color-mix(in srgb, red 10%, white)){
   .rep{background:var(--surface-2)}
 }
+
+/* ---------- cotejo de ejemplares repetidos ----------
+   Cada coincidencia es una ficha con la que hay que hacer algo, no
+   un aviso que se lee: por eso van sueltas y con sus botones a la
+   derecha, y no dentro de la caja gris de las notas. */
+.cotejo-lista{display:grid;gap:8px}
+.coin{display:flex;gap:12px;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;padding:11px 13px;border:1px solid var(--line-2);
+  border-radius:var(--r-sm);background:var(--surface)}
+.coin > div:first-child{min-width:0;flex:1 1 15em}
+.coin b{font-size:14px}
+.coin .mini{margin-top:3px}
+.coin-b{display:flex;gap:7px;flex-wrap:wrap}
+@media (max-width:560px){
+  .coin{align-items:flex-start}
+  .coin-b{width:100%}
+  .coin-b .btn{flex:1;justify-content:center}
+}

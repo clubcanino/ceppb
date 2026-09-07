@@ -126,38 +126,26 @@ const FORMS = {
         {k:"adnEjemplar", l:"Perfil de ADN del ejemplar depositado", tipo:"check", v:p.adnEjemplar, wide:true, h:"El del propio perro, no el de sus padres"},
       ]},
     ], async d => {
-      const n = Object.assign({}, p, d);
-      n.adnEjemplar = !!d.adnEjemplar;
-      n.afijo = limpiarAfijo(d.afijo);
+      /* Antes de nada: ¿este perro ya está en el libro? Se comprueba
+         aquí arriba, antes de crear padres y abuelos, porque si al
+         final resulta que la ficha ya existía no queremos haber
+         dejado medio pedigrí suelto por el camino.
 
-      /* El criador se escribe con el buscador. Si el nombre es de un
-         socio del club, la ficha se enlaza con él y así ese criador
-         sigue viendo lo criado bajo su afijo. Si no lo es —que pasa a
-         menudo— se guarda igual y no pasa nada.
-
-         Si no se escribió criador, se prueba por el afijo: muchos
-         afijos del censo identifican al criador sin más. */
-      const cri = socioPorNombre(d.criadorNombre) || socioPorAfijo(n.afijo);
-      n.criadorId    = cri ? cri.id : null;
-      n.afijoSocioId = cri ? cri.id : null;
-      delete n.criadorNombre;
-
-      /* Padres y abuelos: se buscan en el libro por el nombre y, si no
-         están, se añaden. Así el árbol del club crece con cada alta en
-         lugar de quedarse en lo que trajimos de working-dog. */
-      n.padreId = await perroPorNombreOAlta(d.padreNombre, "M");
-      n.madreId = await perroPorNombreOAlta(d.madreNombre, "H");
-      await ponerAbuelos(n.padreId, d.abueloPP, d.abuelaPM);
-      await ponerAbuelos(n.madreId, d.abueloMP, d.abuelaMM);
-      for (const k of ["padreNombre","madreNombre","abueloPP","abuelaPM","abueloMP","abuelaMM"])
-        delete n[k];
-
-      delete n.id;
-      const nid = await guardar("perros", id, n);
-      toast(id ? "Ficha actualizada" : "Ejemplar dado de alta");
-      if(!id) ir("perro/" + nid);
+         Si hay coincidencias, el alta se queda en suspenso: o el
+         socio reclama la ficha que ya está, o declara que su perro
+         es otro y entonces se guarda esto mismo, tal cual, sin que
+         tenga que escribirlo dos veces. */
+      if (!id){
+        const coin = await coincidenciasDeEjemplar(d);
+        if (coin.length){
+          pedirCotejo(coin, decl => guardarEjemplar(id, p, d, decl));
+          return false;
+        }
+      }
+      return guardarEjemplar(id, p, d, null);
     });
   },
+
   salud(id){
     const p = byId(C("perros"), id) || {}, s = p.salud || {}, g = s.genes || {};
     abrirForm("Pruebas de salud — Anexo A", [
@@ -692,4 +680,46 @@ async function ponerAbuelos(hijoId, nombrePadre, nombreMadre){
 function siguienteNumeroSocio(){
   const usados = C("socios").map(s => s.numero).filter(n => Number.isInteger(n));
   return usados.length ? Math.max(...usados) + 1 : 1;
+}
+
+/* El alta o la edición de un ejemplar, una vez decidido que hay que
+   guardarla. Vive aparte del formulario porque hay dos caminos que
+   llegan hasta aquí: el alta normal, y el alta que antes ha pasado
+   por el cotejo de repetidos. */
+async function guardarEjemplar(id, p, d, declaracion){
+  const n = Object.assign({}, p, d);
+  n.adnEjemplar = !!d.adnEjemplar;
+  n.afijo = limpiarAfijo(d.afijo);
+
+  /* El criador se escribe con el buscador. Si el nombre es de un
+     socio del club, la ficha se enlaza con él y así ese criador
+     sigue viendo lo criado bajo su afijo. Si no lo es —que pasa a
+     menudo— se guarda igual y no pasa nada.
+
+     Si no se escribió criador, se prueba por el afijo: muchos
+     afijos del censo identifican al criador sin más. */
+  const cri = socioPorNombre(d.criadorNombre) || socioPorAfijo(n.afijo);
+  n.criadorId    = cri ? cri.id : null;
+  n.afijoSocioId = cri ? cri.id : null;
+  delete n.criadorNombre;
+
+  /* Padres y abuelos: se buscan en el libro por el nombre y, si no
+     están, se añaden. Así el árbol del club crece con cada alta en
+     lugar de quedarse en lo que trajimos de working-dog. */
+  n.padreId = await perroPorNombreOAlta(d.padreNombre, "M");
+  n.madreId = await perroPorNombreOAlta(d.madreNombre, "H");
+  await ponerAbuelos(n.padreId, d.abueloPP, d.abuelaPM);
+  await ponerAbuelos(n.madreId, d.abueloMP, d.abuelaMM);
+  for (const k of ["padreNombre","madreNombre","abueloPP","abuelaPM","abueloMP","abuelaMM"])
+    delete n[k];
+
+  /* La declaración del guía queda en la ficha: si algún día
+     aparece el duplicado, la junta puede mirar qué se le enseñó y
+     qué declaró. */
+  if (declaracion) n.altaDeclarada = declaracion;
+
+  delete n.id;
+  const nid = await guardar("perros", id, n);
+  toast(id ? "Ficha actualizada" : "Ejemplar dado de alta");
+  if(!id) ir("perro/" + nid);
 }

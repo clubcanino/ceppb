@@ -64,7 +64,13 @@ document.addEventListener("click", async ev => {
     return;
   }
   if(ev.target.id === "sheet-x" || ev.target.id === "sheet-c" || ev.target.id === "scrim") cerrarForm();
-  if(ev.target.id === "sheet-ok" && formActual){ const f = formActual; try { await f(leerForm()); cerrarForm(); } catch(e){} }
+  /* Un formulario que devuelve false pide quedarse abierto: lo usa el
+     alta de ejemplar para enseñar las coincidencias del libro sin
+     perder por el camino lo que el socio acababa de escribir. */
+  if(ev.target.id === "sheet-ok" && formActual){
+    const f = formActual;
+    try { if (await f(leerForm()) !== false) cerrarForm(); } catch(e){}
+  }
   if(ev.target.id === "tema"){
     const cur = document.documentElement.getAttribute("data-theme");
     const oscuro = cur ? cur === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;

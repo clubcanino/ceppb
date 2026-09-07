@@ -148,6 +148,10 @@ V.perro = function(id){
         ${(p.historialTitularidad||[]).length?`<dt>Titulares anteriores</dt><dd style="font-weight:400">${
           (p.historialTitularidad||[]).map(h=>`${esc(byId(C("socios"),h.de)?.nombreCompleto||"—")} <span class="dim">→</span> ${esc(byId(C("socios"),h.a)?.nombreCompleto||"—")} <span class="mini">${fmtF(h.fecha)}</span>`).join("<br>")}</dd>`:""}
         ${p.workingdogUrl?`<dt>working-dog</dt><dd><a class="linkish" href="${esc(enlaceWorkingDog(p))}" target="_blank" rel="noopener noreferrer">Ficha externa</a>${pedigriWorkingDog(p)?` · <a class="linkish" href="${esc(pedigriWorkingDog(p))}" target="_blank" rel="noopener noreferrer">Pedigrí ampliado</a>`:""}</dd>`:""}
+        ${SESION.esAdmin && p.altaDeclarada ? `<dt>Alta declarada</dt><dd style="font-weight:400">
+          <span class="mini">Al darlo de alta, el ${fmtF(p.altaDeclarada.fecha)} se le enseñaron
+          ${(p.altaDeclarada.coincidencias||[]).length} ficha${(p.altaDeclarada.coincidencias||[]).length===1?"":"s"}
+          del libro y declaró que ninguna era este ejemplar.</span></dd>` : ""}
       </dl></div></div>
     </div><div class="grid">
       <div class="card"><div class="card-h"><h3>Situación reproductiva</h3></div><div class="card-b">

@@ -14,7 +14,7 @@ import vm from "node:vm";
 const ARCHIVOS = [
   "js/config.js", "js/util.js", "js/idiomas.js", "idiomas/ca.js", "idiomas/va.js", "idiomas/gl.js", "idiomas/eu.js", "idiomas/en.js", "idiomas/fr.js", "idiomas/de.js", "js/reglamento.js", "js/genealogia.js", "js/privacidad.js",
   "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js", "js/media.js", "js/exportar.js", "js/directo.js",
-  "js/formularios.js", "js/formularios-def.js",
+  "js/formularios.js", "js/cotejo.js", "js/formularios-def.js",
   "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
   "js/vistas/perros.js", "js/vistas/certificado.js", "js/vistas/carnet.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
   "js/vistas/bienvenida.js", "js/vistas/mi-area.js", "js/vistas/junta.js", "js/vistas/videos.js", "js/vistas/club.js",

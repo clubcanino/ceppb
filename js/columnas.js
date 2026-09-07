@@ -21,7 +21,6 @@ const COLUMNAS = {
     "id",
     "numero",
     "auth_user_id",
-    "acepta_mensajes",
     "nombre",
     "apellidos",
     "email",
@@ -52,6 +51,7 @@ const COLUMNAS = {
     "variedades",
     "roles",
     "perfil_publico",
+    "acepta_mensajes",
     "priv",
     "avatar_url",
     "idioma",
@@ -101,6 +101,7 @@ const COLUMNAS = {
     "pedigri_pegado",
     "historial_titularidad",
     "origen",
+    "alta_declarada",
     "creado"
   ],
   eventos: [
@@ -128,37 +129,22 @@ const COLUMNAS = {
     "organizado_ceppb",
     "calificacion",
     "clase",
+    "equipo",
     "puesto",
     "distincion",
     "modalidad",
     "resultado",
     "titulo",
     "puntos",
+    "puntos_sobre",
     "guia",
     "anio",
     "calificacion_origen",
-    "puntos_sobre",
-    "equipo",
     "validado",
     "validado_por",
     "validado_fecha",
     "validado_nota",
     "registrado_por",
-    "creado"
-  ],
-  megusta: [
-    "perro_id",
-    "socio_id",
-    "creado"
-  ],
-  mensajes: [
-    "id",
-    "de_id",
-    "para_id",
-    "perro_id",
-    "asunto",
-    "cuerpo",
-    "leido",
     "creado"
   ],
   inscripciones: [
@@ -206,6 +192,21 @@ const COLUMNAS = {
     "fecha_resolucion",
     "resuelta_por",
     "solicitante_id",
+    "creado"
+  ],
+  megusta: [
+    "perro_id",
+    "socio_id",
+    "creado"
+  ],
+  mensajes: [
+    "id",
+    "de_id",
+    "para_id",
+    "perro_id",
+    "asunto",
+    "cuerpo",
+    "leido",
     "creado"
   ],
   pagos: [

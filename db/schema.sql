@@ -148,6 +148,9 @@ create table if not exists perros (
   pedigri_pegado    text,
   historial_titularidad jsonb default '[]'::jsonb,
   origen            text,          -- de dónde salió la ficha (working-dog, etc.)
+  -- Declaración de quien dio de alta la ficha de que comprobó las
+  -- coincidencias del libro y su ejemplar no era ninguna de ellas.
+  alta_declarada    jsonb,
   creado            timestamptz default now()
 );
 create index if not exists perros_prop_idx on perros(propietario_id);
@@ -180,6 +183,14 @@ create table if not exists resultados (
   modalidad text,         -- TS · TC
   resultado text,         -- APTO · NO APTO
   titulo text,            -- IGP1..3 · MR1..3
+  -- Puntuación. Llegaron con las importaciones de actas y faltaban aquí:
+  -- el generador de columnas.js lee este archivo, así que lo que no esté
+  -- aquí se cae del navegador sin avisar.
+  puntos numeric(6,1),    -- en mondioring hay medios puntos: 247,5
+  puntos_sobre integer,   -- cada grado puntúa sobre un máximo distinto
+  guia text,              -- quien lo presentó
+  anio integer,
+  calificacion_origen text, -- la calificación tal como venía en el acta
   -- NADA cuenta hasta que la junta valida
   validado text default 'pendiente' check (validado in ('pendiente','validado','rechazado')),
   validado_por text, validado_fecha date, validado_nota text,
