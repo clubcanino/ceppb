@@ -393,6 +393,14 @@ document.addEventListener("click", ev => {
   render();
 });
 
+/* --- pestañas de la pantalla de eventos --- */
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("[data-tabev]");
+  if (!b) return;
+  tabEventos = b.dataset.tabev;
+  render();
+});
+
 /* --- idioma de la plataforma --- */
 document.addEventListener("change", async ev => {
   /* Hay dos: el de la barra superior y el de «Mi cuenta». */

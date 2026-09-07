@@ -55,9 +55,6 @@ function pasosDelSocio(){
 V.bienvenida = function(){
   const s = SESION.socio;
   const nombre = s ? String(s.nombreCompleto || "").split(/\s+/)[0] : "";
-  const perros = typeof perrosVisibles === "function" ? perrosVisibles() : C("perros");
-  const camp = C("resultados").filter(r => r.tipoEvento === "IGP").length;
-
   return `
     <div class="masthead">
       <div class="flag"><i></i><i></i><i></i></div>
@@ -74,12 +71,6 @@ V.bienvenida = function(){
           libro de cría vivo: el pedigrí se construye solo, el reglamento se aplica
           sobre cada ficha y la consanguinidad se calcula antes de cruzar, no después.
         </div>
-      </div>
-      <div class="mast-stats">
-        <div class="stat"><div class="k">Libro genealógico</div><div class="v">${perros.length}</div><div class="n">ejemplares enlazados entre sí</div></div>
-        <div class="stat"><div class="k">Generaciones</div><div class="v">5</div><div class="n">de pedigrí desplegado</div></div>
-        <div class="stat"><div class="k">Palmarés</div><div class="v">${camp}</div><div class="n">participaciones en campeonatos</div></div>
-        <div class="stat"><div class="k">Reglamento</div><div class="v">2025</div><div class="n">aplicado ficha por ficha</div></div>
       </div>
     </div>
 

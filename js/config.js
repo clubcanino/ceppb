@@ -18,3 +18,9 @@ window.CONFIG = {
 
 CONFIG.configurado = CONFIG.SUPABASE_URL !== "PENDIENTE" &&
                      CONFIG.SUPABASE_ANON !== "PENDIENTE";
+
+/* La web del club. El calendario de convocatorias y las inscripciones
+   viven allí y se muestran aquí dentro, para no llevarlos por
+   duplicado ni obligar al socio a saltar de una página a otra. */
+CONFIG.WEB_CLUB    = "https://www.ceppb.info";
+CONFIG.WEB_EVENTOS = "https://www.ceppb.info/eventos";

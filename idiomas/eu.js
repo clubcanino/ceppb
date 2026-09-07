@@ -137,4 +137,10 @@ TEXTOS.eu = {
   "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "Klubeko bazkidea bazara, zure fitxa jada badago idazkaritzan dauden datuekin. Sartu zure helbide elektronikoarekin haren jabetza hartzeko.",
   "¿Todavía no eres socio?": "Oraindik ez zara bazkidea?",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "Belgikako Artzain Txakurraren Espainiako Klubak belgikar artzainaren lau aldaeretako hazleak, kirolariak eta zaleak biltzen ditu. Idatzi klubaren idazkaritzara eta nola elkartu azalduko dizugu.",
+
+  /* Eventos: el calendario de la web del club */
+  "Convocatorias del libro": "Liburuaren deialdiak",
+  "Calendario del CEPPB": "CEPPBren egutegia",
+  "Abrir en una pestaña nueva": "Ireki fitxa berri batean",
+  "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Hau klubaren webguneko ekitaldien orria da, dagoen bezala. Izen-emateak han egiten dira.",
 };

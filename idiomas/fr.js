@@ -142,4 +142,10 @@ TEXTOS.fr = {
   "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "Si vous êtes membre du club, votre fiche existe déjà avec les données du secrétariat. Connectez-vous avec votre adresse pour en prendre possession.",
   "¿Todavía no eres socio?": "Pas encore membre ?",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "Le Club Espagnol du Chien de Berger Belge réunit les éleveurs, les compétiteurs et les passionnés des quatre variétés du berger belge. Écrivez au secrétariat du club et nous vous expliquerons comment adhérer.",
+
+  /* Eventos: el calendario de la web del club */
+  "Convocatorias del libro": "Convocations du livre",
+  "Calendario del CEPPB": "Calendrier du CEPPB",
+  "Abrir en una pestaña nueva": "Ouvrir dans un nouvel onglet",
+  "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Voici la page des événements du site du club, telle quelle. Les inscriptions s'y font.",
 };

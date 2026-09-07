@@ -3,13 +3,16 @@
    ============================================================ */
 "use strict";
 
+/* Quién ve cada sección. «visitante» es quien no ha entrado: sólo la
+   portada y la puerta. El libro es de los socios del club, y no se
+   enseña de fuera ni el censo, ni los ejemplares, ni los cargos. */
 const VISTAS = [
   {h:"", t:"La plataforma"},
   {r:"muro",     n:"Novedades",        v:["admin","socio","visitante"]},
-  {r:"socios",   n:"Socios",           v:["admin","socio","visitante"], ct:()=>C("socios").filter(perfilVisible).length || null},
-  {r:"perros",   n:"Ejemplares",       v:["admin","socio","visitante"], ct:()=>perrosVisibles().length || null},
-  {r:"eventos",  n:"Eventos",          v:["admin","socio","visitante"], ct:()=>C("eventos").length || null},
-  {r:"cargos",   n:"Cargos y jueces",  v:["admin","socio","visitante"], ct:()=>C("socios").filter(s=>(s.roles||[]).length).length || null},
+  {r:"socios",   n:"Socios",           v:["admin","socio"], ct:()=>C("socios").filter(perfilVisible).length || null},
+  {r:"perros",   n:"Ejemplares",       v:["admin","socio"], ct:()=>perrosVisibles().length || null},
+  {r:"eventos",  n:"Eventos",          v:["admin","socio"], ct:()=>C("eventos").length || null},
+  {r:"cargos",   n:"Cargos y jueces",  v:["admin","socio"], ct:()=>C("socios").filter(s=>(s.roles||[]).length).length || null},
 
   {h:"cria", t:"Cría"},
   {r:"aptos",    n:"Aptos de cría",    v:["admin","socio"]},
@@ -81,7 +84,9 @@ function pintarNav(){
     if (v.h !== undefined){ secc.push({t:v.t, items:[]}); return; }
     if (!v.v.includes(SESION.rol)) return;
     if (v.si && !v.si()) return;
-    const ct = v.ct ? v.ct() : null;
+    /* Los números de al lado de cada sección son datos del club: cuántos
+       socios, cuántos ejemplares. Quien no ha entrado no los ve. */
+    const ct = (v.ct && SESION.usuario) ? v.ct() : null;
     secc[secc.length-1].items.push(
       `<a href="#/${v.r}" class="${r===v.r?"on":""}">${esc(t(v.n))}` +
       (ct != null ? `<span class="ct">${ct}</span>` : "") + `</a>`);

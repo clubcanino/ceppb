@@ -142,4 +142,10 @@ TEXTOS.en = {
   "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "If you are a member, your record already exists with the details held by the club office. Sign in with your email to claim it.",
   "¿Todavía no eres socio?": "Not a member yet?",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "The Spanish Belgian Shepherd Dog Club brings together the breeders, competitors and enthusiasts of the four Belgian Shepherd varieties. Write to the club office and we will explain how to join.",
+
+  /* Eventos: el calendario de la web del club */
+  "Convocatorias del libro": "Studbook events",
+  "Calendario del CEPPB": "CEPPB calendar",
+  "Abrir en una pestaña nueva": "Open in a new tab",
+  "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "This is the club website's events page as it is. Entries are made there.",
 };

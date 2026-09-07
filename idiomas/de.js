@@ -142,4 +142,10 @@ TEXTOS.de = {
   "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "Wenn Sie Mitglied sind, gibt es Ihre Karteikarte bereits mit den Daten der Geschäftsstelle. Melden Sie sich mit Ihrer E-Mail-Adresse an, um sie zu übernehmen.",
   "¿Todavía no eres socio?": "Noch kein Mitglied?",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "Der Spanische Belgische-Schäferhund-Klub vereint die Züchter, Sportler und Liebhaber der vier Varietäten des Belgischen Schäferhundes. Schreiben Sie an die Geschäftsstelle des Vereins, und wir erklären Ihnen, wie Sie beitreten können.",
+
+  /* Eventos: el calendario de la web del club */
+  "Convocatorias del libro": "Veranstaltungen des Zuchtbuchs",
+  "Calendario del CEPPB": "CEPPB-Kalender",
+  "Abrir en una pestaña nueva": "In neuem Tab öffnen",
+  "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Das ist die Veranstaltungsseite der Vereinswebsite, so wie sie ist. Die Anmeldungen laufen dort.",
 };

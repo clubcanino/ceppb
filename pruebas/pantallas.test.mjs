@@ -755,3 +755,52 @@ test("la interfaz no le explica al socio cómo está hecha por dentro", () => {
       assert.equal(txt.includes(jerga), false, `${v} le habla al socio de «${jerga}»`);
   }
 });
+
+/* ============================================================
+   Sin entrar: ni datos, ni cifras, ni secciones del club.
+   ============================================================ */
+test("el menú de quien no ha entrado no lleva números al lado", () => {
+  const ctx = montar();
+  vm.runInContext(`SESION.rol="visitante"; SESION.usuario=null; SESION.socio=null;
+                   SESION.esAdmin=false; S.listo=true; pintarNav();`, ctx);
+  const nav = vm.runInContext(`$("#nav").innerHTML`, ctx);
+  assert.equal(/class="ct"/.test(nav), false, "el menú de visitante enseña contadores");
+});
+
+test("un visitante sólo tiene portada y puerta", () => {
+  const ctx = montar();
+  const abiertas = JSON.parse(vm.runInContext(
+    'JSON.stringify(VISTAS.filter(v => v.r && v.v.includes("visitante")).map(v => v.r))', ctx));
+  assert.deepEqual(abiertas.sort(), ["entrar", "muro"]);
+});
+
+test("la bienvenida ya no lleva el marcador de cifras", () => {
+  const ctx = montar();
+  vm.runInContext(`SESION.rol="socio"; SESION.esAdmin=false; SESION.usuario={id:"u1"};
+                   SESION.socio={id:"s1", numero:1, nombreCompleto:"Ana Ruiz"};
+                   S.listo=true; S.error=null;`, ctx);
+  const html = vm.runInContext("String(V.bienvenida(''))", ctx);
+  assert.equal(html.includes("mast-stats"), false);
+  for (const fuera of ["Palmarés", "Generaciones", "de pedigrí desplegado"])
+    assert.equal(html.includes(fuera), false, "la bienvenida sigue enseñando «" + fuera + "»");
+});
+
+/* ============================================================
+   El calendario de la web del club, dentro de la plataforma.
+   ============================================================ */
+test("eventos ofrece las convocatorias del libro y el calendario del club", () => {
+  const ctx = montar();
+  vm.runInContext(`SESION.rol="socio"; SESION.esAdmin=false; SESION.usuario={id:"u1"};
+                   SESION.socio={id:"s1", numero:1}; S.listo=true; S.error=null;`, ctx);
+  const club = vm.runInContext("String(V.eventos(''))", ctx);
+  assert.match(club, /data-tabev="club"/);
+  assert.match(club, /data-tabev="web"/);
+  assert.equal(club.includes("<iframe"), false, "la pestaña del libro no empotra nada");
+
+  vm.runInContext('tabEventos = "web"', ctx);
+  const web = vm.runInContext("String(V.eventos(''))", ctx);
+  vm.runInContext('tabEventos = "club"', ctx);
+  assert.match(web, /<iframe[^>]+src="https:\/\/www\.ceppb\.info\/eventos"/);
+  /* y siempre una salida por si el marco no carga */
+  assert.match(web, /target="_blank" rel="noopener noreferrer"/);
+});

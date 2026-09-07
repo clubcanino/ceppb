@@ -140,4 +140,10 @@ TEXTOS.va = {
   "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "Si eres soci del club, la teua fitxa ja existix amb les dades que consten en secretaria. Entra amb el teu correu per a prendre'n possessió.",
   "¿Todavía no eres socio?": "Encara no eres soci?",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "El Club Espanyol del Gos Pastor Belga reunix els criadors, esportistes i aficionats de les quatre varietats del pastor belga. Escriu a la secretaria del club i t'expliquem com associar-t'hi.",
+
+  /* Eventos: el calendario de la web del club */
+  "Convocatorias del libro": "Convocatòries del llibre",
+  "Calendario del CEPPB": "Calendari del CEPPB",
+  "Abrir en una pestaña nueva": "Obri en una pestanya nova",
+  "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Açò és la pàgina d'esdeveniments del web del club, tal qual. Les inscripcions es fan ahí.",
 };

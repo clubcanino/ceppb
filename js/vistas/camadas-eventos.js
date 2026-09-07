@@ -27,7 +27,42 @@ V.camadas = function(){
 };
 
 /* --- Eventos --- */
+/* Dos cosas distintas bajo el mismo nombre: las convocatorias que el
+   club lleva en esta plataforma —con sus inscripciones y sus
+   resultados— y el calendario que publica en su web. Se enseñan las
+   dos, cada una en su sitio, sin copiar la una en la otra. */
+let tabEventos = "club";
+
 V.eventos = function(){
+  const pestanas = [["club", "Convocatorias del libro"], ["web", "Calendario del CEPPB"]];
+  const cabecera = `<div class="tabs" style="margin-bottom:16px">${pestanas.map(([k, n]) =>
+    `<button data-tabev="${k}" class="${tabEventos === k ? "on" : ""}">${esc(t(n))}</button>`).join("")}</div>`;
+
+  if (tabEventos === "web") return cabecera + calendarioDelClub();
+
+  return cabecera + eventosDelLibro();
+};
+
+/* El calendario de la web del club, dentro de la plataforma. */
+function calendarioDelClub(){
+  return `<div class="card">
+    <div class="card-h"><h3>${esc(t("Calendario del CEPPB"))}</h3>
+      <span class="spacer"></span>
+      <a class="btn sm" href="${esc(CONFIG.WEB_EVENTOS)}" target="_blank" rel="noopener noreferrer">${esc(t("Abrir en una pestaña nueva"))}</a>
+    </div>
+    <div class="card-b" style="padding:0">
+      <div class="marco-web">
+        <iframe src="${esc(CONFIG.WEB_EVENTOS)}" title="${esc(t("Calendario del CEPPB"))}"
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+    <div class="card-b" style="border-top:1px solid var(--line)">
+      <div class="mini">${esc(t("Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí."))}</div>
+    </div>
+  </div>`;
+}
+
+function eventosDelLibro(){
   const evs = C("eventos").slice().sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha)));
   const fut = evs.filter(e=>e.fecha>=hoy()), pas = evs.filter(e=>e.fecha<hoy()).reverse();
   const mias = C("inscripciones").filter(i => SESION.esAdmin || i.socioId===miSocioId());

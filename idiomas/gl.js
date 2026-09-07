@@ -138,4 +138,10 @@ TEXTOS.gl = {
   "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "Se es socio do club, a túa ficha xa existe cos datos que constan na secretaría. Entra co teu correo para tomar posesión dela.",
   "¿Todavía no eres socio?": "Aínda non es socio?",
   "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "O Club Español do Can Pastor Belga reúne os criadores, deportistas e afeccionados das catro variedades do pastor belga. Escribe á secretaría do club e explicámosche como asociarte.",
+
+  /* Eventos: el calendario de la web del club */
+  "Convocatorias del libro": "Convocatorias do libro",
+  "Calendario del CEPPB": "Calendario do CEPPB",
+  "Abrir en una pestaña nueva": "Abrir nunha lapela nova",
+  "Esto es la página de eventos de la web del club, tal cual. Las inscripciones se hacen ahí.": "Isto é a páxina de eventos da web do club, tal cal. As inscricións fanse alí.",
 };
