@@ -97,9 +97,17 @@ function pintarNav(){
 }
 
 function pintarAcciones(){
-  $("#acciones").innerHTML = SESION.usuario
-    ? `<button class="btn sm" id="salir">Salir</button>`
-    : `<a class="btn brand sm" href="#/entrar">Entrar</a>`;
+  /* El idioma se elegía sólo dentro de «Mi cuenta», tres clics adentro:
+     quien entra en francés no sabe ni que existe esa pantalla. Aquí
+     está siempre a la vista, con el código de la lengua para que quepa
+     también en el teléfono. */
+  const idioma = `<select class="inp sm elegir-idioma" aria-label="Idioma" title="${esc(t("Idioma"))}">` +
+    IDIOMAS.map(i => `<option value="${i.c}" ${idiomaActual === i.c ? "selected" : ""}>` +
+      `${esc(i.c.toUpperCase())}</option>`).join("") + `</select>`;
+
+  $("#acciones").innerHTML = idioma + (SESION.usuario
+    ? `<button class="btn sm" id="salir">${esc(t("Salir"))}</button>`
+    : `<a class="btn brand sm" href="#/entrar">${esc(t("Entrar"))}</a>`);
 }
 
 function render(){

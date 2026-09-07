@@ -656,3 +656,40 @@ test("entrar lleva a la bienvenida, no a una puerta cerrada", () => {
   assert.match(app, /vista === "entrar" && SESION\.usuario/);
   assert.match(app, /location\.hash = "#\/bienvenida"/);
 });
+
+/* ============================================================
+   El idioma, a la vista.
+
+   Estaba sólo dentro de «Mi cuenta»: quien entra en francés no
+   sabe siquiera que esa pantalla existe.
+   ============================================================ */
+test("el idioma se puede cambiar desde la barra superior", () => {
+  const ctx = montar();
+  vm.runInContext(`SESION.rol="socio"; SESION.usuario={id:"u1"}; SESION.socio=null;
+                   S.listo=true; pintarAcciones();`, ctx);
+  const html = vm.runInContext(`$("#acciones").innerHTML`, ctx);
+  assert.match(html, /class="[^"]*elegir-idioma/);
+  for (const c of ["es", "en", "fr", "de"])
+    assert.match(html, new RegExp(`value="${c}"`), "falta el idioma " + c);
+});
+
+test("los dos selectores de idioma comparten el mismo manejador", () => {
+  const ev = readFileSync(new URL("../js/eventos.js", import.meta.url), "utf8");
+  assert.match(ev, /classList\.contains\("elegir-idioma"\)/);
+  const aj = readFileSync(new URL("../js/vistas/ajustes.js", import.meta.url), "utf8");
+  assert.match(aj, /class="inp elegir-idioma"/);
+});
+
+test("la bienvenida está traducida a las tres lenguas, no sólo el menú", () => {
+  const ctx = montar();
+  const T = vm.runInContext("TEXTOS", ctx);
+  for (const l of ["en", "fr", "de"]){
+    for (const clave of ["Da de alta tus ejemplares",
+                         "Calcula el cruce antes de hacerlo",
+                         "Nueve cosas que puedes hacer desde hoy",
+                         "Tú decides qué se ve de ti"]){
+      assert.ok(T[l] && T[l][clave], `${l} no traduce «${clave}»`);
+      assert.notEqual(T[l][clave], clave, `${l} dejó «${clave}» en castellano`);
+    }
+  }
+});

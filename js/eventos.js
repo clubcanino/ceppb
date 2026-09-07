@@ -395,7 +395,9 @@ document.addEventListener("click", ev => {
 
 /* --- idioma de la plataforma --- */
 document.addEventListener("change", async ev => {
-  if (ev.target.id !== "elegir-idioma") return;
+  /* Hay dos: el de la barra superior y el de «Mi cuenta». */
+  if (ev.target.id !== "elegir-idioma" &&
+      !(ev.target.classList && ev.target.classList.contains("elegir-idioma"))) return;
   const codigo = ev.target.value;
   ponerIdioma(codigo);
 

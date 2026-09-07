@@ -66,7 +66,7 @@ V.ajustes = function(){
           afijos y los términos del reglamento —ACE, ACES, Anexo A, Malinois— no se
           traducen: son los mismos en toda la FCI.</p>
           <div class="f wide" style="margin-top:12px">
-            <select class="inp" id="elegir-idioma">
+            <select class="inp elegir-idioma" id="elegir-idioma">
               ${IDIOMAS.map(i => `<option value="${i.c}" ${idiomaActual===i.c?"selected":""}>
                 ${esc(i.propio)}${i.c!=="es" ? " · " + esc(i.n) : ""}</option>`).join("")}
             </select>
