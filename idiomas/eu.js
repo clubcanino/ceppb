@@ -220,4 +220,22 @@ TEXTOS.eu = {
   "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "Beste bazkide batzuek plataformatik idatz diezazukete. Ez dute zure helbide elektronikoa ez zure beste daturik ikusten: zure izena bakarrik, zuregana zuzendu ahal izateko.",
   "Sí, que me escriban": "Bai, idatz diezadatela",
   "Prefiero que no": "Nahiago dut ezetz",
+
+  /* El carnet de socio */
+  "Mi carnet de socio": "Nire bazkide-txartela",
+  "Carnet de socio": "Bazkide-txartela",
+  "Socio nº": "Bazkide zk.",
+  "Socio desde": "Bazkide noiztik",
+  "Cuota": "Kuota",
+  "Afijo": "Afixua",
+  "Provincia": "Probintzia",
+  "Código de verificación": "Egiaztapen-kodea",
+  "Válido durante": "Baliozkoa",
+  "Baja el": "Baja data",
+  "Guardar como PDF o imprimir": "Gorde PDF gisa edo inprimatu",
+  "En el móvil basta con enseñar esta pantalla.": "Mugikorrean nahikoa da pantaila hau erakustea.",
+  "El carnet acredita que eres socio del club. No lleva tu DNI, ni tu dirección, ni tu número de cuenta: no hacen falta para eso y un carnet se enseña.": "Txartelak klubeko bazkidea zarela egiaztatzen du. Ez darama zure NANik, ez zure helbiderik, ez zure kontu-zenbakirik: horretarako ez dira behar, eta txartel bat erakutsi egiten da.",
+  "Cada socio saca el suyo": "Bazkide bakoitzak berea ateratzen du",
+  "El carnet lo expide su titular, y la junta directiva.": "Txartela bere titularrak ematen du, eta zuzendaritza batzordeak.",
+  "Socio no encontrado": "Bazkidea ez da aurkitu",
 };

@@ -225,4 +225,22 @@ TEXTOS.de = {
   "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "Andere Mitglieder können Ihnen über die Plattform schreiben. Sie sehen weder Ihre E-Mail-Adresse noch sonst etwas von Ihnen: nur Ihren Namen, um Sie ansprechen zu können.",
   "Sí, que me escriban": "Ja, man darf mir schreiben",
   "Prefiero que no": "Lieber nicht",
+
+  /* El carnet de socio */
+  "Mi carnet de socio": "Mein Mitgliedsausweis",
+  "Carnet de socio": "Mitgliedsausweis",
+  "Socio nº": "Mitglied Nr.",
+  "Socio desde": "Mitglied seit",
+  "Cuota": "Beitrag",
+  "Afijo": "Zwingername",
+  "Provincia": "Provinz",
+  "Código de verificación": "Prüfcode",
+  "Válido durante": "Gültig für",
+  "Baja el": "Ausgetreten am",
+  "Guardar como PDF o imprimir": "Als PDF speichern oder drucken",
+  "En el móvil basta con enseñar esta pantalla.": "Am Handy genügt es, diesen Bildschirm zu zeigen.",
+  "El carnet acredita que eres socio del club. No lleva tu DNI, ni tu dirección, ni tu número de cuenta: no hacen falta para eso y un carnet se enseña.": "Der Ausweis belegt, dass Sie Mitglied des Vereins sind. Er trägt weder Ihren Personalausweis noch Ihre Anschrift noch Ihre Kontonummer: dafür braucht es sie nicht, und ein Ausweis wird vorgezeigt.",
+  "Cada socio saca el suyo": "Jedes Mitglied stellt seinen eigenen aus",
+  "El carnet lo expide su titular, y la junta directiva.": "Der Ausweis wird von seinem Inhaber ausgestellt, und vom Vorstand.",
+  "Socio no encontrado": "Mitglied nicht gefunden",
 };

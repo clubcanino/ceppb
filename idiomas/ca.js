@@ -220,4 +220,22 @@ TEXTOS.ca = {
   "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "Altres socis et poden escriure des de la plataforma. No veuen el teu correu ni cap altra dada teva: només el teu nom, per poder adreçar-se a tu.",
   "Sí, que me escriban": "Sí, que m'escriguin",
   "Prefiero que no": "Prefereixo que no",
+
+  /* El carnet de socio */
+  "Mi carnet de socio": "El meu carnet de soci",
+  "Carnet de socio": "Carnet de soci",
+  "Socio nº": "Soci núm.",
+  "Socio desde": "Soci des de",
+  "Cuota": "Quota",
+  "Afijo": "Afix",
+  "Provincia": "Província",
+  "Código de verificación": "Codi de verificació",
+  "Válido durante": "Vàlid durant",
+  "Baja el": "Baixa el",
+  "Guardar como PDF o imprimir": "Desa com a PDF o imprimeix",
+  "En el móvil basta con enseñar esta pantalla.": "Al mòbil n'hi ha prou amb ensenyar aquesta pantalla.",
+  "El carnet acredita que eres socio del club. No lleva tu DNI, ni tu dirección, ni tu número de cuenta: no hacen falta para eso y un carnet se enseña.": "El carnet acredita que ets soci del club. No porta el teu DNI, ni la teva adreça, ni el teu número de compte: no calen per a això i un carnet s'ensenya.",
+  "Cada socio saca el suyo": "Cada soci treu el seu",
+  "El carnet lo expide su titular, y la junta directiva.": "El carnet l'expedeix el seu titular, i la junta directiva.",
+  "Socio no encontrado": "Soci no trobat",
 };

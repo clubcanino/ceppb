@@ -16,7 +16,7 @@ const ARCHIVOS = [
   "js/componentes.js", "js/sesion.js", "js/columnas.js", "js/datos.js", "js/media.js", "js/exportar.js", "js/directo.js",
   "js/formularios.js", "js/formularios-def.js",
   "js/vistas/entrar.js", "js/vistas/muro.js", "js/vistas/ajustes.js", "js/vistas/diagnostico.js", "js/vistas/socios.js",
-  "js/vistas/perros.js", "js/vistas/certificado.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
+  "js/vistas/perros.js", "js/vistas/certificado.js", "js/vistas/carnet.js", "js/vistas/cria.js", "js/vistas/camadas-eventos.js",
   "js/vistas/bienvenida.js", "js/vistas/mi-area.js", "js/vistas/junta.js", "js/vistas/videos.js", "js/vistas/club.js",
   "js/app.js",
 ];
@@ -515,17 +515,18 @@ test("ninguna traducción se ha quedado igual que el castellano por descuido", (
   const sonIguales = {
     en: ["Pedigrí", "Público", "Privado", "Foto", "Invitaciones", "Administración"],
     fr: ["Pedigree", "Public", "Privé", "Photo", "Invitations", "Administration",
-         "La plateforme", "Actualités", "De", "Messages"],
+         "La plateforme", "Actualités", "De", "Messages", "Province",
+         "Code de vérification"],
     de: ["Foto", "Privat", "Messages"],
     /* Palabras que en catalán, valenciano, gallego o euskera se
        escriben igual que en castellano. No están sin traducir: es que
        coinciden. */
     ca: ["La plataforma", "Socios", "Pedigrí", "Tema", "Foto", "Privat",
          "Correu", "Idioma", "Palmarés", "Junta directiva", "Visitant",
-         "De", "Missatges", "Enviats"],
+         "De", "Missatges", "Enviats", "Província", "Carnet de soci"],
     va: ["La plataforma", "Socios", "Pedigrí", "Tema", "Foto", "Privat",
          "Correu", "Idioma", "Palmarés", "Junta directiva", "Visitant",
-         "De", "Missatges", "Enviats"],
+         "De", "Missatges", "Enviats", "Província", "Carnet de soci"],
     gl: ["Cría", "Aptos de cría", "Socios", "Camadas", "Eventos", "Pedigrí",
          "Resultados", "Administración", "Diagnóstico", "Macho", "Socio",
          "Visitante", "Cancelar", "Editar", "Borrar", "Publicar", "Entrar",
@@ -535,7 +536,8 @@ test("ninguna traducción se ha quedado igual que el castellano por descuido", (
          "aplicado ficha por ficha", "Vídeos por publicar", "Vinculación de altas",
          "Administradores", "Descendencia", "Validado", "Completo",
          "Guía", "Puntos", "Descargar", "De", "Para", "Responder", "Borrar",
-         "Mensaxes", "Sen asunto", "Escribir a un socio", "Que me escriban"],
+         "Mensaxes", "Sen asunto", "Escribir a un socio", "Que me escriban",
+         "Socio desde", "Provincia", "Código de verificación", "Válido durante"],
     eu: ["Palmaresa"],
   };
   for (const idioma of OTRAS_LENGUAS){
@@ -1283,4 +1285,69 @@ test("una cuenta huérfana se puede atar a su ficha, y sólo la junta", () => {
   assert.match(def, /if\(!SESION\.esAdmin\) return toast\("Sólo la junta directiva"\)/);
   /* sólo se ofrecen fichas que no tengan ya cuenta */
   assert.match(def, /\.filter\(x => !x\.authUserId\)/);
+});
+
+/* ============================================================
+   El carnet de socio.
+
+   Se enseña, así que no debe llevar lo que no hace falta enseñar.
+   ============================================================ */
+function carnetDe(rol, socio){
+  const ctx = montar();
+  vm.runInContext(`
+    SESION.rol=${JSON.stringify(rol)}; SESION.esAdmin=${rol === "admin"};
+    SESION.usuario={id:"u1", email:"x@y.z"};
+    SESION.socio=${JSON.stringify(socio)};
+    S.listo=true; S.error=null;
+    S.data.socios=[${JSON.stringify(socio)},
+                   {id:"s9", numero:9, nombreCompleto:"Otro Socio", cuota:"Individual"}];
+    S.data.socios_privado=[{socioId:"0a39a65a-1671-4bc1-9bfe-b9676e11690f",
+                            dni:"00000000T", direccion:"Calle Falsa 1",
+                            iban:"ES0000000000000000000000"}];
+  `, ctx);
+  return { ctx, html: vm.runInContext(`String(V.carnet("${socio.id}"))`, ctx) };
+}
+const socioPrueba = {id:"0a39a65a-1671-4bc1-9bfe-b9676e11690f", numero:896,
+  nombreCompleto:"Ana Ruiz López",
+  cuota:"Individual", fechaAlta:"2015-03-12", provincia:"Madrid", afijo:"de Prueba",
+  roles:["Junta Directiva"]};
+
+test("el carnet lleva lo que un carnet lleva", () => {
+  const { html } = carnetDe("socio", socioPrueba);
+  assert.match(html, /Ana Ruiz López/);
+  assert.match(html, />896</);
+  assert.match(html, /Individual/);
+  assert.match(html, /de Prueba/);
+  /* y un código con el que comprobar que es auténtico */
+  assert.match(html, /CEPPB-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}/);
+});
+
+test("y no lleva lo que no hace falta enseñar", () => {
+  const { html } = carnetDe("socio", socioPrueba);
+  for (const dato of ["00000000T", "Calle Falsa", "ES00000000"])
+    assert.equal(html.includes(dato), false, "el carnet enseña " + dato);
+});
+
+test("cada socio saca el suyo, no el de otro", () => {
+  const ctx = montar();
+  vm.runInContext(`
+    SESION.rol="socio"; SESION.esAdmin=false; SESION.usuario={id:"u1"};
+    SESION.socio={id:"s1", numero:1, nombreCompleto:"Ana"};
+    S.listo=true; S.error=null;
+    S.data.socios=[{id:"s1", numero:1, nombreCompleto:"Ana"},
+                   {id:"s9", numero:9, nombreCompleto:"Otro Socio"}];
+  `, ctx);
+  const ajeno = vm.runInContext('String(V.carnet("s9"))', ctx);
+  assert.match(ajeno, /Cada socio saca el suyo|expide su titular/);
+  assert.equal(ajeno.includes("Otro Socio"), false);
+  /* la junta sí puede sacarlo, que para eso lleva el censo */
+  const junta = carnetDe("admin", socioPrueba);
+  assert.match(junta.html, /Ana Ruiz López/);
+});
+
+test("un socio de baja lo lleva marcado", () => {
+  const baja = Object.assign({}, socioPrueba, {fechaBaja:"2024-01-31"});
+  const { html } = carnetDe("socio", baja);
+  assert.match(html, /chip block/);
+  assert.equal(/Válido durante/.test(html), false);
 });

@@ -225,4 +225,22 @@ TEXTOS.en = {
   "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "Other members can write to you from the platform. They do not see your email or any other detail of yours: only your name, so they can address you.",
   "Sí, que me escriban": "Yes, let them write",
   "Prefiero que no": "I would rather not",
+
+  /* El carnet de socio */
+  "Mi carnet de socio": "My membership card",
+  "Carnet de socio": "Membership card",
+  "Socio nº": "Member no.",
+  "Socio desde": "Member since",
+  "Cuota": "Membership",
+  "Afijo": "Kennel name",
+  "Provincia": "Province",
+  "Código de verificación": "Verification code",
+  "Válido durante": "Valid through",
+  "Baja el": "Left on",
+  "Guardar como PDF o imprimir": "Save as PDF or print",
+  "En el móvil basta con enseñar esta pantalla.": "On a phone, just show this screen.",
+  "El carnet acredita que eres socio del club. No lleva tu DNI, ni tu dirección, ni tu número de cuenta: no hacen falta para eso y un carnet se enseña.": "The card proves you are a member of the club. It carries no ID number, no address and no bank account: they are not needed for that, and a card is meant to be shown.",
+  "Cada socio saca el suyo": "Each member issues their own",
+  "El carnet lo expide su titular, y la junta directiva.": "The card is issued by its holder, and by the committee.",
+  "Socio no encontrado": "Member not found",
 };

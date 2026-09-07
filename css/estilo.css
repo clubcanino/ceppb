@@ -318,6 +318,53 @@ img.avatar{display:block}
 .busca-fila b{font-size:13px;font-weight:600}
 .busca-vacio{padding:14px 12px;color:var(--muted);font-size:12.5px}
 
+/* ============================================================
+   El carnet de socio.
+
+   Con la proporción de una tarjeta, para que se reconozca como lo
+   que es. En el móvil se enseña tal cual; en papel sale a tamaño
+   de tarjeta.
+   ============================================================ */
+.carnet{max-width:440px;background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;box-shadow:var(--sh-2);overflow:hidden}
+.carnet-flag{height:5px;display:flex}
+.carnet-flag i:nth-child(1){flex:1;background:var(--brand-pure)}
+.carnet-flag i:nth-child(2){flex:2;background:var(--gold-pure)}
+.carnet-flag i:nth-child(3){flex:1;background:var(--brand-pure)}
+
+.carnet-cab{display:flex;gap:12px;align-items:center;padding:15px 18px 12px;
+  border-bottom:1px solid var(--line)}
+.carnet-cab img{width:52px;height:52px;object-fit:contain;flex:none}
+.carnet-club{font-size:11px;color:var(--muted);line-height:1.3}
+.carnet-tipo{font-family:var(--disp);font-size:16px;font-weight:800;letter-spacing:-.02em}
+.carnet-num{text-align:right;flex:none}
+.carnet-num b{display:block;font-family:var(--mono);font-size:25px;font-weight:600;
+  line-height:1.05;font-variant-numeric:tabular-nums}
+
+.carnet-cuerpo{display:flex;gap:16px;padding:18px}
+.carnet-foto{flex:none;width:92px;height:92px;border-radius:10px;overflow:hidden;
+  background:var(--surface-2);display:flex;align-items:center;justify-content:center}
+.carnet-foto img{width:100%;height:100%;object-fit:cover}
+.carnet-nombre{font-size:19px;font-weight:700;letter-spacing:-.02em;line-height:1.2}
+.carnet-datos{display:grid;grid-template-columns:1fr 1fr;gap:7px 14px;margin-top:10px}
+.carnet-datos .mini{display:block;line-height:1.2}
+.carnet-datos b{font-size:13px;font-weight:600}
+
+.carnet-pie{display:flex;align-items:center;gap:12px;padding:12px 18px;
+  border-top:1px solid var(--line);background:var(--surface-2)}
+.carnet-pie .num{font-family:var(--mono);font-size:12px;letter-spacing:.02em}
+
+@media (max-width:600px){
+  .carnet-cuerpo{gap:12px;padding:14px}
+  .carnet-foto{width:74px;height:74px}
+  .carnet-datos{grid-template-columns:1fr}
+}
+
+/* En papel, el carnet solo y a su tamaño */
+@media print{
+  .carnet{max-width:86mm;box-shadow:none;border:1px solid #999;page-break-inside:avoid}
+}
+
 /* El distintivo de los documentos descargables */
 .doc-ico{flex:none;display:inline-flex;align-items:center;justify-content:center;
   width:38px;height:44px;border-radius:5px;background:var(--brand);color:#fff;

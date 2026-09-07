@@ -221,4 +221,22 @@ TEXTOS.gl = {
   "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "Outros socios poden escribirche desde a plataforma. Non ven o teu correo nin ningún outro dato teu: só o teu nome, para poder dirixirse a ti.",
   "Sí, que me escriban": "Si, que me escriban",
   "Prefiero que no": "Prefiro que non",
+
+  /* El carnet de socio */
+  "Mi carnet de socio": "O meu carné de socio",
+  "Carnet de socio": "Carné de socio",
+  "Socio nº": "Socio n.º",
+  "Socio desde": "Socio desde",
+  "Cuota": "Cota",
+  "Afijo": "Afixo",
+  "Provincia": "Provincia",
+  "Código de verificación": "Código de verificación",
+  "Válido durante": "Válido durante",
+  "Baja el": "Baixa o",
+  "Guardar como PDF o imprimir": "Gardar como PDF ou imprimir",
+  "En el móvil basta con enseñar esta pantalla.": "No móbil abonda con amosar esta pantalla.",
+  "El carnet acredita que eres socio del club. No lleva tu DNI, ni tu dirección, ni tu número de cuenta: no hacen falta para eso y un carnet se enseña.": "O carné acredita que es socio do club. Non leva o teu DNI, nin o teu enderezo, nin o teu número de conta: non fan falta para iso e un carné amósase.",
+  "Cada socio saca el suyo": "Cada socio saca o seu",
+  "El carnet lo expide su titular, y la junta directiva.": "O carné exíxeo o seu titular, e mais a xunta directiva.",
+  "Socio no encontrado": "Socio non atopado",
 };

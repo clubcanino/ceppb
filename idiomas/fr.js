@@ -225,4 +225,22 @@ TEXTOS.fr = {
   "Otros socios pueden escribirte desde la plataforma. No ven tu correo ni ningún otro dato tuyo: sólo tu nombre, para poder dirigirse a ti.": "D'autres membres peuvent vous écrire depuis la plateforme. Ils ne voient ni votre adresse ni aucune autre de vos données : seulement votre nom, pour pouvoir s'adresser à vous.",
   "Sí, que me escriban": "Oui, qu'on m'écrive",
   "Prefiero que no": "Je préfère que non",
+
+  /* El carnet de socio */
+  "Mi carnet de socio": "Ma carte de membre",
+  "Carnet de socio": "Carte de membre",
+  "Socio nº": "Membre nº",
+  "Socio desde": "Membre depuis",
+  "Cuota": "Cotisation",
+  "Afijo": "Affixe",
+  "Provincia": "Province",
+  "Código de verificación": "Code de vérification",
+  "Válido durante": "Valable pour",
+  "Baja el": "Radié le",
+  "Guardar como PDF o imprimir": "Enregistrer en PDF ou imprimer",
+  "En el móvil basta con enseñar esta pantalla.": "Sur le téléphone, il suffit de montrer cet écran.",
+  "El carnet acredita que eres socio del club. No lleva tu DNI, ni tu dirección, ni tu número de cuenta: no hacen falta para eso y un carnet se enseña.": "La carte atteste que vous êtes membre du club. Elle ne porte ni votre pièce d'identité, ni votre adresse, ni votre numéro de compte : ils ne servent à rien ici, et une carte se montre.",
+  "Cada socio saca el suyo": "Chaque membre édite la sienne",
+  "El carnet lo expide su titular, y la junta directiva.": "La carte est délivrée par son titulaire, et par le comité.",
+  "Socio no encontrado": "Membre introuvable",
 };

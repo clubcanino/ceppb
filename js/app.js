@@ -64,6 +64,7 @@ const TITULOS_VISTA = {
   eventos:  ["Eventos", "Convocatorias e inscripciones"],
   cargos:   ["Cargos y jueces", "Listados oficiales del club"],
   yo:       ["Mi perfil", "Tus datos, tus perros y qué comparte cada uno"],
+  carnet:   ["Carnet de socio", "Para llevarlo en el móvil o imprimirlo"],
   mensajes: ["Mensajes", "Lo que te escriben otros socios del club"],
   ajustes:  ["Mi cuenta", "Tu contraseña, tu foto y quién te ve"],
   diagnostico: ["Diagnóstico", "Estado de la conexión y de tu sesión"],
