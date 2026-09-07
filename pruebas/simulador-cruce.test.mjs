@@ -247,9 +247,16 @@ test("la base de datos lo exige también: la pantalla no es la que manda", () =>
 /* ------------------------------------------------------------
    El pedigrí de la camada
    ------------------------------------------------------------ */
+/* El cuerpo de una función suelta, sin lo que venga detrás */
+function cuerpoDe(archivo, firma){
+  const t = lee(archivo);
+  const i = t.indexOf(firma);
+  const j = t.indexOf("\n}\n", i);
+  return t.slice(i, j > 0 ? j : undefined);
+}
 test("el simulador enseña el pedigrí de la camada, hasta ocho generaciones", () => {
   const v = lee("js/vistas/cria.js");
-  assert.match(v, /function pedigriDelCruce\(m, h\)/);
+  assert.match(v, /function pedigriDelCruce\(m, h, opciones\)/);
   assert.match(v, /\$\{pedigriDelCruce\(m, h\)\}/, "se pinta en el panel");
   assert.match(v, /let genCruce = 8/, "arranca en ocho, que es lo que se pidió");
   assert.match(v, /\[4,5,6,8\]/, "y se puede bajar");
@@ -278,7 +285,7 @@ test("dice cuánto pedigrí se conoce: los huecos son datos que faltan", () => {
 });
 
 test("usa el censo indexado, que son 510 casillas por pedigrí", () => {
-  const b = lee("js/vistas/cria.js").slice(lee("js/vistas/cria.js").indexOf("function pedigriDelCruce"));
+  const b = cuerpoDe("js/vistas/cria.js", "function pedigriDelCruce");
   assert.match(b, /perroDe\(id\)/, "no un find lineal sobre los 3.833 por cada casilla");
   assert.equal(/byId\(C\("perros"\)/.test(b), false);
 });
@@ -307,4 +314,78 @@ test("el pedigrí se abre por el centro, no por las ramas lejanas", () => {
     "al elegir un reproductor");
   assert.match(v, /pintarPanelCruce\(\);\s*\n\s*centrarPedigriDelCruce\(\);/,
     "y al cambiar de profundidad");
+});
+
+/* ------------------------------------------------------------
+   Que no se coma la pantalla, y que se pueda sacar de ahí
+   ------------------------------------------------------------ */
+test("el pedigrí se queda en su marco y no ensancha la página", () => {
+  const css = lee("css/estilo.css");
+  assert.match(css, /\.cols23 > \*\{min-width:0\}/,
+    "sin esto, una columna de grid no encoge por debajo de su contenido " +
+    "y el pedigrí empuja fuera de la pantalla el resto del simulador");
+  assert.match(css, /\.ped-caja\{overflow:auto/);
+  assert.match(css, /max-height:min\(72vh,620px\)/);
+});
+
+test("se mueve arrastrándolo, y arrastrar no abre la ficha de debajo", () => {
+  const v = lee("js/vistas/cria.js");
+  assert.match(v, /closest\("\.ped-caja"\)/);
+  assert.match(v, /caja\.scrollLeft = arrastre\.sx - dx/);
+  assert.match(v, /function tragarUnClic/,
+    "si no, soltar el ratón encima de un ancestro navegaba a su ficha");
+  assert.match(css_ok(), /\.ped-caja\.agarrando \.ped-n\{pointer-events:none\}/);
+  function css_ok(){ return lee("css/estilo.css"); }
+});
+
+test("tiene su propia página, con los mismos permisos y fuera del menú", () => {
+  const app = lee("js/app.js");
+  assert.match(app, /\{r:"pedigri",  n:"Pedigrí de la camada", v:\["admin","socio"\], oculta:true\}/,
+    "sin declararla, render() no encontraría su definición y quedaría abierta a cualquiera");
+  assert.match(app, /if \(v\.oculta\) return;/, "existe, pero no se anuncia en el menú");
+  assert.match(lee("js/vistas/cria.js"), /V\.pedigri = function\(par\)/);
+});
+
+test("se guarda en PDF imprimiendo, apaisado y con el árbol entero", () => {
+  const v = lee("js/vistas/cria.js");
+  assert.match(v, /data-pedigri-pdf/);
+  assert.match(v, /window\.print\(\)/);
+  const css = lee("css/estilo.css");
+  assert.match(css, /@page\{size:A4 landscape/);
+  assert.match(css, /\.ped-caja\{overflow:visible!important;max-height:none!important/,
+    "en papel no hay barras que arrastrar: se imprime entero");
+});
+
+test("y se exporta con los 510 ancestros por generación", () => {
+  const b = cuerpoDe("js/vistas/cria.js", "function exportarPedigriDelCruce");
+  assert.match(b, /t:"Generación"/);
+  assert.match(b, /t:"Vía"/, "por dónde se llega a cada ancestro");
+  assert.match(b, /t:"LOE"/);
+  assert.match(b, /generarCSV\(cols, filas\)/);
+});
+
+/* ------------------------------------------------------------
+   Las líneas que unen los casilleros
+   ------------------------------------------------------------ */
+test("cada casilla va dentro de su banda: de ahí salen las líneas", () => {
+  for (const f of ["js/vistas/cria.js", "js/vistas/perros.js"])
+    assert.match(lee(f), /<div class="ped-celda">/,
+      `${f}: sin la banda no hay dónde anclar las líneas`);
+});
+
+test("las líneas se trazan con la geometría del pedigrí, sin medir nada", () => {
+  const css = lee("css/estilo.css");
+  assert.match(css, /\.ped-celda\{flex:1;display:flex;align-items:center;position:relative/,
+    "la banda reparte el alto por igual, que es lo que hace que las líneas casen");
+  assert.match(css, /\.ped-col:not\(:first-child\) \.ped-celda::before/, "el tramo horizontal");
+  assert.match(css, /\.ped-col:not\(:first-child\) \.ped-celda::after/, "el tramo vertical");
+  assert.match(css, /:nth-child\(odd\)::after\{top:50%\}/, "el primero de la pareja baja");
+  assert.match(css, /:nth-child\(even\)::after\{bottom:50%\}/, "y el segundo sube");
+  assert.match(css, /height:50%/, "media banda es justo lo que hay hasta el centro del padre");
+});
+
+test("el pedigrí de la ficha del perro también lleva líneas y nombre entero", () => {
+  const b = cuerpoDe("js/vistas/perros.js", "  const casilla = id =>");
+  assert.match(b, /ped-celda/);
+  assert.match(b, /esc\(nombrePerro\(d\)\)/, "y no d.nombre a secas");
 });

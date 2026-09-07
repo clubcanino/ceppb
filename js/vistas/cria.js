@@ -320,7 +320,8 @@ document.addEventListener("click", ev => {
    ============================================================ */
 let genCruce = 8;
 
-function pedigriDelCruce(m, h){
+function pedigriDelCruce(m, h, opciones){
+  const solo = !!(opciones && opciones.solo);
   ponerCenso(C("perros"));
   const n = genCruce;
 
@@ -351,26 +352,35 @@ function pedigriDelCruce(m, h){
   const porPeso = repetidos.slice().sort((a, b) => veces.get(b) - veces.get(a));
   const marca = new Map(porPeso.map((id, i) => [id, (i % 8) + 1]));
 
+  /* Cada casilla va dentro de su banda —la porción de alto que le
+     toca en la columna—, y de ahí salen las líneas: el centro de la
+     banda del padre cae justo en la frontera entre las bandas de sus
+     dos hijos, así que media banda es exactamente el tramo vertical
+     que hay que trazar. */
   const casilla = id => {
     const d = id ? perroDe(id) : null;
-    if (!d) return `<div class="ped-n vacio">—</div>`;
+    if (!d) return `<div class="ped-celda"><div class="ped-n vacio">—</div></div>`;
     const mk = marca.get(id);
-    return `<div class="ped-n ${d.sexo === "M" ? "m" : d.sexo === "H" ? "h" : ""} ${mk ? "rep r" + mk : ""} clic"
+    return `<div class="ped-celda"><div class="ped-n ${d.sexo === "M" ? "m" : d.sexo === "H" ? "h" : ""} ${mk ? "rep r" + mk : ""} clic"
       data-go="perro/${esc(d.id)}" title="${esc(nombrePerro(d))}${mk ? ` · aparece ${veces.get(id)} veces en este pedigrí` : ""}">
       ${mk ? `<span class="ped-veces">×${veces.get(id)}</span>` : ""}
-      <b>${esc(nombrePerro(d))}</b><small>${esc(d.loe || d.variedad || "")}</small></div>`;
+      <b>${esc(nombrePerro(d))}</b><small>${esc(d.loe || d.variedad || "")}</small></div></div>`;
   };
 
   const pct = x => (x * 100).toFixed(1).replace(".", ",") + " %";
   const distintos = veces.size;
 
-  return `<div class="card" style="margin-top:16px">
-    <div class="card-h"><h3>Pedigrí de la camada</h3>
+  return `<div class="card" style="margin-top:${solo ? 0 : 16}px">
+    <div class="card-h no-imprimir"><h3>Pedigrí de la camada</h3>
       <div class="seg" style="margin-left:10px">
         ${[4,5,6,8].map(g => `<button data-gen-cruce="${g}" class="${n===g?"on":""}">${g} gen.</button>`).join("")}
       </div>
       <span class="spacer"></span>
-      <span class="hint">${distintos} ancestros distintos</span>
+      <span class="hint" style="margin-right:8px">${distintos} ancestros distintos</span>
+      <a class="btn sm" href="#/pedigri/${esc(m.id)}~${esc(h.id)}"
+         title="A pantalla completa, en su propia página">Ver en grande</a>
+      <button class="btn sm" data-pedigri-pdf="${esc(m.id)}~${esc(h.id)}">Guardar en PDF</button>
+      <button class="btn sm" data-pedigri-csv="${esc(m.id)}~${esc(h.id)}">Excel</button>
     </div>
 
     <div class="card-b" style="padding:12px 16px 0">
@@ -383,9 +393,14 @@ function pedigriDelCruce(m, h){
       </div>
     </div>
 
-    <div class="card-b ped-caja" style="overflow:auto;max-height:72vh">
-      <div class="ped g${n}">
-        ${columnas.map(col => `<div class="ped-col">${col.map(casilla).join("")}</div>`).join("")}
+    <div class="card-b ped-marco">
+      <div class="ped-caja" title="Arrástralo para moverte por el árbol">
+        <div class="ped g${n}">
+          ${columnas.map(col => `<div class="ped-col">${col.map(casilla).join("")}</div>`).join("")}
+        </div>
+      </div>
+      <div class="mini no-imprimir" style="margin-top:8px">
+        Arrastra el pedigrí para moverte por él, o usa las barras. La página no se mueve.
       </div>
     </div>
 
@@ -420,3 +435,133 @@ document.addEventListener("click", ev => {
   pintarPanelCruce();
   centrarPedigriDelCruce();
 });
+
+/* ============================================================
+   El pedigrí de la camada, en su propia página.
+
+   Ocho generaciones no caben junto al resto del simulador. Aquí
+   ocupa toda la pantalla, se arrastra con el ratón, se guarda en
+   PDF —imprimiendo, que es lo que el navegador ya sabe hacer bien
+   y no obliga a cargar ninguna librería— y se baja a Excel con los
+   510 ancestros ordenados por generación.
+   ============================================================ */
+V.pedigri = function(par){
+  const [mid, hid] = String(par || "").split("~");
+  const m = byId(C("perros"), mid), h = byId(C("perros"), hid);
+  if(!m || !h)
+    return `<div class="empty"><b>Elige antes los dos reproductores</b>
+      <div style="margin-top:14px"><button class="btn brand" data-go="cruce">Ir al simulador de cruce</button></div></div>`;
+
+  ponerCenso(C("perros"));
+  const f = consanguinidadPrevista(m.id, h.id);
+  const j = juzgarConsanguinidad(f);
+
+  setTimeout(centrarPedigriDelCruce, 0);
+
+  return `
+  <div class="no-imprimir" style="margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <button class="btn" data-go="cruce">← Volver al simulador</button>
+    <span class="spacer"></span>
+    <span class="chip ${j.nivel}">${esc(j.t)} · ${(f*100).toFixed(2).replace(".", ",")} %</span>
+    <button class="btn" data-pedigri-pdf="${esc(m.id)}~${esc(h.id)}">Guardar en PDF</button>
+    <button class="btn" data-pedigri-csv="${esc(m.id)}~${esc(h.id)}">Exportar a Excel</button>
+  </div>
+
+  <div class="solo-imprimir" style="margin-bottom:10px">
+    <b>${esc(nombrePerro(m))}</b> × <b>${esc(nombrePerro(h))}</b><br>
+    <span class="mini">Consanguinidad prevista de la camada:
+      ${(f*100).toFixed(2).replace(".", ",")} % · Club Español del Perro Pastor Belga</span>
+  </div>
+
+  <div id="cruce-panel">${pedigriDelCruce(m, h, {solo:true})}</div>`;
+};
+
+/* ------------------------------------------------------------
+   Moverse por el árbol arrastrándolo, sin tocar la página.
+   ------------------------------------------------------------ */
+let arrastre = null;
+
+document.addEventListener("mousedown", ev => {
+  const caja = ev.target.closest && ev.target.closest(".ped-caja");
+  if (!caja || ev.button !== 0) return;
+  arrastre = {caja, x: ev.clientX, y: ev.clientY,
+              sx: caja.scrollLeft, sy: caja.scrollTop, movido: false};
+  caja.classList.add("agarrando");
+});
+
+document.addEventListener("mousemove", ev => {
+  if (!arrastre) return;
+  const dx = ev.clientX - arrastre.x, dy = ev.clientY - arrastre.y;
+  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) arrastre.movido = true;
+  arrastre.caja.scrollLeft = arrastre.sx - dx;
+  arrastre.caja.scrollTop  = arrastre.sy - dy;
+  if (arrastre.movido) ev.preventDefault();
+});
+
+document.addEventListener("mouseup", () => {
+  if (!arrastre) return;
+  arrastre.caja.classList.remove("agarrando");
+  /* Si se ha arrastrado, el clic no debe abrir la ficha del ancestro
+     que quedara debajo del ratón. */
+  const movido = arrastre.movido;
+  arrastre = null;
+  if (movido) document.addEventListener("click", tragarUnClic, {capture:true, once:true});
+});
+
+function tragarUnClic(ev){ ev.stopPropagation(); ev.preventDefault(); }
+
+/* ------------------------------------------------------------
+   Guardarlo: en PDF y en Excel
+   ------------------------------------------------------------ */
+document.addEventListener("click", ev => {
+  const pdf = ev.target.closest && ev.target.closest("[data-pedigri-pdf]");
+  if (pdf){
+    /* Si no estamos ya en la página del pedigrí, se va a ella y se
+       imprime desde allí: el marco con scroll no se imprime entero. */
+    if (!document.querySelector("#cruce-panel .ped-marco") || location.hash.indexOf("#/pedigri/") !== 0){
+      ir("pedigri/" + pdf.getAttribute("data-pedigri-pdf"));
+      setTimeout(() => window.print(), 400);
+    } else {
+      window.print();
+    }
+    return;
+  }
+
+  const csv = ev.target.closest && ev.target.closest("[data-pedigri-csv]");
+  if (csv) exportarPedigriDelCruce(csv.getAttribute("data-pedigri-csv"));
+});
+
+function exportarPedigriDelCruce(par){
+  const [mid, hid] = String(par || "").split("~");
+  const m = byId(C("perros"), mid), h = byId(C("perros"), hid);
+  if(!m || !h) return toast("Elige antes los dos reproductores");
+
+  ponerCenso(C("perros"));
+  const filas = [];
+  let nivel = [{id: m.id, via: "Padre"}, {id: h.id, via: "Madre"}];
+  for (let g = 1; g <= genCruce; g++){
+    const siguiente = [];
+    for (const x of nivel){
+      const d = x.id ? perroDe(x.id) : null;
+      if (d) filas.push({g, via: x.via, d});
+      siguiente.push({id: d ? d.padreId || null : null, via: x.via + " › padre"});
+      siguiente.push({id: d ? d.madreId || null : null, via: x.via + " › madre"});
+    }
+    nivel = siguiente;
+  }
+
+  const cols = [
+    {t:"Generación",  v: r => r.g},
+    {t:"Vía",         v: r => r.via},
+    {t:"Ejemplar",    v: r => nombrePerro(r.d)},
+    {t:"Variedad",    v: r => r.d.variedad || ""},
+    {t:"Sexo",        v: r => r.d.sexo === "M" ? "Macho" : r.d.sexo === "H" ? "Hembra" : ""},
+    {t:"Nacimiento",  v: r => r.d.fechaNacimiento || ""},
+    {t:"LOE",         v: r => r.d.loe || ""},
+    {t:"Chip",        v: r => r.d.chip || ""},
+    {t:"Afijo",       v: r => r.d.afijo || ""},
+  ];
+  descargar(`pedigri-${norm(nombrePerro(m)).replace(/[^a-z0-9]+/g,"-")}-x-${norm(nombrePerro(h)).replace(/[^a-z0-9]+/g,"-")}.csv`,
+    generarCSV(cols, filas));
+  toast(`${filas.length} ancestros exportados`);
+}

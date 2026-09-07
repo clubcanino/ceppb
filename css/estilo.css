@@ -226,8 +226,34 @@ img.avatar{display:block}
 .celda-nm{display:flex;gap:10px;align-items:center;min-width:0}
 
 /* ---------- pedigrí ---------- */
-.ped{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;min-width:560px}
-.ped-col{display:flex;flex-direction:column;gap:6px;justify-content:space-around}
+/* ---------- el pedigrí y sus líneas ----------
+   Cada casilla vive dentro de una banda —la porción de alto que le
+   toca en su columna—. Eso es lo que permite trazar las líneas sin
+   medir nada con JavaScript: el centro de la banda del padre cae
+   justo en la frontera entre las bandas de sus dos hijos, así que
+   media banda es exactamente el tramo vertical que hay que dibujar.
+
+   El primer hijo de cada pareja baja hacia el padre; el segundo sube.
+   Y de cada uno sale un tramo horizontal que cruza el hueco entre
+   columnas hasta encontrarse con el del hermano. */
+.ped{--ped-hueco:6px;--ped-linea:var(--line-2);
+  display:grid;grid-template-columns:repeat(3,1fr);gap:var(--ped-hueco);min-width:560px}
+.ped-col{display:flex;flex-direction:column;justify-content:space-around}
+.ped-celda{flex:1;display:flex;align-items:center;position:relative;min-height:0}
+.ped-celda > .ped-n{flex:1;min-width:0}
+
+/* El tramo horizontal, del borde de la casilla al hueco */
+.ped-col:not(:first-child) .ped-celda::before{
+  content:"";position:absolute;right:100%;top:50%;
+  width:calc(var(--ped-hueco) / 2);
+  border-top:1px solid var(--ped-linea)}
+
+/* El tramo vertical, media banda, hacia donde esté el padre */
+.ped-col:not(:first-child) .ped-celda::after{
+  content:"";position:absolute;right:calc(100% + var(--ped-hueco) / 2);
+  height:50%;width:0;border-right:1px solid var(--ped-linea)}
+.ped-col:not(:first-child) .ped-celda:nth-child(odd)::after{top:50%}
+.ped-col:not(:first-child) .ped-celda:nth-child(even)::after{bottom:50%}
 .ped-n{border:1px solid var(--line);border-left:3px solid var(--line-2);border-radius:var(--r-sm);padding:7px 10px;background:var(--surface-2);min-height:46px;display:flex;flex-direction:column;justify-content:center}
 .ped-n.m{border-left-color:var(--v-gro)} .ped-n.h{border-left-color:var(--v-ter)}
 .ped-n b{font-size:12.5px;font-weight:600;line-height:1.25}
@@ -274,7 +300,12 @@ img.avatar{display:block}
 .tabs button:hover{color:var(--ink)}
 .tabs button.on{color:var(--ink);border-bottom-color:var(--brand);font-weight:600}
 .cols2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+/* `min-width:0` es la diferencia entre que el pedigrí se quede dentro
+   de su marco y que empuje la rejilla hasta sacar de la pantalla el
+   resto de la pantalla: por defecto una columna de grid no encoge por
+   debajo del contenido que lleva dentro. */
 .cols23{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;align-items:start}
+.cols23 > *{min-width:0}
 .note{padding:10px 13px;border-radius:var(--r-sm);font-size:12.5px;border:1px solid var(--line-2);background:var(--surface-2);line-height:1.45}
 .note.warn{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn)}
 .note.block{background:var(--block-bg);border-color:var(--block-line);color:var(--block)}
@@ -488,6 +519,8 @@ img.avatar{display:block}
 .cert-codigo{text-align:right;font-size:11px;color:var(--muted)}
 .cert-codigo .num{font-family:var(--mono);font-size:12.5px;color:var(--ink-2);margin:3px 0}
 
+.solo-imprimir{display:none}
+
 @media print{
   .side, .topbar, .no-imprimir, .toast, .sheet, .scrim{display:none!important}
   .shell{display:block}
@@ -495,6 +528,21 @@ img.avatar{display:block}
   .certificado{border:0;box-shadow:none;max-width:none}
   .certificado section{break-inside:avoid}
   body{background:#fff}
+
+  .solo-imprimir{display:block}
+
+  /* En papel no hay barras que arrastrar: el árbol se imprime entero,
+     apaisado, y encogido para que quepa a lo ancho de la hoja. */
+  @page{size:A4 landscape;margin:8mm}
+  .ped-caja{overflow:visible!important;max-height:none!important;
+    border:0;padding:0;background:#fff}
+  .ped{min-width:0!important;--ped-hueco:5px;--ped-linea:#999}
+  .ped-n{min-height:0;padding:1px 3px;background:#fff;
+    border-color:#bbb;break-inside:avoid}
+  .ped-n b{font-size:6.5pt;line-height:1.1}
+  .ped-n small, .ped-veces{display:none}
+  .ped-n.vacio{border-style:dotted}
+  .card{border:0;box-shadow:none;break-inside:avoid}
 }
 .cert-rubrica-svg{display:block;margin:0 auto 2px;color:var(--ink-2);opacity:.9}
 @media print{ .cert-rubrica-svg{color:#141311} }
@@ -518,14 +566,25 @@ img.avatar{display:block}
 .ped.g3{grid-template-columns:repeat(3,1fr);min-width:560px}
 .ped.g4{grid-template-columns:repeat(4,1fr);min-width:820px}
 .ped.g5{grid-template-columns:repeat(5,1fr);min-width:1120px}
+/* ---------- el pedigrí, encerrado en su marco ----------
+   Ocho generaciones son 510 casillas y varios miles de píxeles en las
+   dos direcciones. Va dentro de una caja con sus propias barras y se
+   arrastra con el ratón: la página no se mueve ni se ensancha. */
+.ped-marco{min-width:0}
+.ped-caja{overflow:auto;max-height:min(72vh,620px);
+  border:1px solid var(--line);border-radius:var(--r-sm);
+  background:var(--surface);padding:10px;
+  cursor:grab;overscroll-behavior:contain}
+.ped-caja.agarrando{cursor:grabbing;user-select:none}
+.ped-caja.agarrando .ped-n{pointer-events:none}
+
 /* Seis, siete y ocho generaciones: 510 ancestros en la última.
    Las casillas encogen hasta lo que se puede leer y el pedigrí se
    mira con scroll, como uno impreso en pliego. */
 .ped.g6{grid-template-columns:repeat(6,1fr);min-width:1180px}
 .ped.g7{grid-template-columns:repeat(7,1fr);min-width:1300px}
 .ped.g8{grid-template-columns:repeat(8,1fr);min-width:1420px}
-.ped.g6, .ped.g7, .ped.g8{gap:3px}
-.ped.g6 .ped-col, .ped.g7 .ped-col, .ped.g8 .ped-col{gap:2px}
+.ped.g6, .ped.g7, .ped.g8{--ped-hueco:8px}
 .ped.g6 .ped-n, .ped.g7 .ped-n, .ped.g8 .ped-n{
   padding:2px 5px;min-height:0;border-left-width:3px}
 .ped.g6 .ped-n b{font-size:10px;line-height:1.15}

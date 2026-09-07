@@ -353,12 +353,12 @@ function pedigriDe(p, puedo){
 
   const casilla = id => {
     const d = id ? byId(C("perros"), id) : null;
-    if (!d) return `<div class="ped-n vacio">—</div>`;
+    if (!d) return `<div class="ped-celda"><div class="ped-n vacio">—</div></div>`;
     const m = marca.get(id);
-    return `<div class="ped-n ${d.sexo === "M" ? "m" : d.sexo === "H" ? "h" : ""} ${m ? "rep r" + m : ""} clic"
-      data-go="perro/${esc(d.id)}" title="${esc(d.nombre)}${m ? ` · aparece ${veces.get(id)} veces en este pedigrí` : ""}">
+    return `<div class="ped-celda"><div class="ped-n ${d.sexo === "M" ? "m" : d.sexo === "H" ? "h" : ""} ${m ? "rep r" + m : ""} clic"
+      data-go="perro/${esc(d.id)}" title="${esc(nombrePerro(d))}${m ? ` · aparece ${veces.get(id)} veces en este pedigrí` : ""}">
       ${m ? `<span class="ped-veces">×${veces.get(id)}</span>` : ""}
-      <b>${esc(d.nombre)}</b><small>${esc(d.loe || d.variedad || "")}</small></div>`;
+      <b>${esc(nombrePerro(d))}</b><small>${esc(d.loe || d.variedad || "")}</small></div></div>`;
   };
 
   const f    = consanguinidad(p.id);
@@ -401,7 +401,7 @@ function pedigriDe(p, puedo){
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         ${porPeso.slice(0, 12).map(id => {
           const d = byId(C("perros"), id);
-          return `<a class="chip rep r${marca.get(id)}" href="#/perro/${esc(id)}">${esc(d ? d.nombre : "")}
+          return `<a class="chip rep r${marca.get(id)}" href="#/perro/${esc(id)}">${esc(d ? nombrePerro(d) : "")}
             <b style="margin-left:5px">×${veces.get(id)}</b></a>`;
         }).join("")}
       </div>

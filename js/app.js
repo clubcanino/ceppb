@@ -17,6 +17,12 @@ const VISTAS = [
   {h:"cria", t:"Cría"},
   {r:"aptos",    n:"Aptos de cría",    v:["admin","socio"]},
   {r:"cruce",    n:"Simulador de cruce", v:["admin","socio"]},
+  /* Se llega desde el simulador, no desde el menú: es el mismo
+     pedigrí, a pantalla completa. Pero se declara aquí para que le
+     valgan los mismos permisos; sin declararla, render() no
+     encontraría su definición y la habría dejado abierta a
+     cualquiera. */
+  {r:"pedigri",  n:"Pedigrí de la camada", v:["admin","socio"], oculta:true},
   {r:"camadas",  n:"Camadas",          v:["admin","socio"], ct:()=>C("camadas").length || null},
   {r:"intervar", n:"Cruces intervariedades", v:["admin","socio"], ct:()=>C("solicitudes").filter(x=>x.tipo==="intervariedad"&&x.estado==="pendiente").length || null},
 
@@ -59,6 +65,7 @@ const TITULOS_VISTA = {
   certificado: ["Certificado del ejemplar", "Documento oficial del club con lo validado"],
   aptos:    ["Aptos de cría", "Las cinco figuras del Capítulo 2, ejemplar por ejemplar"],
   cruce:    ["Simulador de cruce", "Comprueba una alianza contra el reglamento antes de solicitarla"],
+  pedigri:  ["Pedigrí de la camada", "El árbol que tendrían los cachorros de esta alianza"],
   intervar: ["Cruces intervariedades", "Expedientes de autorización previa — Capítulo 8"],
   camadas:  ["Camadas", "Declaración y difusión de camadas"],
   eventos:  ["Eventos", "Convocatorias e inscripciones"],
@@ -89,6 +96,7 @@ function pintarNav(){
   const secc = [];
   VISTAS.forEach(v => {
     if (v.h !== undefined){ secc.push({t:v.t, items:[]}); return; }
+    if (v.oculta) return;              // existe, pero no se anuncia
     if (!v.v.includes(SESION.rol)) return;
     if (v.si && !v.si()) return;
     /* Los números de al lado de cada sección son datos del club: cuántos
