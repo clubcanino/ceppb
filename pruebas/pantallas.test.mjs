@@ -713,3 +713,45 @@ test("la bienvenida está traducida a las tres lenguas, no sólo el menú", () =
     }
   }
 });
+
+/* ============================================================
+   La portada: quien no ha entrado no ve datos del club.
+
+   Ni el número de socios, ni nombres, ni movimientos. Sólo qué es
+   esto, qué podrá hacer dentro y la puerta.
+   ============================================================ */
+test("sin entrar no se ve ni una cifra del club", () => {
+  const ctx = montar();
+  vm.runInContext(`SESION.rol="visitante"; SESION.usuario=null; SESION.socio=null;
+                   SESION.esAdmin=false; S.listo=true; S.error=null;`, ctx);
+  const html = vm.runInContext("String(V.muro(''))", ctx);
+  assert.match(html, /href="#\/entrar"/, "la portada debe ofrecer entrar");
+  for (const cifra of ["mast-stats", "Novedades del club", "feed-row"])
+    assert.equal(html.includes(cifra), false, "la portada enseña «" + cifra + "»");
+});
+
+test("el número de socios sólo lo ve la junta", () => {
+  const ctx = montar();
+  const conRol = (rol) => {
+    vm.runInContext(`SESION.rol=${JSON.stringify(rol)}; SESION.esAdmin=${rol === "admin"};
+      SESION.usuario={id:"u1", email:"x@y.z"}; SESION.socio={id:"s1", numero:1, nombreCompleto:"A B"};
+      S.listo=true; S.error=null;`, ctx);
+    return vm.runInContext("String(V.muro(''))", ctx);
+  };
+  assert.equal(/<div class="k">Socios<\/div>/.test(conRol("socio")), false,
+    "un socio corriente no debe ver el total del censo");
+  assert.match(conRol("admin"), /<div class="k">Socios<\/div>/);
+});
+
+test("la interfaz no le explica al socio cómo está hecha por dentro", () => {
+  const vistas = ["js/vistas/muro.js", "js/vistas/club.js", "js/vistas/junta.js",
+                  "js/vistas/mi-area.js", "js/vistas/bienvenida.js", "js/vistas/perros.js"];
+  /* Sólo se mira el texto que se pinta, no los comentarios del código:
+     los comentarios explican el porqué y ahí sí tienen su sitio. */
+  const sinComentarios = s => s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+  for (const v of vistas){
+    const txt = sinComentarios(readFileSync(new URL("../" + v, import.meta.url), "utf8"));
+    for (const jerga of ["base de datos", "el servidor", "trigger", "el prototipo", "RLS"])
+      assert.equal(txt.includes(jerga), false, `${v} le habla al socio de «${jerga}»`);
+  }
+});

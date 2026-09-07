@@ -311,7 +311,7 @@ const FORMS = {
   admins(){
     const emails = C("admins").map(a => a.email).sort();
     abrirForm("Cuentas con permiso de junta directiva", [
-      {t:"Quién manda", d:"Un correo por línea. Estas cuentas validan pruebas de salud y resultados, resuelven expedientes y asignan los cargos del club. La base de datos comprueba contra esta lista en cada operación: quitar a alguien de aquí le retira el permiso al instante.", f:[
+      {t:"Quién manda", d:"Un correo por línea. Estas cuentas validan pruebas de salud y resultados, resuelven expedientes y asignan los cargos del club. Quitar a alguien de aquí le retira el permiso al instante.", f:[
         {k:"lista", l:"Correos", tipo:"textarea", v:emails.join("\n"), wide:true,
          ph:"presidencia@ejemplo.com\ntesoreria@ejemplo.com"},
       ]},

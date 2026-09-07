@@ -134,4 +134,12 @@ TEXTOS.de = {
   "Idioma": "Sprache",
   "Empezar por mis ejemplares": "Mit meinen Hunden anfangen",
   "Ver las novedades del club": "Die Neuigkeiten des Vereins ansehen",
+
+  /* Portada pública */
+  "El libro genealógico del club: los ejemplares, sus pedigríes, su salud y sus títulos, con el Reglamento de Cría aplicado sobre cada ficha.": "Das Zuchtbuch des Vereins: die Hunde, ihre Ahnentafeln, ihre Gesundheit und ihre Titel, mit der Zuchtordnung über jeder Karteikarte.",
+  "Para los socios del CEPPB": "Für die Mitglieder des CEPPB",
+  "Esto es de uso interno del club. Cada socio entra con su correo y ve su propia área; lo que aparece en ella depende de lo que cada uno haya decidido compartir.": "Dies ist für den internen Gebrauch des Vereins. Jedes Mitglied meldet sich mit seiner E-Mail-Adresse an und sieht seinen eigenen Bereich; was dort erscheint, hängt davon ab, was jeder zu teilen beschlossen hat.",
+  "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "Wenn Sie Mitglied sind, gibt es Ihre Karteikarte bereits mit den Daten der Geschäftsstelle. Melden Sie sich mit Ihrer E-Mail-Adresse an, um sie zu übernehmen.",
+  "¿Todavía no eres socio?": "Noch kein Mitglied?",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "Der Spanische Belgische-Schäferhund-Klub vereint die Züchter, Sportler und Liebhaber der vier Varietäten des Belgischen Schäferhundes. Schreiben Sie an die Geschäftsstelle des Vereins, und wir erklären Ihnen, wie Sie beitreten können.",
 };

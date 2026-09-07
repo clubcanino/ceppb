@@ -130,4 +130,12 @@ TEXTOS.gl = {
   "Idioma": "Idioma",
   "Empezar por mis ejemplares": "Empezar polos meus exemplares",
   "Ver las novedades del club": "Ver as novidades do club",
+
+  /* Portada pública */
+  "El libro genealógico del club: los ejemplares, sus pedigríes, su salud y sus títulos, con el Reglamento de Cría aplicado sobre cada ficha.": "O libro xenealóxico do club: os exemplares, os seus pedigrís, a súa saúde e os seus títulos, co Regulamento de Cría aplicado sobre cada ficha.",
+  "Para los socios del CEPPB": "Para os socios do CEPPB",
+  "Esto es de uso interno del club. Cada socio entra con su correo y ve su propia área; lo que aparece en ella depende de lo que cada uno haya decidido compartir.": "Isto é de uso interno do club. Cada socio entra co seu correo e ve a súa propia área; o que aparece nela depende do que cadaquén decidise compartir.",
+  "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "Se es socio do club, a túa ficha xa existe cos datos que constan na secretaría. Entra co teu correo para tomar posesión dela.",
+  "¿Todavía no eres socio?": "Aínda non es socio?",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "O Club Español do Can Pastor Belga reúne os criadores, deportistas e afeccionados das catro variedades do pastor belga. Escribe á secretaría do club e explicámosche como asociarte.",
 };

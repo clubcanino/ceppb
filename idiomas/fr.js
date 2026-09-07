@@ -134,4 +134,12 @@ TEXTOS.fr = {
   "Idioma": "Langue",
   "Empezar por mis ejemplares": "Commencer par mes chiens",
   "Ver las novedades del club": "Voir les actualités du club",
+
+  /* Portada pública */
+  "El libro genealógico del club: los ejemplares, sus pedigríes, su salud y sus títulos, con el Reglamento de Cría aplicado sobre cada ficha.": "Le livre généalogique du club : les chiens, leurs pedigrees, leur santé et leurs titres, avec le Règlement d'Élevage appliqué à chaque fiche.",
+  "Para los socios del CEPPB": "Pour les membres du CEPPB",
+  "Esto es de uso interno del club. Cada socio entra con su correo y ve su propia área; lo que aparece en ella depende de lo que cada uno haya decidido compartir.": "C'est à usage interne du club. Chaque membre se connecte avec son adresse et voit son propre espace ; ce qui s'y affiche dépend de ce que chacun a choisi de partager.",
+  "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "Si vous êtes membre du club, votre fiche existe déjà avec les données du secrétariat. Connectez-vous avec votre adresse pour en prendre possession.",
+  "¿Todavía no eres socio?": "Pas encore membre ?",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "Le Club Espagnol du Chien de Berger Belge réunit les éleveurs, les compétiteurs et les passionnés des quatre variétés du berger belge. Écrivez au secrétariat du club et nous vous expliquerons comment adhérer.",
 };

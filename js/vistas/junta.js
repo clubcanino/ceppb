@@ -107,14 +107,13 @@ V.altas = function(){
     {t:"Vía de alta", s:s=>s.email?0:1, r:s=>s.email?`<span class="chip">Invitación por correo</span>`:`<span class="chip warn">Reclamación manual</span>`},
     {t:"Estado", s:s=>s.cuentaVinculada?1:0, r:s=>s.cuentaVinculada?`<span class="chip ok">Vinculada</span>`:`<span class="chip">Sin reclamar</span>`},
   ];
-  return `<div class="card" style="margin-bottom:16px"><div class="card-h"><h3>Cómo se vincula cada alta a su socio</h3></div><div class="card-b">
+  return `<div class="card" style="margin-bottom:16px"><div class="card-h"><h3>Cómo entra cada socio en su ficha</h3></div><div class="card-b">
       <div class="reqs">
-        <div class="req">${marca("ok")}<div class="tx"><b>1. Los ${socios.length} socios ya existen como perfiles sin reclamar</b><small>Importados del fichero de la secretaría. Nadie puede acceder a ellos todavía.</small></div></div>
-        <div class="req">${marca("ok")}<div class="tx"><b>2. Invitación con enlace de un solo uso</b><small>Se envía al correo que ya consta en la ficha (${conEmail.length} socios). El enlace caduca y sólo sirve una vez: eso es lo que ata la cuenta al número de socio, sin que nadie pueda reclamar un perfil ajeno.</small></div></div>
-        <div class="req">${marca(sinEmail.length?"falta":"ok")}<div class="tx"><b>3. Reclamación manual para los ${sinEmail.length} sin correo</b><small>Formulario con nº de socio + DNI + teléfono; la secretaría lo aprueba a mano antes de dar acceso.</small></div></div>
-        <div class="req">${marca("falta")}<div class="tx"><b>4. Altas nuevas</b><small>Quien no es socio se registra como aficionado con acceso sólo de lectura; al aprobarse su alta, la secretaría le asigna número y su perfil pasa a socio.</small></div></div>
+        <div class="req">${marca("ok")}<div class="tx"><b>La ficha ya existe, sin dueño</b><small>Los ${socios.length} socios del censo están dados de alta con los datos de secretaría. Nadie entra en ellas hasta que su titular las reclama.</small></div></div>
+        <div class="req">${marca("ok")}<div class="tx"><b>Con correo: invitación de un solo uso</b><small>${conEmail.length} socios. El enlace caduca y sólo sirve una vez, y es lo que ata la cuenta al número de socio para que nadie pueda reclamar una ficha ajena.</small></div></div>
+        <div class="req">${marca(sinEmail.length?"falta":"ok")}<div class="tx"><b>Sin correo: a mano por secretaría</b><small>${sinEmail.length} socios. Reclaman su ficha con el número de socio, el DNI y el teléfono, y la secretaría lo aprueba antes de darles acceso.</small></div></div>
       </div>
-      <div class="note warn" style="margin-top:14px">Esto requiere el sistema de cuentas real: el prototipo simula el resultado, no envía correos.</div>
+      <div class="note warn" style="margin-top:14px">Advierte a los socios de que el correo puede caerles en <b>Spam</b>. Que busquen <b>CEPPB</b>, marquen el mensaje como «No es spam» y añadan el remitente a sus contactos.</div>
     </div></div>
     <div class="stats" style="margin-bottom:16px">
       <div class="stat"><div class="k">Invitables por correo</div><div class="v">${conEmail.length}</div><div class="n">${Math.round(conEmail.length/socios.length*100)} % del censo</div></div>

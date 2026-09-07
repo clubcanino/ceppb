@@ -7,6 +7,11 @@
 const MOTTO_HTML = '<em>belleza</em> y <i>funcionalidad</i>';
 
 V.muro = function(){
+  /* Quien no ha entrado ve una portada, no el libro. Nada de cifras
+     del club ni de movimientos de sus socios: se le cuenta qué es
+     esto y qué podrá hacer, y se le abre la puerta. */
+  if (!SESION.usuario) return portadaPublica();
+
   const socios = C("socios");
   const perros = perrosVisibles();
   const res    = C("resultados");
@@ -119,10 +124,10 @@ V.muro = function(){
       </div>
     </div>
     <div class="mast-stats">
-      <div class="stat"><div class="k">Socios</div><div class="v">${socios.length}</div>
+      ${SESION.esAdmin ? `<div class="stat"><div class="k">Socios</div><div class="v">${socios.length}</div>
         <div class="n">${socios.filter(s=>s.activo).length} con alta vigente</div></div>
       <div class="stat"><div class="k">Criadores</div><div class="v">${conAfijo}</div>
-        <div class="n">Con afijo FCI/RSCE</div></div>
+        <div class="n">Con afijo FCI/RSCE</div></div>` : ""}
       <div class="stat"><div class="k">Ejemplares</div><div class="v">${perros.length}</div>
         <div class="n">${conApto} habilitados para la cría</div></div>
       <div class="stat"><div class="k">Camadas</div><div class="v">${C("camadas").length}</div>
@@ -180,3 +185,62 @@ V.muro = function(){
     </div>
   </div>`;
 };
+
+/* ============================================================
+   Portada pública — lo que ve quien todavía no ha entrado.
+
+   Ni una cifra del club, ni un nombre de socio, ni un perro. Sólo
+   qué es esto, qué podrá hacer dentro y la puerta.
+   ============================================================ */
+function portadaPublica(){
+  return `
+  <div class="masthead">
+    <div class="flag"><i></i><i></i><i></i></div>
+    <div class="mast-top">
+      <img class="crest-light" src="assets/emblema-ceppb.png" alt="Emblema del CEPPB" width="82" height="82">
+      <img class="crest-dark" src="assets/emblema-ceppb-oscuro.webp" alt="" width="82" height="82">
+      <div style="flex:1;min-width:230px">
+        <div class="eyebrow">${esc(t("Club Español del Perro Pastor Belga"))}</div>
+        <h2>${esc(t("Libro de Cría"))}</h2>
+        <div class="motto">${MOTTO_HTML}</div>
+      </div>
+      <div style="max-width:38ch;color:var(--muted);font-size:12.5px;line-height:1.5">
+        ${esc(t("El libro genealógico del club: los ejemplares, sus pedigríes, su salud y sus títulos, con el Reglamento de Cría aplicado sobre cada ficha."))}
+      </div>
+    </div>
+  </div>
+
+  <div class="card lift" style="margin-bottom:16px">
+    <div class="card-h"><h3>${esc(t("Para los socios del CEPPB"))}</h3></div>
+    <div class="card-b">
+      <p style="color:var(--muted);font-size:13px;line-height:1.55;margin-bottom:16px">
+        ${esc(t("Esto es de uso interno del club. Cada socio entra con su correo y ve su propia área; lo que aparece en ella depende de lo que cada uno haya decidido compartir."))}
+      </p>
+      <div class="figs">${pasosDelSocio().slice(0, 6).map((p, i) => `
+        <div class="fig" style="--via:var(--gold)">
+          <div class="fig-h">
+            <span class="code">${i + 1}</span>
+            <div><div class="nm2">${p.ico} ${esc(p.t)}</div></div>
+          </div>
+          <div class="fig-b">
+            <p style="color:var(--muted);font-size:12.5px;line-height:1.5;margin:0">${esc(p.d)}</p>
+          </div>
+        </div>`).join("")}</div>
+    </div>
+  </div>
+
+  <div class="cols2">
+    <div class="card"><div class="card-h"><h3>${esc(t("Entrar"))}</h3></div><div class="card-b">
+      <p style="color:var(--muted);font-size:12.5px;line-height:1.55;margin-bottom:14px">
+        ${esc(t("Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella."))}
+      </p>
+      <a class="btn brand" href="#/entrar">${esc(t("Acceso de socios"))}</a>
+    </div></div>
+
+    <div class="card"><div class="card-h"><h3>${esc(t("¿Todavía no eres socio?"))}</h3></div><div class="card-b">
+      <p style="color:var(--muted);font-size:12.5px;line-height:1.55;margin:0">
+        ${esc(t("El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte."))}
+      </p>
+    </div></div>
+  </div>`;
+}

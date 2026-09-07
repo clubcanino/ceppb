@@ -50,12 +50,14 @@ V.admins = function(){
               <td style="text-align:right">${s?`<button class="btn sm" data-go="socio/${esc(s.id)}">Ver ficha</button>`:`<span class="chip">Sin ficha</span>`}</td></tr>`;}).join("")}</table>`
             : `<div class="empty" style="padding:30px">Sin cuentas configuradas</div>`}
         </div></div>
-      <div class="card"><div class="card-h"><h3>Qué manda de verdad</h3></div><div class="card-b">
+      <div class="card"><div class="card-h"><h3>Qué puede hacer la junta</h3></div><div class="card-b">
         <div class="reqs">
-          <div class="req">${marca("ok")}<div class="tx"><b>Los datos reservados los protege el servidor</b><small>El DNI, la dirección y el número de cuenta viven en un espacio que sólo se deja leer a quien tiene permiso de edición sobre la plataforma. No es una pantalla que los esconda.</small></div></div>
-          <div class="req">${marca("ok")}<div class="tx"><b>La comprobación la hace la base de datos</b><small>Cada vez que alguien intenta validar algo, la base de datos comprueba su correo contra esta lista. No es una anotación: es la regla.</small></div></div>
-          <div class="req">${marca("ok")}<div class="tx"><b>Sólo estas cuentas nombran cargos</b><small>Jueces de trabajo, jueces confirmadores, figurantes y veterinarios registrados. Un socio no puede asignárselos.</small></div></div>
+          <div class="req">${marca("ok")}<div class="tx"><b>Validar salud, títulos y resultados</b><small>Ningún socio puede dar por buenos sus propios papeles. Hasta que la junta los coteja con el certificado, no cuentan para nada.</small></div></div>
+          <div class="req">${marca("ok")}<div class="tx"><b>Ver los datos reservados</b><small>El DNI, la dirección y el número de cuenta. Ningún otro socio los ve, tenga el perfil abierto o cerrado.</small></div></div>
+          <div class="req">${marca("ok")}<div class="tx"><b>Nombrar los cargos del club</b><small>Jueces de trabajo, jueces confirmadores, figurantes y veterinarios registrados. Un socio no puede asignárselos.</small></div></div>
+          <div class="req">${marca("ok")}<div class="tx"><b>Autorizar traspasos y cruces intervariedades</b><small>El cambio de titularidad de un ejemplar y los cruces entre variedades no se aplican hasta que la junta los resuelve.</small></div></div>
         </div>
+        <div class="mini" style="margin-top:12px">Quitar un correo de esta lista le retira el permiso al instante.</div>
       </div></div>
     </div>`;
 };
@@ -108,7 +110,7 @@ V.invitaciones = function(){
   const chipEst = s => ({no_enviada:`<span class="chip">Sin invitar</span>`,
     enviada:`<span class="chip warn">Invitada ${fmtF((s.invitacion||{}).fecha)}</span>`,
     aceptada:`<span class="chip ok">Perfil reclamado</span>`})[est(s)];
-  return `<div class="note" style="margin-bottom:16px">Cada invitación lleva un <b>enlace personal de un solo uso</b>: es lo que ata la cuenta al número de socio y evita que nadie reclame un perfil ajeno. Envíalas de una en una mientras pruebas; el estado de cada una queda registrado aquí.</div>
+  return `<div class="note" style="margin-bottom:16px">Cada invitación lleva un <b>enlace personal de un solo uso</b>: es lo que ata la cuenta al número de socio y evita que nadie reclame un perfil ajeno. El estado de cada una queda registrado aquí.</div>
     <div class="note warn" style="margin-bottom:16px"><b>Advierte a los socios de que miren en Spam.</b>
     Un correo automático que llega por primera vez cae en el buzón de no deseado más veces
     de las que llega a la bandeja de entrada, y el socio da por hecho que no le ha llegado.

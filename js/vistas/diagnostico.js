@@ -1,13 +1,24 @@
 /* ============================================================
    Diagnóstico — para cuando algo no funciona y hay que saber por
-   qué sin adivinar. Se abre en #/diagnostico.
+   qué sin adivinar.
+
+   No está en el menú a propósito: es una herramienta de avería, no
+   una sección del club. Se llega escribiendo #/diagnostico.
 
    No enseña ningún dato de socios: solo el estado de la sesión y
    de la conexión.
    ============================================================ */
 "use strict";
 
-const VERSION_APP = "28";
+/* La versión sale del propio archivo cargado. Escrita a mano se
+   quedaba vieja y esta pantalla acababa mintiendo, que es justo lo
+   contrario de para lo que sirve. */
+const VERSION_APP = (function(){
+  try {
+    const s = document.querySelector('script[src*="app.js"]');
+    return (s && (s.src.match(/[?&]v=(\d+)/) || [])[1]) || "—";
+  } catch(e){ return "—"; }
+})();
 
 V.diagnostico = function(){
   const u = SESION.usuario;

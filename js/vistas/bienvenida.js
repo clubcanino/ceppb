@@ -113,8 +113,8 @@ V.bienvenida = function(){
           Hasta entonces figuran como pendientes y no suman para ningún apto de cría.
         </p>
         <p style="color:var(--muted);font-size:12.5px;line-height:1.55;margin-top:9px">
-          Eso no lo comprueba esta pantalla: lo impide el propio servidor. Nadie puede
-          validarse sus propios papeles aunque sepa cómo intentarlo.
+          Nadie puede dar por buenos sus propios papeles, y eso vale para todos:
+          es lo que hace que un apto de cría del CEPPB signifique algo.
         </p>
       </div></div>
 

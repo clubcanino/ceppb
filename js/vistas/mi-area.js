@@ -29,7 +29,7 @@ V.yo = function(){
           <div class="note ok">Cuenta vinculada al socio nº ${esc(s.numero)} mediante invitación enviada a ${esc(s.email||"su correo registrado")}.</div>
           <div class="mini" style="margin-top:10px">El número de socio y el DNI sólo los modifica la secretaría del club.</div></div></div>
         <div class="card"><div class="card-h"><h3>Datos reservados</h3></div><div class="card-b">
-          <div class="note block" style="margin-bottom:10px">El número de cuenta <b>no se puede compartir en ningún nivel</b>. No aparece entre los ajustes de privacidad ni en el directorio, y el propio servidor impide leerlo a quien no sea la junta.</div>
+          <div class="note block" style="margin-bottom:10px">El número de cuenta <b>no se comparte en ningún caso</b>. No aparece entre tus ajustes de privacidad ni en el directorio: sólo lo ve la tesorería del club.</div>
           <dl class="kv" style="margin-top:10px"><dt>Cuota</dt><dd>${esc(s.cuota||"—")}</dd>
           <dt>IBAN de domiciliación</dt><dd class="num">${esc(byId(C("socios_privado"),s.id)?.iban ? "•••• "+byId(C("socios_privado"),s.id).iban.slice(-4) : "—")}</dd></dl>
           <button class="btn sm" style="margin-top:10px" data-form="bancario|${esc(s.id)}">Cambiar cuenta bancaria</button></div></div>

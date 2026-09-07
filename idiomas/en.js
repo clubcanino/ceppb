@@ -134,4 +134,12 @@ TEXTOS.en = {
   "Idioma": "Language",
   "Empezar por mis ejemplares": "Start with my dogs",
   "Ver las novedades del club": "See the club news",
+
+  /* Portada pública */
+  "El libro genealógico del club: los ejemplares, sus pedigríes, su salud y sus títulos, con el Reglamento de Cría aplicado sobre cada ficha.": "The club's studbook: the dogs, their pedigrees, their health and their titles, with the Breeding Regulations applied to every record.",
+  "Para los socios del CEPPB": "For CEPPB members",
+  "Esto es de uso interno del club. Cada socio entra con su correo y ve su propia área; lo que aparece en ella depende de lo que cada uno haya decidido compartir.": "This is for the club's own use. Each member signs in with their email and sees their own area; what appears there depends on what each person has chosen to share.",
+  "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "If you are a member, your record already exists with the details held by the club office. Sign in with your email to claim it.",
+  "¿Todavía no eres socio?": "Not a member yet?",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "The Spanish Belgian Shepherd Dog Club brings together the breeders, competitors and enthusiasts of the four Belgian Shepherd varieties. Write to the club office and we will explain how to join.",
 };

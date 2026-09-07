@@ -129,4 +129,12 @@ TEXTOS.eu = {
   "Idioma": "Hizkuntza",
   "Empezar por mis ejemplares": "Hasi nire aleekin",
   "Ver las novedades del club": "Ikusi klubaren berritasunak",
+
+  /* Portada pública */
+  "El libro genealógico del club: los ejemplares, sus pedigríes, su salud y sus títulos, con el Reglamento de Cría aplicado sobre cada ficha.": "Klubaren liburu genealogikoa: aleak, haien pedigriak, haien osasuna eta haien tituluak, Hazkuntza Erregelamendua fitxa bakoitzari aplikatuta.",
+  "Para los socios del CEPPB": "CEPPBko bazkideentzat",
+  "Esto es de uso interno del club. Cada socio entra con su correo y ve su propia área; lo que aparece en ella depende de lo que cada uno haya decidido compartir.": "Hau klubaren barne erabilerarako da. Bazkide bakoitza bere helbide elektronikoarekin sartzen da eta bere eremua ikusten du; bertan agertzen dena bakoitzak partekatzea erabaki duenaren araberakoa da.",
+  "Si eres socio del club, tu ficha ya existe con los datos que constan en secretaría. Entra con tu correo para tomar posesión de ella.": "Klubeko bazkidea bazara, zure fitxa jada badago idazkaritzan dauden datuekin. Sartu zure helbide elektronikoarekin haren jabetza hartzeko.",
+  "¿Todavía no eres socio?": "Oraindik ez zara bazkidea?",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte.": "Belgikako Artzain Txakurraren Espainiako Klubak belgikar artzainaren lau aldaeretako hazleak, kirolariak eta zaleak biltzen ditu. Idatzi klubaren idazkaritzara eta nola elkartu azalduko dizugu.",
 };
