@@ -190,7 +190,7 @@ V.perro = function(id){
       {t:"Evento", s:r=>r.evento||"", r:r=>`${esc(r.evento||r.tipoEvento||"—")}${r.organizadoCEPPB?` <span class="chip">CEPPB</span>`:""}`},
       {t:"Resultado", s:r=>r.calificacion||r.resultado||r.titulo||"", r:r=>{
         if(r.tipo==="estructura") return `<span class="chip ${r.calificacion==="EXC"?"ok":""}">${esc(r.calificacion||"—")}</span>${r.distincion?` <span class="chip">${esc(r.distincion)}</span>`:""}${r.puesto?` <span class="num">${r.puesto}º</span>`:""}`;
-        if(r.tipo==="trabajo") return `${r.titulo?`<span class="chip ok">${esc(r.titulo)}</span> `:""}${r.calificacion?`<span class="chip">${esc(r.calificacion)}</span>`:""}${r.puntos!=null&&!(r.calificacion==="DESC"&&!r.puntos)?` <span class="num">${r.puntos} pts</span>`:""}${r.puesto?` <span class="num">${r.puesto}º</span>`:""}${!r.titulo&&!r.calificacion?`<span class="chip">—</span>`:""}`;
+        if(r.tipo==="trabajo") return `${r.titulo?`<span class="chip ok">${esc(r.titulo)}</span> `:""}${r.calificacion?`<span class="chip">${esc(r.calificacion)}</span>`:""}${r.puntos!=null&&!(r.calificacion==="DESC"&&!r.puntos)?` <span class="num" title="${r.puntosSobre?"Sobre "+r.puntosSobre:""}">${r.puntos}${r.puntosSobre?"/"+r.puntosSobre:""} pts</span>`:""}${r.puesto?` <span class="num">${r.puesto}º</span>`:""}${!r.titulo&&!r.calificacion?`<span class="chip">—</span>`:""}`;
         return `<span class="chip ${r.resultado==="APTO"?"ok":"block"}">${esc(r.modalidad?r.modalidad+" · ":"")}${esc(r.resultado||"—")}</span>`;}},
       {t:"Guía", s:r=>r.guia||"", r:r=>esc(r.guia||"—")},
       {t:"Juez", s:r=>r.juez||"", r:r=>esc(r.juez||"—")},

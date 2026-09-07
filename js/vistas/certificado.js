@@ -117,7 +117,8 @@ V.certificado = function(id){
              Certificar «—» cuando lo que hay es un 3º con 269 puntos
              sería quitarle mérito al perro. */
           `<li><b>${esc(r.titulo || (r.puesto ? r.puesto + "º" : "Participación"))}</b>${
-            r.puntos != null && !(r.calificacion === "DESC" && !r.puntos) ? " · " + r.puntos + " puntos" : ""}${
+            r.puntos != null && !(r.calificacion === "DESC" && !r.puntos)
+              ? " · " + r.puntos + (r.puntosSobre ? " de " + r.puntosSobre : "") + " puntos" : ""}${
             r.calificacion ? " · " + esc(r.calificacion) : ""}${
             r.evento ? " · " + esc(r.evento) : ""}${
             r.fecha ? " · " + fmtF(r.fecha) : (r.anio ? " · " + r.anio : "")}${
