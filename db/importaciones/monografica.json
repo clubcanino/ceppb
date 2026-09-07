@@ -1,11 +1,11 @@
 {
  "evento": {
-  "nombre": "Monográfica Nacional del Perro Pastor Belga 2025 · Igea",
-  "tipo": "Concurso monográfico CEPPB",
+  "nombre": "Especial Nacional de Cría CEPPB 2025 · Igea",
+  "tipo": "Especial de Cría",
   "lugar": "Igea (La Rioja)",
-  "fecha": null,
+  "fecha": "2025-11-08",
   "organizado_ceppb": true,
-  "id": "2208f7dc-7b4d-5122-8605-9120817a9d7e"
+  "id": "a866144e-e190-58ee-ab5a-78fe2e667f53"
  },
  "ejemplares": [
   {
@@ -353,7 +353,7 @@
    ],
    "titulo": "CCJ · MJ",
    "juez": "Elena Viñolo",
-   "id": "e0d79231-b3e2-537b-aca6-1a875e83e62b",
+   "id": "48fb8929-160b-5e2d-a5dd-226cd1b5c19f",
    "perro": "ab796842-39f3-5e86-a61d-718aab20eddc"
   },
   {
@@ -369,7 +369,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "dcb7a0d7-d107-55c6-94ac-97f83e006a13",
+   "id": "db0bee43-6c21-58ee-ae46-d9a2a0da4122",
    "perro": "e339a3ab-c3e6-57a4-9316-62348b3a9b4c"
   },
   {
@@ -383,7 +383,7 @@
    "distinciones": [],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "ff311506-d11e-5d01-91db-8c7e20bd0116",
+   "id": "1d924ebd-e318-5baa-8c50-1d6e4ce7e3e0",
    "perro": "d8d119f0-62bc-5bf6-9332-65bd551c2382"
   },
   {
@@ -397,7 +397,7 @@
    "distinciones": [],
    "titulo": "CCV",
    "juez": "Elena Viñolo",
-   "id": "4e6dbd01-c985-5870-abc8-fbf0997d7119",
+   "id": "f06b4916-fec9-504e-811e-70165a0a43d3",
    "perro": "07480635-abf8-50f5-b090-db1a38266faa"
   },
   {
@@ -411,7 +411,7 @@
    "distinciones": [],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "ba5582fb-fe7f-59f8-9a17-33e3c3040a3c",
+   "id": "93248648-c41d-5169-b3db-9e6e9eb73c63",
    "perro": "e25d53dd-c795-5317-b984-43fc912b7b2c"
   },
   {
@@ -427,7 +427,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "9bb79f55-e9b1-54e3-b987-51ae5cd74475",
+   "id": "459666d3-fa27-5351-8800-1bc01051f065",
    "perro": "680684e9-0659-541c-9557-7a715baf3962"
   },
   {
@@ -441,7 +441,7 @@
    "distinciones": [],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "9469c9db-a63a-57a1-8172-17ab5bc57b75",
+   "id": "86347877-e9c8-5a57-ad90-f3e5ed98d4db",
    "perro": "fe6de016-0552-5e23-b143-626a0d8a037c"
   },
   {
@@ -457,7 +457,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "1c41744c-569e-5bfa-bf00-8156de3113c5",
+   "id": "94ecdb78-33ee-5bdf-854a-dbf88dcf8e6f",
    "perro": "bbca93c7-352c-5f06-8096-fb121f463cda"
   },
   {
@@ -471,7 +471,7 @@
    "distinciones": [],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "ed4f0b0f-fbbd-542c-ab74-43689965aa26",
+   "id": "b7e27268-a1f4-52b5-abf1-14ef1a0c01ba",
    "perro": "26a30dc4-9204-5880-9c9c-95d5857c0fae"
   },
   {
@@ -488,7 +488,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "377a54c2-e80c-582a-bc53-4bdc415f7f44",
+   "id": "afd9a434-3fdf-55c8-8517-d17f06354473",
    "perro": "ebf9a306-c9db-5612-8f88-5fe297bcc4cf"
   },
   {
@@ -504,7 +504,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "b7ac417a-08bb-57cb-a493-c409d070e952",
+   "id": "5d5c3617-7d3a-5c8c-a2e8-4e8c87c16b59",
    "perro": "c55f6ad4-8c35-5bbf-bad4-c397505078bd"
   },
   {
@@ -520,7 +520,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "fc6dd188-3e08-5e3b-89d1-012cf8ef8b10",
+   "id": "f61ebf38-1995-56e6-9d3f-8ead82c01da0",
    "perro": "13b40adc-39ae-5757-a09c-eafa749f8e11"
   },
   {
@@ -534,7 +534,7 @@
    "distinciones": [],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "63581e5e-2eab-581e-9748-a7aef3b68e3f",
+   "id": "40cd10f3-08b4-536b-8338-284c597b2684",
    "perro": "3c881de4-d910-571c-96ff-6d70be9b0fc3"
   },
   {
@@ -550,7 +550,7 @@
    ],
    "titulo": "CCJ",
    "juez": "Elena Viñolo",
-   "id": "1937a488-77ff-5904-92f0-f59f045f6680",
+   "id": "25c7ca0e-ac74-5531-8644-c8f677285ef1",
    "perro": "a57f3b7a-7db1-5c48-8c94-caa232d2bdae"
   },
   {
@@ -564,7 +564,7 @@
    "distinciones": [],
    "titulo": "MMC · MMG",
    "juez": "Elena Viñolo",
-   "id": "88532110-d662-5d22-9e98-c842e2affaaa",
+   "id": "387dba4e-0a65-5254-b6f3-7caf604bb1c2",
    "perro": "106c86f6-3804-58e0-b426-1a7c823f6680"
   },
   {
@@ -578,7 +578,7 @@
    "distinciones": [],
    "titulo": "MC",
    "juez": "Elena Viñolo",
-   "id": "06553697-cc6c-5fe2-8dd5-76913174a914",
+   "id": "e950170b-1b28-5681-8ee6-e7342a60d0d2",
    "perro": "a7a5ebf1-1c1e-5244-9b90-a361a4da344c"
   },
   {
@@ -592,7 +592,7 @@
    "distinciones": [],
    "titulo": "CCJ",
    "juez": "Elena Viñolo",
-   "id": "2f9dab46-51f3-527d-819b-a1d15194fe40",
+   "id": "075e4824-7472-5ee8-8e4e-bef8ae035295",
    "perro": "25d1316a-2688-559c-97c6-705411aefffe"
   },
   {
@@ -608,7 +608,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "6037e18f-b3b1-5eb1-b874-4747e08eaf6d",
+   "id": "2b8bac14-f7a6-5e3e-ac7b-27d4642495de",
    "perro": "e27c8465-68be-594f-9dbf-819540bf0ae8"
   },
   {
@@ -624,7 +624,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "fb4484ce-13df-5921-b46d-5783761b13cc",
+   "id": "0871283d-b103-5a77-a70d-bb6ed7399881",
    "perro": "ff47aeb0-d933-502b-892b-7e14ef92ef2c"
   },
   {
@@ -641,7 +641,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "aee086f4-b5a1-597c-95a4-869b6c828901",
+   "id": "7cf70d94-f2d0-531d-a147-76fffa700b19",
    "perro": "72ed776e-31d9-58b5-9b22-80f91132959f"
   },
   {
@@ -655,7 +655,7 @@
    "distinciones": [],
    "titulo": "RCCJ",
    "juez": "Elena Viñolo",
-   "id": "778048a3-9e93-5e31-87c5-0366e438d0bf",
+   "id": "d39b6882-b65f-5304-a0a7-1fd19038494e",
    "perro": "b740b701-1945-5cf9-9d7b-3b4ad6b4b801"
   },
   {
@@ -669,7 +669,7 @@
    "distinciones": [],
    "titulo": "CCJ",
    "juez": "Elena Viñolo",
-   "id": "297270e1-f5bc-556b-bbb2-97e32aaeeb8b",
+   "id": "2a295bd5-9f93-5425-a936-1b5cf4932d22",
    "perro": "c63654fd-2426-54b8-bb9a-fb61e4e1741f"
   },
   {
@@ -683,7 +683,7 @@
    "distinciones": [],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "8bac92cb-24d9-5937-a2d5-3152d6207c62",
+   "id": "d9fc93c8-9a8c-569a-ba64-f6dea3e6b468",
    "perro": "12d6150f-6639-5364-ac5f-184c2c685e80"
   },
   {
@@ -699,7 +699,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "3f6bf9cd-5cfd-5cb1-b396-5a56b46e1c8f",
+   "id": "558a37a1-4339-5140-921a-ac0ce72143ae",
    "perro": "4873c434-7317-5585-88ca-d43604c2fd4b"
   },
   {
@@ -713,7 +713,7 @@
    "distinciones": [],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "abe3f763-8316-5d03-b31d-5a2ebabe4a24",
+   "id": "70412d09-1d4c-5827-a599-414619e2bc2b",
    "perro": "6412f88f-4ec8-5988-98a1-37216369053a"
   },
   {
@@ -729,7 +729,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "f0e22fe5-8392-5c8d-9538-ab8de1bb0f3f",
+   "id": "0c5b9e2f-a27b-51f7-9377-c3587c28c5f4",
    "perro": "e6abf182-046f-54d4-a23a-cfedd0f155be"
   },
   {
@@ -743,7 +743,7 @@
    "distinciones": [],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "5cee9990-883a-5e7f-8498-cb49611d2f03",
+   "id": "6567306a-45d8-5b1f-adf7-449ddd24778e",
    "perro": "289a0b71-c925-5014-93d4-73eaefb6a687"
   },
   {
@@ -759,7 +759,7 @@
    ],
    "titulo": null,
    "juez": "Elena Viñolo",
-   "id": "a31cccc5-4cb7-5a28-8b5d-970ee7e8be5b",
+   "id": "c174365d-4ca8-54f5-ba98-264ec66df8f5",
    "perro": "e8b24754-2aa8-5d5b-aeaa-3cf2db5a54a4"
   },
   {
@@ -773,7 +773,7 @@
    "distinciones": [],
    "titulo": "RCCV",
    "juez": "Elena Viñolo",
-   "id": "3ff3de8b-0824-5d43-87a2-185b7028bcab",
+   "id": "15f15f36-dde5-5dfa-a675-84816f55800c",
    "perro": "b7675889-2e0b-525b-8f33-e8c2274b1027"
   },
   {
@@ -787,7 +787,7 @@
    "distinciones": [],
    "titulo": "CCV · MV",
    "juez": "Elena Viñolo",
-   "id": "f025d4f3-e8f0-590f-b94c-7b4ae753246d",
+   "id": "361787df-6403-5a03-9691-c115f5459ec5",
    "perro": "804e28fd-ba60-517b-8ca8-a8d0f7ec7925"
   }
  ]

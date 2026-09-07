@@ -1,5 +1,5 @@
 /* ============================================================
-   La Monográfica Nacional 2025, catálogo en mano.
+   La Especial Nacional de Cría 2025 de Igea, catálogo en mano.
 
    Esto es belleza y SÍ cuenta: el Anexo A pide calificaciones de
    EXC en evento del CEPPB para las figuras ACE, ACES y ACSS. Por
@@ -99,10 +99,35 @@ test("el volcado se puede repetir sin duplicar nada", () => {
   assert.match(sql, /on conflict \(id\) do update set/);
 });
 
-test("la fecha del concurso queda pendiente y no se inventa", () => {
-  /* El catálogo no la trae. Sin ella, el reglamento no dará por
-     válidas las calificaciones que exigen 18 meses de edad: es lo
-     conservador. En cuanto la confirme secretaría, se rellena. */
-  assert.equal(d.evento.fecha, null);
-  assert.match(sql, /fecha = coalesce\(excluded\.fecha, eventos\.fecha\)/);
+test("la fecha y el tipo salen del calendario del club, no del catálogo", () => {
+  /* En Igea, en 2025, el club no celebró más que un evento: la
+     Especial Nacional de Cría del 8 de noviembre. */
+  assert.equal(d.evento.fecha, "2025-11-08");
+  assert.equal(d.evento.tipo, "Especial de Cría");
+});
+
+test("una Especial de Cría puntúa un 50 % más (Cap. 7)", () => {
+  /* Si el tipo se hubiera quedado en «Concurso monográfico», cada
+     ejemplar habría perdido un tercio de sus puntos en el baremo. */
+  const cac = {calificacion:"EXC", puesto:1, distincion:"CAC"};
+  assert.equal(R.puntosResultado(cac, "ra"), 12);
+  assert.equal(R.puntosResultado(Object.assign({tipoEvento:"Especial de Cría"}, cac), "ra"), 18);
+});
+
+test("el evento que se importó con el nombre equivocado se borra", () => {
+  assert.match(sql, /delete from resultados where evento_id/);
+  assert.match(sql, /delete from eventos where id/);
+  /* y el borrado va antes de volver a insertar */
+  assert.ok(sql.indexOf("delete from eventos") < sql.indexOf("insert into eventos"));
+});
+
+test("con la fecha, el reglamento ya puede medir la edad", () => {
+  /* La figura ACSS exige dos EXC con 18 meses cumplidos. Sin fecha
+     del evento no se podía comprobar y no contaba ninguna. */
+  const cal = (fecha) => ({tipo:"estructura", calificacion:"EXC", fecha,
+                           organizadoCEPPB:true, validado:"validado", perroId:"p1"});
+  const rs = R.res("p1", [cal("2025-11-08"), cal("2025-11-08")]);
+  const req = {min:"EXC", n:2, ceppb:true, edadMin:18};
+  assert.equal(R.estructura(rs, req, "2020-01-01").e, "ok", "un adulto sí cumple");
+  assert.equal(R.estructura(rs, req, "2025-01-01").e, "falta", "un cachorro de 10 meses no");
 });

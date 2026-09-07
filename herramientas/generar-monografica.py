@@ -83,7 +83,12 @@ def main():
     out.append("--    intermedia, abierta, trabajo, campeones, veteranos.")
     out.append("alter table resultados add column if not exists clase text;")
     out.append("")
-    out.append("-- 1. El concurso")
+    out.append("-- 1. Fuera el duplicado: al importarlo la primera vez aún no se")
+    out.append("--    sabía de qué evento del club era, y entró con otro nombre.")
+    out.append(f"delete from resultados where evento_id = {esc(id_estable('evento:' + d['nombreAnterior']))}::uuid;")
+    out.append(f"delete from eventos where id = {esc(id_estable('evento:' + d['nombreAnterior']))}::uuid;")
+    out.append("")
+    out.append("-- 2. El concurso")
     out.append(f"insert into eventos (id, nombre, tipo, fecha, lugar, juez, organizado_ceppb)")
     out.append(f"values ({esc(ev_id)}::uuid, {esc(ev['nombre'])}, {esc(ev['tipo'])}, "
                f"{esc(ev['fecha'])}, {esc(ev['lugar'])}, "
@@ -94,7 +99,7 @@ def main():
     out.append("  fecha = coalesce(excluded.fecha, eventos.fecha),")
     out.append("  organizado_ceppb = true;")
     out.append("")
-    out.append("-- 2. Los ejemplares.")
+    out.append("-- 3. Los ejemplares.")
     out.append("--    Lo que ya conste en el libro manda: de aquí sólo se")
     out.append("--    completa lo que estuviera en blanco.")
     out.append("insert into perros (id, nombre, sexo, variedad, loe, chip,"
@@ -114,7 +119,7 @@ def main():
     out.append("  fecha_nacimiento = coalesce(perros.fecha_nacimiento, excluded.fecha_nacimiento),")
     out.append("  origen = coalesce(perros.origen, excluded.origen);")
     out.append("")
-    out.append("-- 3. Las calificaciones.")
+    out.append("-- 4. Las calificaciones.")
     out.append("--    Entran validadas: es el acta del juez del propio club.")
     out.append("alter table resultados disable trigger trg_proteger_resultado;")
     out.append("")

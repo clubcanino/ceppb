@@ -22,16 +22,25 @@ NS = '{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
 REL = '{http://schemas.openxmlformats.org/officeDocument/2006/relationships}'
 
 # --- el evento -------------------------------------------------------
-# El catálogo no trae ni el nombre del concurso ni su fecha: sólo la
-# lista de inscritos. Van aquí, y la fecha se rellena en cuanto la
-# confirme la secretaría del club.
+# El catálogo sólo trae la lista de inscritos: ni el nombre del
+# concurso ni su fecha. Salen del calendario de la web del club, donde
+# en Igea, en 2025, no hubo más que un evento: la Especial Nacional de
+# Cría del 8 de noviembre. El archivo lo llama «monográfica», que es
+# como se conoce, pero en el calendario del club figura con su nombre.
+#
+# El tipo importa y no es un detalle: el Capítulo 7 multiplica por 1,5
+# los puntos obtenidos en una Especial de Cría.
 EVENTO = {
-    "nombre": "Monográfica Nacional del Perro Pastor Belga 2025 · Igea",
-    "tipo":   "Concurso monográfico CEPPB",
+    "nombre": "Especial Nacional de Cría CEPPB 2025 · Igea",
+    "tipo":   "Especial de Cría",
     "lugar":  "Igea (La Rioja)",
-    "fecha":  None,          # pendiente de confirmar
+    "fecha":  "2025-11-08",
     "organizado_ceppb": True,
 }
+
+# Como se llamó al importarlo la primera vez, cuando aún no se sabía de
+# qué evento era. Sirve para borrar aquel duplicado.
+NOMBRE_ANTERIOR = "Monográfica Nacional del Perro Pastor Belga 2025 · Igea"
 
 
 def columna(ref):
@@ -249,6 +258,7 @@ def main(ruta):
     print(json.dumps({
         "origen": ruta.split("/")[-1],
         "evento": EVENTO,
+        "nombreAnterior": NOMBRE_ANTERIOR,
         "ejemplares": ejemplares,
         "resultados": resultados,
         "avisos": avisos,
