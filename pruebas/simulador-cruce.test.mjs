@@ -162,6 +162,8 @@ test("pero el detalle de lo que falta se sigue enseñando entero", () => {
 
 test("los ejemplares sin sexo anotado también se pueden elegir", () => {
   const v = lee("js/vistas/cria.js");
+  assert.equal(/machos\.length \+ hembras\.length/.test(v), false,
+    "sumar las dos listas contaba dos veces a los que no tienen sexo: 4.112 de 3.833");
   assert.match(v, /p\.sexo==="M" \|\| !p\.sexo/,
     "279 ejemplares del libro no traen el sexo: dejarlos fuera era dejarlos fuera del simulador");
   assert.match(v, /p\.sexo==="H" \|\| !p\.sexo/);

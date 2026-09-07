@@ -98,7 +98,7 @@ V.cruce = function(){
     <div>${panel}</div>
     <div class="grid">
       <div class="card"><div class="card-h"><h3>Reproductores</h3>
-        <span class="hint">${machos.length + hembras.length} en el libro</span></div><div class="card-b">
+        <span class="hint">${perros.length} en el libro</span></div><div class="card-b">
         <div class="f" style="margin-bottom:12px"><label>Macho</label>
           ${buscadorDeFicha("crm", ficha(machos), cruceSel.m,
             {alElegir:"cruceMacho", ph:"Escribe el nombre del perro…"})}</div>
