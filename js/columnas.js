@@ -125,6 +125,7 @@ const COLUMNAS = {
     "juez",
     "organizado_ceppb",
     "calificacion",
+    "clase",
     "puesto",
     "distincion",
     "modalidad",

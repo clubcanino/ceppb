@@ -95,14 +95,17 @@ function resultadosDeEventos(){
   const cols = [
     {t:t("Puesto"), s:r=>r.puesto||9999, r:r=>r.puesto?`<span class="num">${r.puesto}º</span>`:`<span class="dim">—</span>`},
     {t:t("Ejemplar"), s:r=>{const p=byId(C("perros"),r.perroId); return p?p.nombre:"";},
-     r:r=>{const p=byId(C("perros"),r.perroId); return p?`<span class="nm">${esc(p.nombre)}</span>`:`<span class="dim">—</span>`;}},
+     r:r=>{const p=byId(C("perros"),r.perroId);
+       return p?`<span class="nm">${esc(p.nombre)}</span>${r.clase?`<div class="mini">Clase ${esc(String(r.clase).toLowerCase())}</div>`:""}`:`<span class="dim">—</span>`;}},
     {t:t("Guía"), s:r=>r.guia||"", r:r=>esc(r.guia||"—")},
     {t:t("Puntos"), s:r=>r.puntos==null?-1:r.puntos,
      r:r=>r.puntos==null?`<span class="dim">—</span>`
         :`<span class="num">${r.puntos}${r.puntosSobre?"/"+r.puntosSobre:""}</span>`},
     {t:t("Calificación"), s:r=>r.calificacion||r.calificacionOrigen||"",
-     r:r=>r.calificacion?`<span class="chip ${r.calificacion==="EXC"?"ok":r.calificacion==="DESC"?"block":""}">${esc(r.calificacion)}</span>`
-        :r.calificacionOrigen?`<span class="chip">${esc(r.calificacionOrigen)}</span>`:`<span class="dim">—</span>`},
+     r:r=>`${r.calificacion?`<span class="chip ${r.calificacion==="EXC"?"ok":r.calificacion==="DESC"?"block":""}">${esc(r.calificacion)}</span>`
+        :r.calificacionOrigen?`<span class="chip">${esc(r.calificacionOrigen)}</span>`:`<span class="dim">—</span>`}${
+        r.distincion?` <span class="chip">${esc(r.distincion)}</span>`:""}${
+        r.titulo&&r.tipo==="estructura"?` <span class="chip">${esc(r.titulo)}</span>`:""}`},
   ];
 
   const opcion = x => `<option value="${esc(x.id)}" ${x.id===e.id?"selected":""}>${

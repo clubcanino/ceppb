@@ -154,6 +154,7 @@ create table if not exists resultados (
   evento text, evento_id uuid references eventos(id) on delete set null,
   tipo_evento text, juez text, organizado_ceppb boolean default false,
   calificacion text,      -- EXC · MB · B · SUF
+  clase text,             -- cachorro · junior · intermedia · abierta · trabajo · campeones · veteranos
   puesto integer,
   distincion text,        -- CAC · CACIB · RCAC · RCACIB · CCPB · RCCPB · BOB
   modalidad text,         -- TS · TC
