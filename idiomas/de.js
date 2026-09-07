@@ -166,4 +166,6 @@ TEXTOS.de = {
   "Baja y elige «Añadir a pantalla de inicio».": "Scrollen Sie nach unten und wählen Sie „Zum Home-Bildschirm“.",
   "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Bestätigen Sie. Das Vereinswappen liegt dann neben Ihren übrigen Apps.",
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Suchen Sie im Menü Ihres Browsers nach „App installieren“ oder „Zum Startbildschirm hinzufügen“.",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "Der Spanische Belgische-Schäferhund-Klub vereint die Züchter, Sportler und Liebhaber der vier Varietäten des Belgischen Schäferhundes.",
+  "Hazte socio": "Mitglied werden",
 };

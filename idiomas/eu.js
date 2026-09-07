@@ -161,4 +161,6 @@ TEXTOS.eu = {
   "Baja y elige «Añadir a pantalla de inicio».": "Jaitsi eta aukeratu «Gehitu hasierako pantailan».",
   "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Berretsi. Klubaren ikurra zure gainerako aplikazioen ondoan geratuko zaizu.",
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Zure nabigatzailearen menuan, bilatu «Instalatu aplikazioa» edo «Gehitu hasierako pantailan».",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "Belgikako Artzain Txakurraren Espainiako Klubak belgikar artzainaren lau aldaeretako hazleak, kirolariak eta zaleak biltzen ditu.",
+  "Hazte socio": "Egin zaitez bazkide",
 };

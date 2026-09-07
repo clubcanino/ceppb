@@ -162,4 +162,6 @@ TEXTOS.gl = {
   "Baja y elige «Añadir a pantalla de inicio».": "Baixa e escolle «Engadir á pantalla de inicio».",
   "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Confirma. Quédache o emblema do club xunto ás demais aplicacións.",
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Desde o menú do teu navegador, busca «Instalar aplicación» ou «Engadir á pantalla de inicio».",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "O Club Español do Can Pastor Belga reúne os criadores, deportistas e afeccionados das catro variedades do pastor belga.",
+  "Hazte socio": "Faite socio",
 };

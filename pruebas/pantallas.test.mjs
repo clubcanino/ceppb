@@ -953,3 +953,69 @@ test("dos fichas que se llaman igual se distinguen", () => {
   assert.notEqual(r[0][1], r[1][1], "dos «Alan» tienen que poder distinguirse");
   assert.match(r[0][1], /LOE 111/);
 });
+
+/* ============================================================
+   Dos niveles dentro de la junta.
+
+   Tesorería trabaja: valida, lleva el censo, cobra cuotas. Lo que
+   no toca es la plataforma misma —la lista de administradores y
+   los cargos del club—, y no se le dice que no puede: no se le
+   ofrece.
+   ============================================================ */
+function comoJunta(presidencia){
+  const ctx = montar();
+  vm.runInContext(`
+    SESION.rol="admin"; SESION.esAdmin=true; SESION.esPresidencia=${presidencia};
+    SESION.usuario={id:"u1", email:"x@y.z"}; SESION.socio=null;
+    SESION.resuelta=true; S.listo=true; S.error=null;
+    S.data.admins=[{email:"santiagodiazf@gmail.com", nivel:"presidencia", nota:"Presidencia"},
+                   {email:"tesoreria.ceppb@gmail.com", nivel:"gestion", nota:"Tesorería"}];
+    pintarNav();
+  `, ctx);
+  return {ctx, nav: vm.runInContext('$("#nav").innerHTML', ctx)};
+}
+
+test("a gestión no se le ofrece la lista de administradores", () => {
+  assert.equal(comoJunta(false).nav.includes('href="#/admins"'), false);
+  assert.match(comoJunta(true).nav, /href="#\/admins"/);
+});
+
+test("y si escribe la dirección a mano, tampoco entra", () => {
+  const {ctx} = comoJunta(false);
+  vm.runInContext('location.hash = "#/admins"; render();', ctx);
+  assert.match(vm.runInContext('$("#tt").textContent', ctx), /no disponible/i);
+});
+
+test("gestión ve quién es quién, pero no edita la lista", () => {
+  const editar = p => {
+    const {ctx} = comoJunta(p);
+    return vm.runInContext("String(V.admins(''))", ctx);
+  };
+  assert.equal(editar(false).includes('data-form="admins|"'), false);
+  assert.match(editar(true), /data-form="admins\|"/);
+  /* el alcance de cada cuenta sí se ve, para saber quién puede qué */
+  assert.match(editar(false), /Presidencia<\/span>/);
+  assert.match(editar(false), /Gestión<\/span>/);
+});
+
+test("gestión conserva todo el trabajo diario", () => {
+  const nav = comoJunta(false).nav;
+  for (const r of ["#/validar", "#/socios", "#/cobros", "#/invitaciones", "#/videos", "#/admin"])
+    assert.ok(nav.includes(`href="${r}"`), "gestión debería seguir teniendo " + r);
+});
+
+test("la base de datos es la que manda, no la pantalla", () => {
+  const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
+  assert.match(sql, /function es_presidencia\(\)/);
+  assert.match(sql, /create policy admins_escritura on admins for all\s*\n\s*using \(es_presidencia\(\)\)/);
+  assert.match(sql, /new\.roles is distinct from old\.roles and not es_presidencia\(\)/);
+});
+
+test("la portada enlaza el formulario de alta del club", () => {
+  const ctx = montar();
+  vm.runInContext(`SESION.rol="visitante"; SESION.usuario=null; SESION.socio=null;
+                   SESION.esAdmin=false; S.listo=true; S.error=null;`, ctx);
+  const html = vm.runInContext("String(V.muro(''))", ctx);
+  assert.match(html, /href="https:\/\/www\.ceppb\.info\/inscripcion"/);
+  assert.match(html, /target="_blank" rel="noopener noreferrer"/);
+});

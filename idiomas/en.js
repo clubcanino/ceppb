@@ -166,4 +166,6 @@ TEXTOS.en = {
   "Baja y elige «Añadir a pantalla de inicio».": "Scroll down and choose “Add to Home Screen”.",
   "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Confirm. The club emblem will sit alongside your other apps.",
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "In your browser menu, look for “Install app” or “Add to Home Screen”.",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "The Spanish Belgian Shepherd Dog Club brings together the breeders, competitors and enthusiasts of the four Belgian Shepherd varieties.",
+  "Hazte socio": "Join the club",
 };

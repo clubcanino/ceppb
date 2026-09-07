@@ -12,17 +12,31 @@ create extension if not exists "pgcrypto";
 create table if not exists admins (
   email text primary key,
   nota  text,
+  -- «presidencia» manda del todo; «gestion» hace el trabajo diario
+  -- pero no toca esta lista ni nombra cargos del club.
+  nivel text not null default 'gestion'
+    check (nivel in ('presidencia', 'gestion')),
   creado timestamptz default now()
 );
-insert into admins (email, nota) values
-  ('santiagodiazf@gmail.com', 'Presidencia'),
-  ('pres.ceppb@gmail.com',    'Cuenta de presidencia del club'),
-  ('tesoreria.ceppb@gmail.com','Tesorería')
+insert into admins (email, nota, nivel) values
+  ('santiagodiazf@gmail.com', 'Presidencia', 'presidencia'),
+  ('pres.ceppb@gmail.com',    'Cuenta de presidencia del club', 'presidencia'),
+  ('tesoreria.ceppb@gmail.com','Tesorería', 'gestion')
 on conflict (email) do nothing;
 
 create or replace function es_admin() returns boolean
 language sql stable security definer set search_path = public as $$
   select exists (select 1 from admins a where lower(a.email) = lower(auth.jwt() ->> 'email'));
+$$;
+
+/* Quien manda del todo: la lista de administradores es la llave
+   maestra, y los cargos del club los nombra la presidencia. */
+create or replace function es_presidencia() returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from admins a
+     where lower(a.email) = lower(auth.jwt() ->> 'email')
+       and a.nivel = 'presidencia');
 $$;
 
 create or replace function es_socio() returns boolean
@@ -255,10 +269,10 @@ create index if not exists media_perro_idx on media(perro_id);
 create or replace function proteger_socio() returns trigger
 language plpgsql security definer set search_path = public as $$
 begin
-  if es_admin() then return new; end if;
-  if new.roles is distinct from old.roles then
-    raise exception 'Los cargos del club sólo los asigna la Junta Directiva';
+  if new.roles is distinct from old.roles and not es_presidencia() then
+    raise exception 'Los cargos del club los nombra la presidencia';
   end if;
+  if es_admin() then return new; end if;
   if new.numero is distinct from old.numero then
     raise exception 'El número de socio sólo lo cambia la secretaría';
   end if;
@@ -475,6 +489,9 @@ drop policy if exists invitaciones_pol on invitaciones;
 create policy invitaciones_pol on invitaciones for all using (es_admin()) with check (es_admin());
 drop policy if exists admins_lectura on admins;
 create policy admins_lectura on admins for select using (es_admin());
+drop policy if exists admins_escritura on admins;
+create policy admins_escritura on admins for all
+  using (es_presidencia()) with check (es_presidencia());
 
 -- ============================================================
 --  ALTA: al entrar con el enlace de invitación, la cuenta se ata al socio

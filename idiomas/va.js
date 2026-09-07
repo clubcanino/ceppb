@@ -164,4 +164,6 @@ TEXTOS.va = {
   "Baja y elige «Añadir a pantalla de inicio».": "Baixa i tria «Afig a la pantalla d'inici».",
   "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Confirma. Et queda l'emblema del club al costat de les altres aplicacions.",
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Des del menú del teu navegador, busca «Instal·la l'aplicació» o «Afig a la pantalla d'inici».",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "El Club Espanyol del Gos Pastor Belga reunix els criadors, esportistes i aficionats de les quatre varietats del pastor belga.",
+  "Hazte socio": "Fes-te soci",
 };

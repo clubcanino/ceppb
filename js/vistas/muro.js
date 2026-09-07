@@ -238,9 +238,10 @@ function portadaPublica(){
     </div></div>
 
     <div class="card"><div class="card-h"><h3>${esc(t("¿Todavía no eres socio?"))}</h3></div><div class="card-b">
-      <p style="color:var(--muted);font-size:12.5px;line-height:1.55;margin:0">
-        ${esc(t("El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga. Escribe a la secretaría del club y te explicamos cómo asociarte."))}
+      <p style="color:var(--muted);font-size:12.5px;line-height:1.55;margin-bottom:14px">
+        ${esc(t("El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga."))}
       </p>
+      <a class="btn" href="${esc(CONFIG.WEB_ALTA)}" target="_blank" rel="noopener noreferrer">${esc(t("Hazte socio"))}</a>
     </div></div>
   </div>`;
 }

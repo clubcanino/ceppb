@@ -166,4 +166,6 @@ TEXTOS.fr = {
   "Baja y elige «Añadir a pantalla de inicio».": "Descendez et choisissez « Sur l'écran d'accueil ».",
   "Confirma. Te queda el emblema del club junto a tus demás aplicaciones.": "Confirmez. L'emblème du club rejoindra vos autres applications.",
   "Desde el menú de tu navegador, busca «Instalar aplicación» o «Añadir a pantalla de inicio».": "Dans le menu de votre navigateur, cherchez « Installer l'application » ou « Ajouter à l'écran d'accueil ».",
+  "El Club Español del Perro Pastor Belga reúne a los criadores, deportistas y aficionados de las cuatro variedades del pastor belga.": "Le Club Espagnol du Chien de Berger Belge réunit les éleveurs, les compétiteurs et les passionnés des quatre variétés du berger belge.",
+  "Hazte socio": "Devenir membre",
 };

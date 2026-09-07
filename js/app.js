@@ -42,7 +42,10 @@ const VISTAS = [
   {r:"invitaciones", n:"Invitaciones", v:["admin"]},
   {r:"altas",    n:"Vinculación de altas", v:["admin"]},
   {r:"cobros",   n:"Cuotas y cobros",  v:["admin"]},
-  {r:"admins",   n:"Administradores",  v:["admin"]},
+  /* La lista de administradores es la llave maestra: quien la edita
+     puede darse cualquier permiso. Sólo la presidencia, y a quien no
+     lo sea ni se le ofrece: no hay cartel de «no tienes permiso». */
+  {r:"admins",   n:"Administradores",  v:["admin"], si:()=>SESION.esPresidencia},
 ];
 
 const TITULOS_VISTA = {
@@ -141,7 +144,7 @@ function render(){
     return;
   }
 
-  if (def && !def.v.includes(SESION.rol)){
+  if (def && (!def.v.includes(SESION.rol) || (def.si && !def.si()))){
     $("#tt").textContent = "Sección no disponible";
     $("#ts").textContent = "";
     $("#vista").innerHTML = `<div class="empty"><b>Esta sección no está abierta a tu perfil</b>` +

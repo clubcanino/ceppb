@@ -14,6 +14,7 @@ const COLUMNAS = {
   admins: [
     "email",
     "nota",
+    "nivel",
     "creado"
   ],
   socios: [

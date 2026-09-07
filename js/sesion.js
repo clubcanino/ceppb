@@ -12,6 +12,11 @@ const SESION = {
   usuario: null,     // usuario de Supabase Auth (o null si es visitante)
   socio: null,       // ficha del socio atada a esa cuenta (o null)
   esAdmin: false,    // pertenece a la junta directiva
+  /* Dentro de la junta hay dos niveles. «Presidencia» manda del todo:
+     es quien toca la lista de administradores y quien nombra los
+     cargos del club. «Gestión» hace todo el trabajo diario —validar,
+     censo, cuotas, traspasos— pero no cambia la plataforma. */
+  esPresidencia: false,
   rol: "visitante",  // visitante | socio | admin
 
   /* Mientras esto sea falso todavía no se sabe quién entra: preguntar
@@ -50,7 +55,8 @@ SESION.iniciar = async function(sb){
       await recargar();
       SESION.avisarSiFaltaContrasena();
     } else {
-      SESION.socio = null; SESION.esAdmin = false; SESION.rol = "visitante";
+      SESION.socio = null; SESION.esAdmin = false;
+      SESION.esPresidencia = false; SESION.rol = "visitante";
     }
     SESION.resuelta = true;
     render();
@@ -78,10 +84,19 @@ SESION.avisarSiFaltaContrasena = function(){
 /* Si la tabla `admins` devuelve algo, es que eres de la junta: su
    política de lectura solo deja entrar a la junta. */
 SESION.refrescar = async function(){
-  if (!SESION.usuario){ SESION.rol = "visitante"; return; }
+  if (!SESION.usuario){
+    SESION.rol = "visitante"; SESION.esAdmin = false; SESION.esPresidencia = false;
+    return;
+  }
 
-  const { data: admins } = await SESION.sb.from("admins").select("email").limit(1);
+  /* La tabla de administradores sólo se deja leer a la junta: si
+     devuelve algo, es que quien mira es de la junta. Y su propia fila
+     dice con qué alcance. */
+  const { data: admins } = await SESION.sb.from("admins").select("email,nivel");
   SESION.esAdmin = Array.isArray(admins) && admins.length > 0;
+  const correo = String(SESION.usuario.email || "").toLowerCase();
+  const mia = (admins || []).find(a => String(a.email).toLowerCase() === correo);
+  SESION.esPresidencia = !!(mia && mia.nivel === "presidencia");
 
   const { data: socio } = await SESION.sb.from("socios")
     .select("*").eq("auth_user_id", SESION.usuario.id).maybeSingle();

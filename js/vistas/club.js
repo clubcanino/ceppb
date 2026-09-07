@@ -38,14 +38,18 @@ V.admins = function(){
      de datos para decidir quién manda. Antes se leía de una colección
      del prototipo que ya no existe, y por eso salía siempre vacía. */
   const emails = C("admins").map(a => a.email).filter(Boolean).sort();
+  const nivelDeAdmin = e => (C("admins").find(a =>
+    String(a.email).toLowerCase() === String(e).toLowerCase()) || {}).nivel || "gestion";
   const socioDe = e => C("socios").find(s => (s.email||"").toLowerCase() === String(e).toLowerCase());
-  return `<div class="note" style="margin-bottom:16px">Estas son las cuentas con permiso de junta directiva: validan pruebas de salud y resultados, autorizan cruces intervariedades y cambios de titularidad, asignan los cargos del club y son las únicas que ven los datos reservados.</div>
+  return `<div class="note" style="margin-bottom:16px">Estas son las cuentas con permiso de junta directiva: validan pruebas de salud y resultados, autorizan cruces intervariedades y cambios de titularidad, y son las únicas que ven los datos reservados.
+      <div style="margin-top:8px">Las de <b>presidencia</b> pueden además editar esta lista y nombrar los cargos del club.</div></div>
     <div class="cols23">
       <div class="card"><div class="card-h"><h3>Cuentas autorizadas</h3><span class="hint">${emails.length}</span>
-        <span class="spacer"></span><button class="btn sm" data-form="admins|">Editar la lista</button></div>
+        <span class="spacer"></span>${SESION.esPresidencia?`<button class="btn sm" data-form="admins|">Editar la lista</button>`:""}</div>
         <div class="card-b" style="padding:0">
           ${emails.length ? `<table>${emails.map(e=>{const s=socioDe(e);
             return `<tr><td><span class="num">${esc(e)}</span>
+              ${nivelDeAdmin(e)==="presidencia"?`<span class="chip ok">Presidencia</span>`:`<span class="chip">Gestión</span>`}
               <div class="mini">${s?`Socio nº ${esc(s.numero)} · ${esc(s.nombreCompleto)}`:"Cuenta de servicio del club, sin ficha de socio asociada"}</div></td>
               <td style="text-align:right">${s?`<button class="btn sm" data-go="socio/${esc(s.id)}">Ver ficha</button>`:`<span class="chip">Sin ficha</span>`}</td></tr>`;}).join("")}</table>`
             : `<div class="empty" style="padding:30px">Sin cuentas configuradas</div>`}

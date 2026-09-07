@@ -24,3 +24,4 @@ CONFIG.configurado = CONFIG.SUPABASE_URL !== "PENDIENTE" &&
    duplicado ni obligar al socio a saltar de una página a otra. */
 CONFIG.WEB_CLUB    = "https://www.ceppb.info";
 CONFIG.WEB_EVENTOS = "https://www.ceppb.info/eventos";
+CONFIG.WEB_ALTA    = "https://www.ceppb.info/inscripcion";
