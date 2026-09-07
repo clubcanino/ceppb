@@ -571,6 +571,9 @@ img.avatar{display:block}
    dos direcciones. Va dentro de una caja con sus propias barras y se
    arrastra con el ratón: la página no se mueve ni se ensancha. */
 .ped-marco{min-width:0}
+.ped-barra{display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+  padding-top:0;padding-bottom:10px}
+.ped-barra .seg{flex:none}
 .ped-caja{overflow:auto;max-height:min(72vh,620px);
   border:1px solid var(--line);border-radius:var(--r-sm);
   background:var(--surface);padding:10px;

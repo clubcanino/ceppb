@@ -372,13 +372,16 @@ function pedigriDelCruce(m, h, opciones){
 
   return `<div class="card" style="margin-top:${solo ? 0 : 16}px">
     <div class="card-h no-imprimir"><h3>Pedigrí de la camada</h3>
-      <div class="seg" style="margin-left:10px">
+      <span class="spacer"></span>
+      <span class="hint">${distintos} ancestros distintos</span>
+    </div>
+    <div class="card-b no-imprimir ped-barra">
+      <div class="seg">
         ${[4,5,6,8].map(g => `<button data-gen-cruce="${g}" class="${n===g?"on":""}">${g} gen.</button>`).join("")}
       </div>
       <span class="spacer"></span>
-      <span class="hint" style="margin-right:8px">${distintos} ancestros distintos</span>
-      <a class="btn sm" href="#/pedigri/${esc(m.id)}~${esc(h.id)}"
-         title="A pantalla completa, en su propia página">Ver en grande</a>
+      ${solo ? "" : `<a class="btn sm" href="#/pedigri/${esc(m.id)}~${esc(h.id)}"
+         title="A pantalla completa, en su propia página">Ver en grande</a>`}
       <button class="btn sm" data-pedigri-pdf="${esc(m.id)}~${esc(h.id)}">Guardar en PDF</button>
       <button class="btn sm" data-pedigri-csv="${esc(m.id)}~${esc(h.id)}">Excel</button>
     </div>
@@ -423,8 +426,19 @@ function pedigriDelCruce(m, h, opciones){
    lejanas. Se deja centrado, que es donde está el tronco. */
 function centrarPedigriDelCruce(){
   const caja = document.querySelector("#cruce-panel .ped-caja");
-  if (!caja) return;
-  caja.scrollTop = Math.max(0, (caja.scrollHeight - caja.clientHeight) / 2);
+  if (!caja || typeof caja.querySelector !== "function") return;
+
+  /* El centro exacto del árbol es el hueco entre el padre y la madre:
+     abrirlo ahí enseñaba una caja en blanco. Se abre sobre el padre,
+     que es por donde se empieza a leer un pedigrí. */
+  const primera = caja.querySelector(".ped-col .ped-celda");
+  if (primera){
+    const centro = primera.offsetTop + primera.offsetHeight / 2;
+    caja.scrollTop = Math.max(0, centro - caja.clientHeight / 2);
+  } else {
+    caja.scrollTop = Math.max(0, (caja.scrollHeight - caja.clientHeight) / 2);
+  }
+  caja.scrollLeft = 0;
 }
 
 /* Cambiar de profundidad no toca las cajas de escribir. */

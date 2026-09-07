@@ -306,8 +306,10 @@ test("hay sitio en la hoja de estilo para seis, siete y ocho columnas", () => {
 test("el pedigrí se abre por el centro, no por las ramas lejanas", () => {
   const v = lee("js/vistas/cria.js");
   assert.match(v, /function centrarPedigriDelCruce\(\)/);
-  assert.match(v, /scrollTop = Math\.max\(0, \(caja\.scrollHeight - caja\.clientHeight\) \/ 2\)/,
-    "a ocho generaciones el árbol mide miles de píxeles y el tronco queda en el medio");
+  assert.match(v, /const primera = caja\.querySelector\("\.ped-col \.ped-celda"\)/,
+    "el centro exacto del árbol es el hueco entre el padre y la madre: " +
+    "abrirlo ahí enseñaba una caja en blanco");
+  assert.match(v, /centro - caja\.clientHeight \/ 2/, "se abre sobre el padre");
   /* Los tres caminos por los que se llega a verlo */
   assert.match(v, /setTimeout\(centrarPedigriDelCruce, 0\)/, "al entrar en la pantalla");
   assert.match(v, /caja\.innerHTML = panelDeCruce\(\);\s*\n\s*centrarPedigriDelCruce\(\);/,

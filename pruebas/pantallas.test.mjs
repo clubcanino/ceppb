@@ -26,7 +26,8 @@ function montar(){
   const nodos = {};
   const nodo = () => ({
     innerHTML: "", textContent: "", value: "", classList: {add(){}, remove(){}},
-    querySelectorAll: () => [], insertAdjacentHTML(){}, focus(){}, setAttribute(){},
+    querySelectorAll: () => [], querySelector: () => null,
+    insertAdjacentHTML(){}, focus(){}, setAttribute(){},
     getAttribute: () => null, closest: () => null, dataset: {},
   });
   const doc = {
