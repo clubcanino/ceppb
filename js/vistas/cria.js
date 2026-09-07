@@ -110,6 +110,10 @@ V.cruce = function(){
     .map(p=>[p.id, nombrePerro(p) + (p.variedad ? " · " + p.variedad : ""),
              p.loe || (p.fechaNacimiento ? "n. " + String(p.fechaNacimiento).slice(0,4) : "")]));
 
+  /* Al entrar en la pantalla, el pedigrí también se deja centrado:
+     esto corre cuando el navegador ya ha puesto el HTML. */
+  setTimeout(centrarPedigriDelCruce, 0);
+
   return `<div class="cols23">
     <div id="cruce-panel">${panelDeCruce()}</div>
     <div class="grid">
@@ -285,7 +289,9 @@ function tarjetaReglamentos(){
 /* Repintar sólo los resultados, dejando en paz las cajas de escribir. */
 function pintarPanelCruce(){
   const caja = document.getElementById("cruce-panel");
-  if (caja) caja.innerHTML = panelDeCruce();
+  if (!caja) return;
+  caja.innerHTML = panelDeCruce();
+  centrarPedigriDelCruce();
 }
 
 /* Dar de alta un reproductor sin perder el simulador: se abre el alta
@@ -377,7 +383,7 @@ function pedigriDelCruce(m, h){
       </div>
     </div>
 
-    <div class="card-b" style="overflow:auto;max-height:78vh">
+    <div class="card-b ped-caja" style="overflow:auto;max-height:72vh">
       <div class="ped g${n}">
         ${columnas.map(col => `<div class="ped-col">${col.map(casilla).join("")}</div>`).join("")}
       </div>
@@ -396,10 +402,21 @@ function pedigriDelCruce(m, h){
   </div>`;
 }
 
+/* A ocho generaciones el árbol mide varios miles de píxeles: las dos
+   primeras columnas quedan en mitad de esa altura, y quien abre el
+   pedigrí se encontraba arriba del todo, viendo sólo las ramas más
+   lejanas. Se deja centrado, que es donde está el tronco. */
+function centrarPedigriDelCruce(){
+  const caja = document.querySelector("#cruce-panel .ped-caja");
+  if (!caja) return;
+  caja.scrollTop = Math.max(0, (caja.scrollHeight - caja.clientHeight) / 2);
+}
+
 /* Cambiar de profundidad no toca las cajas de escribir. */
 document.addEventListener("click", ev => {
   const b = ev.target.closest && ev.target.closest("[data-gen-cruce]");
   if (!b) return;
   genCruce = Number(b.getAttribute("data-gen-cruce")) || 8;
   pintarPanelCruce();
+  centrarPedigriDelCruce();
 });

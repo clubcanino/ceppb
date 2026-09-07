@@ -295,3 +295,16 @@ test("hay sitio en la hoja de estilo para seis, siete y ocho columnas", () => {
       `faltan las ${g} columnas: el pedigrí se pintaría amontonado`);
   assert.match(css, /\.ped\.g8 \.ped-n b\{font-size:9px/);
 });
+
+test("el pedigrí se abre por el centro, no por las ramas lejanas", () => {
+  const v = lee("js/vistas/cria.js");
+  assert.match(v, /function centrarPedigriDelCruce\(\)/);
+  assert.match(v, /scrollTop = Math\.max\(0, \(caja\.scrollHeight - caja\.clientHeight\) \/ 2\)/,
+    "a ocho generaciones el árbol mide miles de píxeles y el tronco queda en el medio");
+  /* Los tres caminos por los que se llega a verlo */
+  assert.match(v, /setTimeout\(centrarPedigriDelCruce, 0\)/, "al entrar en la pantalla");
+  assert.match(v, /caja\.innerHTML = panelDeCruce\(\);\s*\n\s*centrarPedigriDelCruce\(\);/,
+    "al elegir un reproductor");
+  assert.match(v, /pintarPanelCruce\(\);\s*\n\s*centrarPedigriDelCruce\(\);/,
+    "y al cambiar de profundidad");
+});
