@@ -191,5 +191,14 @@ def main():
     out.append("       (select count(*) from resultados where tipo_evento = 'IGP' and validado <> 'validado') as sin_validar;")
     print("\n".join(out))
 
+    # El mismo volcado en JSON, para poder cargarlo desde la propia
+    # plataforma con la sesión de la junta en vez de por el editor SQL.
+    json.dump({
+        "eventos": sorted(eventos.values(), key=lambda x: x["anio"]),
+        "resultados": resultados,
+    }, open("db/importaciones/participaciones.json", "w", encoding="utf-8"),
+        ensure_ascii=False, indent=1)
+
+
 if __name__ == "__main__":
     main()
