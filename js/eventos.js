@@ -218,8 +218,8 @@ document.addEventListener("change", ev => {
   if(t.id === "f-per-sexo"){ fPer.sexo = t.value; render(); }
   if(t.id === "f-per-apto"){ fPer.apto = t.value; render(); }
   if(t.id === "f-per-salud"){ fPer.salud = t.value; render(); }
-  if(t.id === "cr-m"){ cruceSel.m = t.value; render(); }
-  if(t.id === "cr-h"){ cruceSel.h = t.value; render(); }
+  /* Los reproductores del simulador se buscan escribiendo, no se
+     despliegan: el buscador avisa aquí cuando se elige uno. */
 });
 let tq;
 document.addEventListener("input", ev => {
@@ -400,6 +400,9 @@ document.addEventListener("click", ev => {
   genPedigri = +b.dataset.gen;
   render();
 });
+
+AL_ELEGIR_FICHA.cruceMacho  = id => { cruceSel.m = id; render(); };
+AL_ELEGIR_FICHA.cruceHembra = id => { cruceSel.h = id; render(); };
 
 /* --- instalar la plataforma en el teléfono --- */
 document.addEventListener("click", async ev => {

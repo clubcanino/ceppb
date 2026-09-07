@@ -35,6 +35,14 @@ function campo(f){
       ${f.h?`<span class="hint2">${esc(f.h)}</span>`:""}</div>`;
   }
 
+  /* Buscar una ficha del club —un socio, un ejemplar— en vez de
+     desplegar una lista de cientos. Guarda el identificador. */
+  if(f.tipo === "buscarId"){
+    return `<div class="f ${f.wide?"wide":""}"><label>${esc(f.l)}</label>
+      ${buscadorDeFicha(f.k, f.op, v, {campo:f.k, ph:f.ph})}
+      ${f.h?`<span class="hint2">${esc(f.h)}</span>`:""}</div>`;
+  }
+
   return `<div class="f ${f.wide?"wide":""}"><label>${esc(f.l)}</label>
     <input class="inp" type="${f.tipo||"text"}" name="${f.k}" value="${esc(v)}" placeholder="${esc(f.ph||"")}">${f.h?`<span class="hint2">${esc(f.h)}</span>`:""}</div>`;
 }
@@ -65,6 +73,31 @@ function leerForm(){
   return o;
 }
 const optSocios = () => [["", "— sin asignar —"]].concat(C("socios").slice().sort((a,b)=>a.apellidos.localeCompare(b.apellidos,"es")).map(s=>[s.id, `${s.nombreCompleto} (nº ${s.numero})`]));
+
+/* Para buscar no vale la opción vacía —se busca escribiendo— y las
+   etiquetas tienen que ser únicas: si dos fichas se llaman igual, lo
+   escrito no diría a cuál se refiere. Se desempatan con el LOE, y si
+   tampoco lo hay, con el año de nacimiento. */
+function unicas(pares){
+  const cuantos = {};
+  pares.forEach(([, t]) => cuantos[t] = (cuantos[t] || 0) + 1);
+  const vistos = {};
+  return pares.map(([id, t, extra]) => {
+    if (cuantos[t] === 1) return [id, t];
+    vistos[t] = (vistos[t] || 0) + 1;
+    return [id, `${t} (${extra || "ficha " + vistos[t]})`];
+  });
+}
+
+const buscaSocios = () => unicas(C("socios").slice()
+  .sort((a,b)=>String(a.apellidos).localeCompare(String(b.apellidos),"es"))
+  .map(s=>[s.id, `${s.nombreCompleto} (nº ${s.numero})`]));
+
+const buscaPerros = sexo => unicas(C("perros")
+  .filter(p => !sexo || p.sexo === sexo)
+  .sort((a,b)=>String(a.nombre).localeCompare(String(b.nombre),"es"))
+  .map(p=>[p.id, p.nombre + (p.variedad ? " · " + p.variedad : ""),
+           p.loe || (p.fechaNacimiento ? "n. " + String(p.fechaNacimiento).slice(0,4) : "")]));
 const optSociosAfijo = () => [["", "— criador no socio o desconocido —"]].concat(
   C("socios").slice().sort((a,b)=>(b.afijo?1:0)-(a.afijo?1:0) || a.apellidos.localeCompare(b.apellidos,"es"))
     .map(s=>[s.id, s.afijo ? `${s.afijo} — ${s.nombreCompleto}` : `${s.nombreCompleto} (sin afijo)`]));

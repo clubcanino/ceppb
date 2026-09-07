@@ -911,3 +911,45 @@ test("la reclamación autorizada cambia la titularidad, como el traspaso", () =>
   const sql = readFileSync(new URL("../db/schema.sql", import.meta.url), "utf8");
   assert.match(sql, /new\.tipo in \('traspaso', 'reclamacion'\)/);
 });
+
+/* ============================================================
+   Ni un desplegable con el censo o el libro dentro.
+
+   347 socios y 3.803 ejemplares no caben en una lista que se abre
+   entera: se escriben tres letras y salen los que encajan.
+   ============================================================ */
+test("los campos de socio y de ejemplar se buscan, no se despliegan", () => {
+  const def = readFileSync(new URL("../js/formularios-def.js", import.meta.url), "utf8");
+  const sinComentarios = def.replace(/\/\*[\s\S]*?\*\//g, "");
+  for (const m of sinComentarios.matchAll(/\{[^{}]*tipo:"select"[^{}]*\}/g))
+    for (const prohibido of ["optSocios()", "optPerros(", "buscaSocios()", "buscaPerros("])
+      assert.equal(m[0].includes(prohibido), false,
+        "sigue habiendo un desplegable con fichas dentro: " + m[0].slice(0, 70));
+  /* y los que había son ahora buscadores */
+  assert.equal((sinComentarios.match(/tipo:"buscarId"/g) || []).length, 6);
+});
+
+test("el simulador de cruce tampoco despliega los tres mil ejemplares", () => {
+  const cria = readFileSync(new URL("../js/vistas/cria.js", import.meta.url), "utf8");
+  assert.equal(/<select[^>]*id="cr-[mh]"/.test(cria), false);
+  assert.match(cria, /buscadorDeFicha\("crm"/);
+  assert.match(cria, /buscadorDeFicha\("crh"/);
+});
+
+test("las sugerencias no salen hasta la tercera letra", () => {
+  const ctx = montar();
+  const bf = vm.runInContext("buscadorDeFicha", ctx);
+  const html = bf("prueba", [["s1", "Ana Ruiz (nº 1)"], ["s2", "Ana Soler (nº 2)"]], "s1", {campo:"x"});
+  assert.match(html, /value="Ana Ruiz \(nº 1\)"/);
+  assert.match(html, /type="hidden" name="x" value="s1"/);
+  assert.equal(vm.runInContext("LETRAS_PARA_BUSCAR", ctx), 3);
+});
+
+test("dos fichas que se llaman igual se distinguen", () => {
+  const ctx = montar();
+  const unicas = vm.runInContext("unicas", ctx);
+  const r = unicas([["a", "Alan", "LOE 111"], ["b", "Alan", "LOE 222"], ["c", "Bruno", ""]]);
+  assert.equal(r[2][1], "Bruno", "lo que no se repite se queda como está");
+  assert.notEqual(r[0][1], r[1][1], "dos «Alan» tienen que poder distinguirse");
+  assert.match(r[0][1], /LOE 111/);
+});

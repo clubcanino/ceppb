@@ -90,10 +90,18 @@ const FORMS = {
       ]},
 
       {t:"Propietario", f:[
-        {k:"propietarioId", l:"Propietario", tipo:"select",
-         op: SESION.esAdmin ? optSocios() : [[miSocioId()||"", (SESION.socio && SESION.socio.nombreCompleto) || "Tú"]],
-         v: p.propietarioId ?? (miSocioId()||""), wide:true,
-         h: SESION.esAdmin ? "" : "Tus perros van a tu nombre"},
+        /* Un socio sólo puede ponerlos a su nombre, y ahí una lista de
+           uno es más clara que un buscador. La junta puede ponerlos a
+           nombre de cualquiera de los 347, y ahí hay que buscar. */
+        SESION.esAdmin
+          ? {k:"propietarioId", l:"Propietario", tipo:"buscarId", op:buscaSocios(),
+             v: p.propietarioId ?? "", wide:true,
+             ph:"Escribe tres letras del apellido…",
+             h:"Déjalo en blanco si el ejemplar aún no tiene titular"}
+          : {k:"propietarioId", l:"Propietario", tipo:"select",
+             op:[[miSocioId()||"", (SESION.socio && SESION.socio.nombreCompleto) || "Tú"]],
+             v: p.propietarioId ?? (miSocioId()||""), wide:true,
+             h:"Tus perros van a tu nombre"},
       ]},
 
       {t:"Padres", d:"Escribe el nombre y, a partir de tres letras, salen los del libro del club. Si el perro no está, escríbelo igual: se añade al libro y su pedigrí se irá completando.", f:[
@@ -219,8 +227,10 @@ const FORMS = {
   camada(){
     abrirForm("Declarar camada", [
       {t:"Progenitores", d:"Se comprobará el cruce contra el reglamento antes de guardar.", f:[
-        {k:"padreId", l:"Padre", tipo:"select", op:optPerros("M"), wide:true},
-        {k:"madreId", l:"Madre", tipo:"select", op:optPerros("H"), wide:true},
+        {k:"padreId", l:"Padre", tipo:"buscarId", op:buscaPerros("M"), wide:true,
+         ph:"Escribe tres letras del nombre…"},
+        {k:"madreId", l:"Madre", tipo:"buscarId", op:buscaPerros("H"), wide:true,
+         ph:"Escribe tres letras del nombre…"},
       ]},
       {t:"Camada", f:[
         {k:"fechaNacimiento", l:"Fecha de nacimiento", tipo:"date", v:hoy()},
@@ -228,7 +238,8 @@ const FORMS = {
         {k:"nMachos", l:"Machos", tipo:"number", v:0}, {k:"nHembras", l:"Hembras", tipo:"number", v:0},
         {k:"loeCamada", l:"Nº de camada en LOE", v:""},
         {k:"fechaComunicacion", l:"Fecha de comunicación al club", tipo:"date", v:hoy(), h:"Debe estar dentro de los 30 días siguientes al nacimiento"},
-        {k:"criadorId", l:"Criador", tipo:"select", op:optSocios(), v:miSocioId()||"", wide:true},
+        {k:"criadorId", l:"Criador", tipo:"buscarId", op:buscaSocios(), v:miSocioId()||"", wide:true,
+         ph:"Escribe tres letras del apellido…"},
       ]},
     ], async d => {
       const m = byId(C("perros"), d.padreId), h = byId(C("perros"), d.madreId);
@@ -341,7 +352,8 @@ const FORMS = {
       return toast("Ya hay un cambio de titularidad pendiente para este ejemplar");
     abrirForm("Cambio de titularidad", [
       {t:"Traspaso", d:`Titular actual: <b>${esc(actual?.nombreCompleto || "sin asignar")}</b>. El cambio no surte efecto hasta que lo autorice la junta: hasta entonces la ficha sigue a nombre del titular actual.`, f:[
-        {k:"aSocioId", l:"Nuevo titular", tipo:"select", op:optSocios(), wide:true},
+        {k:"aSocioId", l:"Nuevo titular", tipo:"buscarId", op:buscaSocios(), wide:true,
+         ph:"Escribe tres letras del apellido…"},
         {k:"fechaEfecto", l:"Fecha de la cesión o venta", tipo:"date", v:hoy()},
         {k:"documento", l:"Documento que lo acredita", tipo:"select", wide:true,
          op:["Contrato de compraventa","Contrato de cesión","Documento de traspaso RSCE","Herencia o cambio familiar","Otro"]},
@@ -405,7 +417,8 @@ const FORMS = {
     const cr = byId(C("socios"), miSocioId()) || byId(C("socios"), m.criadorId);
     abrirForm("Solicitud de cruce intervariedades", [
       {t:"Cruce", d:`<b>${esc(m.nombre)}</b> (${esc(m.variedad)}) × <b>${esc(h.nombre)}</b> (${esc(h.variedad)}). La Comisión de Cría informa y la Junta Directiva resuelve en 30 días hábiles.`, f:[
-        {k:"criadorId", l:"Criador solicitante", tipo:"select", op:optSocios(), v:cr?cr.id:"", wide:true},
+        {k:"criadorId", l:"Criador solicitante", tipo:"buscarId", op:buscaSocios(), v:cr?cr.id:"", wide:true,
+         ph:"Escribe tres letras del apellido…"},
         {k:"linea", l:"Línea para la que se solicita", tipo:"select", wide:true,
          op:["Estándar / belleza","Trabajo / utilidad","Ambas líneas"]},
         {k:"motivo", l:"Escrito motivado", tipo:"textarea",

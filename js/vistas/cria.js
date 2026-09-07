@@ -77,15 +77,24 @@ V.cruce = function(){
           return `<div class="req"><div class="tx"><b>${g.k}</b><small>${esc(pred)}</small></div></div>`;}).join("")}
       </div></div>`:""}`;
   }
-  const opt = (l, sel) => l.map(p=>`<option value="${esc(p.id)}" ${sel===p.id?"selected":""}>${esc(p.nombre)}${p.variedad?" · "+p.variedad:""}</option>`).join("");
+  /* Se escribe el nombre, no se despliega una lista: el libro pasa de
+     tres mil ejemplares y bajar por ellos a ojo es inviable. */
+  const ficha = l => unicas(l.slice()
+    .sort((a,b)=>String(a.nombre).localeCompare(String(b.nombre),"es"))
+    .map(p=>[p.id, p.nombre + (p.variedad ? " · " + p.variedad : ""),
+             p.loe || (p.fechaNacimiento ? "n. " + String(p.fechaNacimiento).slice(0,4) : "")]));
+
   return `<div class="cols23">
     <div>${panel}</div>
     <div class="grid">
-      <div class="card"><div class="card-h"><h3>Reproductores</h3></div><div class="card-b">
+      <div class="card"><div class="card-h"><h3>Reproductores</h3>
+        <span class="hint">${machos.length + hembras.length} en el libro</span></div><div class="card-b">
         <div class="f" style="margin-bottom:12px"><label>Macho</label>
-          <select class="inp" id="cr-m"><option value="">— elegir —</option>${opt(machos, cruceSel.m)}</select></div>
+          ${buscadorDeFicha("crm", ficha(machos), cruceSel.m,
+            {alElegir:"cruceMacho", ph:"Escribe tres letras del nombre…"})}</div>
         <div class="f"><label>Hembra</label>
-          <select class="inp" id="cr-h"><option value="">— elegir —</option>${opt(hembras, cruceSel.h)}</select></div>
+          ${buscadorDeFicha("crh", ficha(hembras), cruceSel.h,
+            {alElegir:"cruceHembra", ph:"Escribe tres letras del nombre…"})}</div>
       </div></div>
       <div class="card"><div class="card-h"><h3>Cruces intervariedades autorizados</h3><span class="hint">Cap. 8.2</span></div><div class="card-b">
         ${CRUCES_INTER.map(c=>`<div class="req"><div class="tx"><b>${esc(c.a)} × ${esc(c.b)}</b><small>${esc(c.nota)}</small></div></div>`).join("")}

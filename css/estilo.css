@@ -300,6 +300,11 @@ img.avatar{display:block}
 .abrir-menu:hover{background:var(--surface-2)}
 .tapa-menu{display:none}
 
+/* Buscar una ficha del club escribiendo. Ocupa lo mismo que ocupaba
+   el desplegable al que sustituye. */
+.buscaficha{position:relative}
+.buscaficha .inp{width:100%}
+
 /* Los pasos para instalarla en el iPhone, que allí van a mano. */
 .pasos-instalar{margin:14px 0 0;padding-left:20px;color:var(--muted);font-size:12.5px;line-height:1.6}
 .pasos-instalar li{margin-bottom:6px}

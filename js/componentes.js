@@ -67,3 +67,64 @@ function tabla(key, cols, filas, onClick){
     `</tbody></table></div>`;
 }
 
+
+/* ============================================================
+   Buscar una ficha en vez de desplegar una lista.
+
+   Con 347 socios y 3.803 ejemplares, un desplegable que se abre
+   entero no sirve: hay que bajar por él a ojo. Aquí se escribe y,
+   a partir de tres letras, salen las que encajan.
+
+   Lo que se guarda es el identificador, no lo escrito: mientras el
+   texto no coincida con una ficha de verdad, no hay nada elegido.
+   ============================================================ */
+const BUSCAFICHAS = {};
+const LETRAS_PARA_BUSCAR = 3;
+const FICHAS_QUE_SE_ENSEÑAN = 12;
+
+/* Qué hacer cuando se elige, en las pantallas que no son formulario. */
+const AL_ELEGIR_FICHA = {};
+
+/* opciones: [[id, etiqueta], …]. Las etiquetas tienen que ser
+   distintas entre sí, o dos fichas distintas se confundirían. */
+function buscadorDeFicha(nombre, opciones, elegido, extra){
+  const o = extra || {};
+  const id = "bf-" + nombre + "-" + Math.random().toString(36).slice(2, 7);
+  const lista = (opciones || []).filter(x => x && x[0]);
+  BUSCAFICHAS[id] = lista;
+  const puesto = lista.find(x => String(x[0]) === String(elegido || ""));
+  return `<div class="buscaficha" data-busca="${id}"${o.alElegir ? ` data-al-elegir="${esc(o.alElegir)}"` : ""}>
+    <input class="inp" list="dl-${id}" autocomplete="off"
+           value="${esc(puesto ? puesto[1] : "")}"
+           placeholder="${esc(o.ph || "Escribe tres letras…")}"${o.idInput ? ` id="${esc(o.idInput)}"` : ""}>
+    <datalist id="dl-${id}"></datalist>
+    <input type="hidden" ${o.campo ? `name="${esc(o.campo)}"` : ""} value="${esc(puesto ? puesto[0] : "")}">
+  </div>`;
+}
+
+document.addEventListener("input", ev => {
+  const caja = ev.target.closest && ev.target.closest(".buscaficha");
+  if (!caja || ev.target.type === "hidden") return;
+
+  const clave = caja.dataset.busca;
+  const todas = BUSCAFICHAS[clave] || [];
+  const lista = caja.querySelector("datalist");
+  const oculto = caja.querySelector("input[type=hidden]");
+  const escrito = norm(ev.target.value || "");
+
+  /* Elegido es sólo lo que coincide con una ficha real. Si el socio
+     borra o cambia una letra, deja de estarlo. */
+  const exacta = todas.find(x => norm(x[1]) === escrito);
+  const antes = oculto.value;
+  oculto.value = exacta ? exacta[0] : "";
+
+  lista.innerHTML = escrito.length < LETRAS_PARA_BUSCAR ? "" :
+    todas.filter(x => norm(x[1]).includes(escrito))
+         .slice(0, FICHAS_QUE_SE_ENSEÑAN)
+         .map(x => `<option value="${esc(x[1])}"></option>`).join("");
+
+  if (oculto.value !== antes && caja.dataset.alElegir){
+    const f = AL_ELEGIR_FICHA[caja.dataset.alElegir];
+    if (typeof f === "function") f(oculto.value);
+  }
+});
