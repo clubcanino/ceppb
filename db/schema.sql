@@ -71,7 +71,8 @@ create table if not exists socios (
   perfil_publico  text default 'oculto' check (perfil_publico in ('oculto','socios','publico')),
   priv            jsonb default '{}'::jsonb,
   avatar_url      text,
-  idioma          text default 'es' check (idioma in ('es','en','fr','de')),
+  idioma          text default 'es'
+    check (idioma in ('es','ca','va','gl','eu','en','fr','de')),
   notas           text,          -- notas internas de secretaría
   creado          timestamptz default now()
 );
@@ -318,11 +319,16 @@ begin
   if not es_admin() and new.estado is distinct from old.estado then
     raise exception 'Sólo la Junta Directiva resuelve los expedientes';
   end if;
-  if new.tipo = 'traspaso' and new.estado = 'autorizada' and old.estado <> 'autorizada' then
+  /* Un traspaso autorizado se aplica solo, y una reclamación también:
+     un socio dice «este perro es mío» y, cuando la junta lo autoriza,
+     la ficha pasa a su nombre. Queda escrito de quién venía y a quién
+     va, aunque viniera sin dueño. */
+  if new.tipo in ('traspaso', 'reclamacion')
+     and new.estado = 'autorizada' and old.estado <> 'autorizada' then
     update perros set
       propietario_id = new.a_socio_id,
       historial_titularidad = historial_titularidad || jsonb_build_object(
-        'de', old.de_socio_id, 'a', new.a_socio_id,
+        'de', old.de_socio_id, 'a', new.a_socio_id, 'tipo', new.tipo,
         'fecha', coalesce(new.fecha_efecto, current_date), 'documento', new.documento)
     where id = new.perro_id;
   end if;
