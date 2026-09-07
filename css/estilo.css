@@ -574,7 +574,7 @@ img.avatar{display:block}
 .ped-barra{display:flex;gap:8px;align-items:center;flex-wrap:wrap;
   padding-top:0;padding-bottom:10px}
 .ped-barra .seg{flex:none}
-.ped-caja{overflow:auto;max-height:min(72vh,620px);
+.ped-caja{position:relative;overflow:auto;max-height:min(72vh,620px);
   border:1px solid var(--line);border-radius:var(--r-sm);
   background:var(--surface);padding:10px;
   cursor:grab;overscroll-behavior:contain}

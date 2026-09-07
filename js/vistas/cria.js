@@ -318,12 +318,17 @@ document.addEventListener("click", ev => {
    fallo: son pedigrí que el club todavía no tiene, y por eso se
    dice cuánto se conoce.
    ============================================================ */
-let genCruce = 8;
+/* En el simulador, cinco generaciones: caben en la caja y se leen.
+   Las ocho son el pedigrí ampliado, y ese se saca aparte —a su propia
+   página, al PDF o al Excel— porque ahí sí hay sitio para él. */
+let genCruce = 5;
+let genCruceSolo = 8;
 
 function pedigriDelCruce(m, h, opciones){
   const solo = !!(opciones && opciones.solo);
+  const generaciones = solo ? genCruceSolo : genCruce;
   ponerCenso(C("perros"));
-  const n = genCruce;
+  const n = generaciones;
 
   /* La primera columna son los padres de la camada. */
   const columnas = [];
@@ -377,14 +382,18 @@ function pedigriDelCruce(m, h, opciones){
     </div>
     <div class="card-b no-imprimir ped-barra">
       <div class="seg">
-        ${[4,5,6,8].map(g => `<button data-gen-cruce="${g}" class="${n===g?"on":""}">${g} gen.</button>`).join("")}
+        ${(solo ? [4,5,6,7,8] : [3,4,5]).map(g =>
+          `<button data-gen-cruce="${g}" class="${n===g?"on":""}">${g} gen.</button>`).join("")}
       </div>
       <span class="spacer"></span>
-      ${solo ? "" : `<a class="btn sm" href="#/pedigri/${esc(m.id)}~${esc(h.id)}"
-         title="A pantalla completa, en su propia página">Ver en grande</a>`}
+      ${solo ? "" : `<a class="btn sm brand" href="#/pedigri/${esc(m.id)}~${esc(h.id)}"
+         title="Ocho generaciones, a pantalla completa">Pedigrí ampliado</a>`}
       <button class="btn sm" data-pedigri-pdf="${esc(m.id)}~${esc(h.id)}">Guardar en PDF</button>
       <button class="btn sm" data-pedigri-csv="${esc(m.id)}~${esc(h.id)}">Excel</button>
     </div>
+    ${solo ? "" : `<div class="card-b mini no-imprimir" style="padding-top:0">
+      En el simulador se enseñan ${n} generaciones, que es lo que se lee bien.
+      El pedigrí ampliado son ocho, y sale aparte.</div>`}
 
     <div class="card-b" style="padding:12px 16px 0">
       <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:baseline">
@@ -430,10 +439,15 @@ function centrarPedigriDelCruce(){
 
   /* El centro exacto del árbol es el hueco entre el padre y la madre:
      abrirlo ahí enseñaba una caja en blanco. Se abre sobre el padre,
-     que es por donde se empieza a leer un pedigrí. */
+     que es por donde se empieza a leer un pedigrí.
+
+     Se mide con getBoundingClientRect y no con offsetTop: offsetTop
+     va contra el primer ancestro posicionado, que no tiene por qué
+     ser esta caja, y el pedigrí se abría descuadrado. */
   const primera = caja.querySelector(".ped-col .ped-celda");
-  if (primera){
-    const centro = primera.offsetTop + primera.offsetHeight / 2;
+  if (primera && primera.getBoundingClientRect){
+    const r = primera.getBoundingClientRect(), rc = caja.getBoundingClientRect();
+    const centro = (r.top - rc.top) + caja.scrollTop + r.height / 2;
     caja.scrollTop = Math.max(0, centro - caja.clientHeight / 2);
   } else {
     caja.scrollTop = Math.max(0, (caja.scrollHeight - caja.clientHeight) / 2);
@@ -445,8 +459,18 @@ function centrarPedigriDelCruce(){
 document.addEventListener("click", ev => {
   const b = ev.target.closest && ev.target.closest("[data-gen-cruce]");
   if (!b) return;
-  genCruce = Number(b.getAttribute("data-gen-cruce")) || 8;
-  pintarPanelCruce();
+  const g = Number(b.getAttribute("data-gen-cruce"));
+  if (!g) return;
+
+  if (String(location.hash).indexOf("#/pedigri/") === 0){
+    /* En la página del pedigrí no hay cajas de escribir que cuidar, y
+       lo que cuelga de #cruce-panel es otra cosa. */
+    genCruceSolo = g;
+    render();
+  } else {
+    genCruce = g;
+    pintarPanelCruce();
+  }
   centrarPedigriDelCruce();
 });
 
@@ -552,8 +576,9 @@ function exportarPedigriDelCruce(par){
 
   ponerCenso(C("perros"));
   const filas = [];
+  /* Se exporta el ampliado: para eso se exporta. */
   let nivel = [{id: m.id, via: "Padre"}, {id: h.id, via: "Madre"}];
-  for (let g = 1; g <= genCruce; g++){
+  for (let g = 1; g <= genCruceSolo; g++){
     const siguiente = [];
     for (const x of nivel){
       const d = x.id ? perroDe(x.id) : null;

@@ -254,12 +254,24 @@ function cuerpoDe(archivo, firma){
   const j = t.indexOf("\n}\n", i);
   return t.slice(i, j > 0 ? j : undefined);
 }
-test("el simulador enseña el pedigrí de la camada, hasta ocho generaciones", () => {
+test("el simulador enseña cinco generaciones, y el ampliado son ocho", () => {
   const v = lee("js/vistas/cria.js");
   assert.match(v, /function pedigriDelCruce\(m, h, opciones\)/);
   assert.match(v, /\$\{pedigriDelCruce\(m, h\)\}/, "se pinta en el panel");
-  assert.match(v, /let genCruce = 8/, "arranca en ocho, que es lo que se pidió");
-  assert.match(v, /\[4,5,6,8\]/, "y se puede bajar");
+  assert.match(v, /let genCruce = 5/,
+    "cinco caben en la caja del simulador y se leen");
+  assert.match(v, /let genCruceSolo = 8/,
+    "las ocho salen aparte, donde hay sitio para ellas");
+  assert.match(v, /\(solo \? \[4,5,6,7,8\] : \[3,4,5\]\)/,
+    "cada pantalla ofrece las profundidades que puede enseñar bien");
+});
+
+test("el ampliado se saca aparte: página propia, PDF o Excel", () => {
+  const v = lee("js/vistas/cria.js");
+  assert.match(v, /Pedigrí ampliado</, "el botón dice lo que hace");
+  assert.match(v, /for \(let g = 1; g <= genCruceSolo; g\+\+\)/,
+    "lo que se exporta es el ampliado: para eso se exporta");
+  assert.match(v, /const generaciones = solo \? genCruceSolo : genCruce/);
 });
 
 test("la primera columna son los dos reproductores, no los de uno solo", () => {
@@ -291,8 +303,11 @@ test("usa el censo indexado, que son 510 casillas por pedigrí", () => {
 });
 
 test("cambiar de profundidad no redibuja las cajas de escribir", () => {
-  assert.match(lee("js/vistas/cria.js"),
-    /genCruce = Number\(b\.getAttribute\("data-gen-cruce"\)\)[\s\S]{0,40}pintarPanelCruce\(\)/);
+  const v = lee("js/vistas/cria.js");
+  assert.match(v, /genCruce = g;\s*\n\s*pintarPanelCruce\(\);/,
+    "en el simulador se repinta sólo el panel");
+  assert.match(v, /genCruceSolo = g;\s*\n\s*render\(\);/,
+    "en la página del pedigrí no hay cajas que cuidar, y cuelga otra cosa de #cruce-panel");
 });
 
 test("hay sitio en la hoja de estilo para seis, siete y ocho columnas", () => {
@@ -310,12 +325,14 @@ test("el pedigrí se abre por el centro, no por las ramas lejanas", () => {
     "el centro exacto del árbol es el hueco entre el padre y la madre: " +
     "abrirlo ahí enseñaba una caja en blanco");
   assert.match(v, /centro - caja\.clientHeight \/ 2/, "se abre sobre el padre");
+  assert.match(v, /getBoundingClientRect\(\), rc = caja\.getBoundingClientRect\(\)/,
+    "offsetTop va contra el primer ancestro posicionado, que no tiene por qué ser la caja");
   /* Los tres caminos por los que se llega a verlo */
   assert.match(v, /setTimeout\(centrarPedigriDelCruce, 0\)/, "al entrar en la pantalla");
   assert.match(v, /caja\.innerHTML = panelDeCruce\(\);\s*\n\s*centrarPedigriDelCruce\(\);/,
     "al elegir un reproductor");
-  assert.match(v, /pintarPanelCruce\(\);\s*\n\s*centrarPedigriDelCruce\(\);/,
-    "y al cambiar de profundidad");
+  assert.match(v, /\}\s*\n\s*centrarPedigriDelCruce\(\);\s*\n\}\);/,
+    "y al cambiar de profundidad, en las dos pantallas");
 });
 
 /* ------------------------------------------------------------
@@ -326,7 +343,7 @@ test("el pedigrí se queda en su marco y no ensancha la página", () => {
   assert.match(css, /\.cols23 > \*\{min-width:0\}/,
     "sin esto, una columna de grid no encoge por debajo de su contenido " +
     "y el pedigrí empuja fuera de la pantalla el resto del simulador");
-  assert.match(css, /\.ped-caja\{overflow:auto/);
+  assert.match(css, /\.ped-caja\{position:relative;overflow:auto/);
   assert.match(css, /max-height:min\(72vh,620px\)/);
 });
 
