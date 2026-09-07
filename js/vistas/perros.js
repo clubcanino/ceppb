@@ -316,6 +316,7 @@ function pedigriDe(p, puedo){
     const m = marca.get(id);
     return `<div class="ped-n ${d.sexo === "M" ? "m" : d.sexo === "H" ? "h" : ""} ${m ? "rep r" + m : ""} clic"
       data-go="perro/${esc(d.id)}" title="${esc(d.nombre)}${m ? ` · aparece ${veces.get(id)} veces en este pedigrí` : ""}">
+      ${m ? `<span class="ped-veces">×${veces.get(id)}</span>` : ""}
       <b>${esc(d.nombre)}</b><small>${esc(d.loe || d.variedad || "")}</small></div>`;
   };
 
@@ -355,7 +356,7 @@ function pedigriDe(p, puedo){
     ${repetidos.length ? `<div class="card-b" style="border-top:1px solid var(--line)">
       <div class="mini" style="margin-bottom:8px">Aparecen por las dos ramas y son los que meten la consanguinidad:</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        ${repetidos.slice(0, 12).map(id => {
+        ${porPeso.slice(0, 12).map(id => {
           const d = byId(C("perros"), id);
           return `<a class="chip rep r${marca.get(id)}" href="#/perro/${esc(id)}">${esc(d ? d.nombre : "")}
             <b style="margin-left:5px">×${veces.get(id)}</b></a>`;

@@ -147,6 +147,10 @@ async function recargar(){
     S.data[col] = (await traerTodo(col)).map(f => deFila(f, col));
   });
   await Promise.all(tareas);
+  /* Y quién ha entrado, que no está en ninguna tabla del libro.
+     Si falla, la plataforma sigue: es información de gestión, no
+     algo sin lo que no se pueda trabajar. */
+  try { await cargarAccesos(); } catch(e){ S.accesos = []; }
 }
 
 /* ---------- lectura ---------- */
@@ -168,6 +172,26 @@ async function borrar(col, id){
   const { error } = await S.sb.from(col).delete().eq(PK[col] || "id", id);
   if (error) { avisarError(error); throw error; }
   S.data[col] = S.data[col].filter(x => x.id !== id);
+}
+
+/* ============================================================
+   Quién ha entrado en la plataforma.
+
+   Las fechas de acceso viven en el esquema de autenticación, al que
+   el navegador no llega. Las saca una función de la base de datos
+   que sólo responde a la junta: a cualquier otro le devuelve una
+   lista vacía.
+   ============================================================ */
+S.accesos = [];
+async function cargarAccesos(){
+  if (!SESION.esAdmin) { S.accesos = []; return S.accesos; }
+  const { data, error } = await S.sb.rpc("accesos_a_la_plataforma");
+  S.accesos = error ? [] : (data || []).map(a => ({
+    socioId: a.socio_id, email: a.email,
+    creada: a.cuenta_creada, ultimaEntrada: a.ultima_entrada,
+    correoConfirmado: a.correo_confirmado,
+  }));
+  return S.accesos;
 }
 
 /* Los mensajes que devuelven los triggers del club están escritos en

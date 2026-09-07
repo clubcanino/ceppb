@@ -475,17 +475,27 @@ img.avatar{display:block}
 .rep.r1{--c:#d3040f} .rep.r2{--c:#b58500} .rep.r3{--c:#1f7a4d} .rep.r4{--c:#5a4ac7}
 .rep.r5{--c:#0b7285} .rep.r6{--c:#c2410c} .rep.r7{--c:#a21caf} .rep.r8{--c:#4d7c0f}
 
-.rep{border-left-color:var(--c);
-  background:color-mix(in srgb, var(--c) 13%, var(--surface))}
-.ped-n.rep:hover{background:color-mix(in srgb, var(--c) 22%, var(--surface))}
-.chip.rep{background:color-mix(in srgb, var(--c) 15%, var(--surface));
-  border-color:color-mix(in srgb, var(--c) 35%, var(--line))}
+/* El borde va con «.ped-n.rep» y no con «.rep» a secas: la casilla ya
+   lleva un borde del color de la variedad —.ped-n.m, .ped-n.h— con la
+   misma fuerza, y ganaba ese. El ancestro repetido salía pintado del
+   color del sexo, que es justo lo contrario de lo que se busca. */
+.ped-n.rep, .chip.rep{border-left-color:var(--c)}
+.rep{background:color-mix(in srgb, var(--c) 26%, var(--surface))}
+.ped-n.rep:hover{background:color-mix(in srgb, var(--c) 38%, var(--surface))}
+.chip.rep{background:color-mix(in srgb, var(--c) 22%, var(--surface));
+  border-color:color-mix(in srgb, var(--c) 45%, var(--line))}
+
+/* Cuántas veces sale ese ancestro en el árbol, en su color. Es lo que
+   de verdad se lee de un vistazo: el fondo sólo agrupa. */
+.ped-veces{position:absolute;top:3px;right:4px;
+  font-family:var(--mono);font-size:9px;font-weight:600;line-height:1;
+  padding:2px 4px;border-radius:3px;color:#fff;background:var(--c)}
 
 /* en oscuro basta con subir un poco la mezcla */
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]) .rep{background:color-mix(in srgb, var(--c) 24%, var(--surface))}
+  :root:not([data-theme="light"]) .rep{background:color-mix(in srgb, var(--c) 34%, var(--surface))}
 }
-:root[data-theme="dark"] .rep{background:color-mix(in srgb, var(--c) 24%, var(--surface))}
+:root[data-theme="dark"] .rep{background:color-mix(in srgb, var(--c) 34%, var(--surface))}
 
 /* por si el navegador no entiende color-mix, que se vea el borde igual */
 @supports not (background: color-mix(in srgb, red 10%, white)){
