@@ -118,6 +118,20 @@ def main():
             "guia": r.get("E"),
         })
 
+    # Dos identificadores de working-dog que caen en la misma ficha son
+    # dos perros con el mismo nombre: o es una ficha duplicada en el
+    # origen, o son dos perros distintos y hay que separarlos a mano.
+    porFicha = {}
+    for r in cuerpo:
+        wd = (r.get("H") or "").strip()
+        c = porWd.get(wd)
+        if c:
+            porFicha.setdefault(id_estable(c["clave"]), set()).add((wd, c["nombre"]))
+    for pid, wds in porFicha.items():
+        if len(wds) > 1:
+            print("-- REVISAR, misma ficha para varios working-dog: " +
+                  ", ".join(f"{n} ({w})" for w, n in sorted(wds)), file=sys.stderr)
+
     if huerfanos:
         print("-- ATENCIÓN, sin ficha de perro: " + "; ".join(
             f"{n} ({w})" for n, w in huerfanos), file=sys.stderr)

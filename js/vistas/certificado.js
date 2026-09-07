@@ -112,7 +112,16 @@ V.certificado = function(id){
       <h3>Títulos y resultados validados</h3>
       ${val.length ? `
         ${trab.length ? `<h4>Trabajo</h4><ul class="cert-lista">${trab.map(r =>
-          `<li><b>${esc(r.titulo || "—")}</b>${r.evento ? " · " + esc(r.evento) : ""}${r.fecha ? " · " + fmtF(r.fecha) : ""}</li>`).join("")}</ul>` : ""}
+          /* Dos cosas distintas caben aquí: un título homologado, o la
+             participación en un campeonato con su puesto y sus puntos.
+             Certificar «—» cuando lo que hay es un 3º con 269 puntos
+             sería quitarle mérito al perro. */
+          `<li><b>${esc(r.titulo || (r.puesto ? r.puesto + "º" : "Participación"))}</b>${
+            r.puntos != null ? " · " + r.puntos + " puntos" : ""}${
+            r.calificacion ? " · " + esc(r.calificacion) : ""}${
+            r.evento ? " · " + esc(r.evento) : ""}${
+            r.fecha ? " · " + fmtF(r.fecha) : (r.anio ? " · " + r.anio : "")}${
+            r.guia ? " · Guía: " + esc(r.guia) : ""}</li>`).join("")}</ul>` : ""}
         ${estr.length ? `<h4>Estructura</h4><ul class="cert-lista">${estr.map(r =>
           `<li><b>${esc(r.calificacion || "—")}</b>${r.distincion ? " · " + esc(r.distincion) : ""}${r.evento ? " · " + esc(r.evento) : ""}${r.fecha ? " · " + fmtF(r.fecha) : ""}${r.juez ? " · Juez: " + esc(r.juez) : ""}</li>`).join("")}</ul>` : ""}
         ${car.length ? `<h4>Carácter</h4><ul class="cert-lista">${car.map(r =>

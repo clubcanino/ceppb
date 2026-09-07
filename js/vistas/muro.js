@@ -30,11 +30,17 @@ V.muro = function(){
     const t = r.tipo === "estructura"
         ? `${r.calificacion}${r.distincion?" · "+r.distincion:""} en ${r.evento||r.tipoEvento||"evento"}`
       : r.tipo === "trabajo"
-        ? `Título ${r.titulo}${r.calificacion?" ("+r.calificacion+")":""}`
+        /* Un acta de campeonato no trae título: trae puesto y puntos.
+           Sin esto el muro anunciaba «Título undefined». */
+        ? (r.titulo
+            ? `Título ${r.titulo}${r.calificacion?" ("+r.calificacion+")":""}`
+            : `${r.puesto?r.puesto+"º":"Participación"}${r.puntos!=null?" con "+r.puntos+" puntos":""}${r.calificacion?" ("+r.calificacion+")":""} en ${r.evento||r.tipoEvento||"evento"}`)
       : r.tipo === "caracter"
         ? `Prueba de carácter ${r.modalidad}: ${r.resultado}`
         : `Confirmación: ${r.resultado}`;
-    items.push({f:r.fecha, tipo:"Resultado", t:`${p.nombre} — ${t}`, d: r.juez ? "Juez: "+r.juez : ""});
+    items.push({f:r.fecha || (r.anio ? r.anio + "-12-31" : ""), tipo:"Resultado",
+                t:`${p.nombre} — ${t}`,
+                d: r.juez ? "Juez: "+r.juez : (r.guia ? "Guía: "+r.guia : "")});
   });
 
   C("eventos").filter(e => e.fecha >= hoy()).forEach(e =>
