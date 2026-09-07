@@ -682,6 +682,12 @@ function siguienteNumeroSocio(){
   return usados.length ? Math.max(...usados) + 1 : 1;
 }
 
+/* Adónde ir después de dar de alta un ejemplar. Por defecto, a su
+   ficha; el simulador de cruce lo cambia para volver a sí mismo con el
+   reproductor ya elegido. Se vacía al cerrar el panel, para que no se
+   quede colgado si el socio se arrepiente. */
+const TRAS_ALTA = { fn: null };
+
 /* El alta o la edición de un ejemplar, una vez decidido que hay que
    guardarla. Vive aparte del formulario porque hay dos caminos que
    llegan hasta aquí: el alta normal, y el alta que antes ha pasado
@@ -721,5 +727,10 @@ async function guardarEjemplar(id, p, d, declaracion){
   delete n.id;
   const nid = await guardar("perros", id, n);
   toast(id ? "Ficha actualizada" : "Ejemplar dado de alta");
-  if(!id) ir("perro/" + nid);
+  if(id) return;
+
+  const seguir = TRAS_ALTA.fn;
+  TRAS_ALTA.fn = null;
+  if (seguir) return seguir(nid);
+  ir("perro/" + nid);
 }

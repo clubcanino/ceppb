@@ -294,8 +294,13 @@ R.cruce = function(macho, hembra, perros, resultados, fecha){
   const out = [];
   const f = fecha || hoy();
   if(!macho || !hembra) return [{n:"falta", t:"Selecciona un macho y una hembra"}];
-  if(macho.sexo !== "M") out.push({n:"bloqueo", t:`${macho.nombre} no está registrado como macho`});
-  if(hembra.sexo !== "H") out.push({n:"bloqueo", t:`${hembra.nombre} no está registrada como hembra`});
+  /* Que a una ficha le falte el sexo no es un incumplimiento del
+     reglamento: es un dato que no vino en el pedigrí. Se avisa y se
+     arregla en su ficha. Otra cosa es cruzar dos machos. */
+  if(!macho.sexo) out.push({n:"aviso", t:`${macho.nombre} no tiene el sexo anotado en su ficha`});
+  else if(macho.sexo !== "M") out.push({n:"bloqueo", t:`${macho.nombre} está registrada como hembra`});
+  if(!hembra.sexo) out.push({n:"aviso", t:`${hembra.nombre} no tiene el sexo anotado en su ficha`});
+  else if(hembra.sexo !== "H") out.push({n:"bloqueo", t:`${hembra.nombre} está registrado como macho`});
 
   const em = meses(macho.fechaNacimiento, f), eh = meses(hembra.fechaNacimiento, f);
   if(em == null) out.push({n:"aviso", t:"El macho no tiene fecha de nacimiento registrada", r:"Cap. 1.III"});

@@ -60,7 +60,13 @@ function abrirForm(titulo, gs, onOk){
   $("#sheet-ok").textContent = "Guardar";
   $("#sheet").classList.add("on"); $("#scrim").classList.add("on");
 }
-function cerrarForm(){ $("#sheet").classList.remove("on"); $("#scrim").classList.remove("on"); formActual = null; }
+function cerrarForm(){
+  $("#sheet").classList.remove("on"); $("#scrim").classList.remove("on");
+  formActual = null;
+  /* Si se cerró sin guardar, adonde iba a llevar el alta deja de valer:
+     si no, se aplicaría al siguiente ejemplar que se diera de alta. */
+  if (typeof TRAS_ALTA === "object" && TRAS_ALTA) TRAS_ALTA.fn = null;
+}
 function leerForm(){
   const o = {};
   $("#sheet-b").querySelectorAll("[name]").forEach(el => {

@@ -113,8 +113,27 @@ document.addEventListener("input", ev => {
   const escrito = norm(ev.target.value || "");
 
   /* Elegido es sólo lo que coincide con una ficha real. Si el socio
-     borra o cambia una letra, deja de estarlo. */
-  const exacta = todas.find(x => norm(x[1]) === escrito);
+     borra o cambia una letra, deja de estarlo.
+
+     La lista escribe detrás del nombre la variedad, para distinguir a
+     los que se llaman igual: «Yala de Lacanin de As · Tervueren». Pero
+     un socio escribe el nombre de su perro y nada más, y antes eso no
+     seleccionaba nada: el simulador de cruce se quedaba en blanco por
+     mucho que escribieras bien el nombre. Así que se acepta también el
+     nombre a secas, y lo escrito que sólo pueda ser una ficha. */
+  const soloNombre = v => norm(String(v).split(" · ")[0]);
+
+  let exacta = todas.find(x => norm(x[1]) === escrito);
+  if (!exacta){
+    const porNombre = todas.filter(x => soloNombre(x[1]) === escrito);
+    /* Si dos perros se llaman igual no se adivina: que elija. */
+    if (porNombre.length === 1) exacta = porNombre[0];
+  }
+  if (!exacta && escrito.length >= LETRAS_PARA_BUSCAR){
+    const posibles = todas.filter(x => norm(x[1]).includes(escrito));
+    if (posibles.length === 1) exacta = posibles[0];
+  }
+
   const antes = oculto.value;
   oculto.value = exacta ? exacta[0] : "";
 

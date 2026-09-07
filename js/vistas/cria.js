@@ -38,7 +38,12 @@ V.aptos = function(){
 let cruceSel = {m:"", h:""};
 V.cruce = function(){
   const perros = perrosVisibles(), res = C("resultados");
-  const machos = perros.filter(p=>p.sexo==="M"), hembras = perros.filter(p=>p.sexo==="H");
+  /* Los 279 ejemplares que llegaron de los pedigríes sin sexo anotado
+     también se pueden elegir: dejarlos fuera era dejar fuera del
+     simulador a perros que están en el libro. Si el sexo falta, el
+     reglamento lo dice abajo y se arregla en su ficha. */
+  const machos  = perros.filter(p=>p.sexo==="M" || !p.sexo);
+  const hembras = perros.filter(p=>p.sexo==="H" || !p.sexo);
   if(!cruceSel.m && machos.length) cruceSel.m = machos[0].id;
   if(!cruceSel.h && hembras.length) cruceSel.h = hembras[0].id;
   const m = byId(perros, cruceSel.m), h = byId(perros, cruceSel.h);
@@ -50,10 +55,14 @@ V.cruce = function(){
     const l = R.cruce(m, h, C("perros"), res), v = R.cruceVeredicto(l);
     const orden = {bloqueo:0, aviso:1, ok:2};
     l.sort((a,b)=>orden[a.n]-orden[b.n]);
-    panel = `<div class="note ${v==="bloqueo"?"block":v==="aviso"?"warn":"ok"}" style="margin-bottom:14px">
-        ${v==="bloqueo"?"<b>Cruce no autorizable.</b> Hay incumplimientos del reglamento que lo impiden."
-        :v==="aviso"?"<b>Cruce posible con condiciones.</b> Revisa los avisos antes de solicitarlo a la Comisión de Cría."
-        :"<b>Cruce conforme al reglamento.</b> Ambos reproductores cumplen los requisitos comprobables."}</div>
+    /* El simulador informa; quien autoriza es la Junta Directiva. Por
+       eso no dice «no autorizable»: enseña qué le falta a cada uno y
+       deja la resolución donde tiene que estar. Cuando los dos cumplen,
+       ahí sí se moja. */
+    panel = `<div class="note ${v==="ok"?"ok":"warn"}" style="margin-bottom:14px">
+        ${v==="ok"?"<b>Cruce autorizable y recomendado por el club.</b> Los dos reproductores cumplen los requisitos del reglamento."
+        :v==="aviso"?"<b>Queda algo por comprobar.</b> Abajo tienes qué es; lo demás lo cumplen los dos."
+        :"<b>Todavía no reúne los requisitos del club.</b> Abajo tienes exactamente qué le falta a cada uno."}</div>
       ${listaReq(l.map(x=>({t:x.t, d:x.r||"", e:x.n==="bloqueo"?"no":x.n==="aviso"?"falta":"ok"})))}
       ${tarjetaConsanguinidad(m, h)}
       ${R.esInter(m,h) ? (()=>{ const sol = solicitudDe(m.id,h.id); const e = sol?EST_SOL[sol.estado]:null;
@@ -92,10 +101,17 @@ V.cruce = function(){
         <span class="hint">${machos.length + hembras.length} en el libro</span></div><div class="card-b">
         <div class="f" style="margin-bottom:12px"><label>Macho</label>
           ${buscadorDeFicha("crm", ficha(machos), cruceSel.m,
-            {alElegir:"cruceMacho", ph:"Escribe tres letras del nombre…"})}</div>
+            {alElegir:"cruceMacho", ph:"Escribe el nombre del perro…"})}</div>
         <div class="f"><label>Hembra</label>
           ${buscadorDeFicha("crh", ficha(hembras), cruceSel.h,
-            {alElegir:"cruceHembra", ph:"Escribe tres letras del nombre…"})}</div>
+            {alElegir:"cruceHembra", ph:"Escribe el nombre de la perra…"})}</div>
+        ${SESION.rol!=="visitante"?`<div class="note" style="margin-top:14px">
+          ¿No está en el libro? Dalo de alta y vuelves aquí con él puesto.
+          Queda a tu nombre.
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn sm" data-alta-cruce="m">Dar de alta un macho</button>
+            <button class="btn sm" data-alta-cruce="h">Dar de alta una hembra</button>
+          </div></div>`:""}
       </div></div>
       <div class="card"><div class="card-h"><h3>Cruces intervariedades autorizados</h3><span class="hint">Cap. 8.2</span></div><div class="card-b">
         ${CRUCES_INTER.map(c=>`<div class="req"><div class="tx"><b>${esc(c.a)} × ${esc(c.b)}</b><small>${esc(c.nota)}</small></div></div>`).join("")}
@@ -249,3 +265,14 @@ function tarjetaReglamentos(){
         </div>`).join("")}</div>
     </div></div>`;
 }
+
+/* Dar de alta un reproductor sin perder el simulador: se abre el alta
+   normal —con su cotejo de repetidos— y al guardar se vuelve aquí con
+   el ejemplar ya elegido, en lugar de irse a su ficha. */
+document.addEventListener("click", ev => {
+  const b = ev.target.closest && ev.target.closest("[data-alta-cruce]");
+  if (!b) return;
+  const lado = b.getAttribute("data-alta-cruce") === "h" ? "h" : "m";
+  TRAS_ALTA.fn = id => { cruceSel[lado] = id; ir("cruce"); };
+  FORMS.perro();
+});
