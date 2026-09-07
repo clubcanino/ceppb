@@ -1,7 +1,10 @@
-# Libro de Cría CEPPB
+# Mi CEPPB
 
 Plataforma de socios y ejemplares del **Club Español del Perro Pastor Belga**. Equivalente
 propio de working-dog.com, ajustado al Reglamento de Cría del club (act. enero 2025).
+
+Se llama **Mi CEPPB**. Vive en <https://clubcanino.github.io/ceppb/> y su manual público,
+para los socios, en `manual.html`.
 
 ## Interlocutor
 
@@ -64,7 +67,58 @@ Todo esto ya está resuelto en el prototipo: reutilízalo.
 
 ## Cómo trabajar
 
-- Commits en español, pequeños y explicados.
+- Commits en español, pequeños y explicados. **El commit dice por qué, no qué**: el qué ya
+  está en el diff. Los porqués de este proyecto viven en los mensajes de commit y en los
+  comentarios del código, no en la conversación con Claude, que se pierde.
 - Nada de datos inventados en la base de datos real. Si necesitas probar, usa un proyecto
   aparte de Supabase o datos claramente marcados y bórralos después.
 - Antes de tocar el censo real, haz copia.
+- **Las reglas se comprueban atacando la base de datos**, no mirando la pantalla. Para
+  suplantar a un socio en el editor SQL, dentro de una transacción que se deshace:
+  `select set_config('request.jwt.claims', json_build_object('sub', <auth_user_id>)::text, true);`
+  `set local role authenticated;` … `rollback;`
+- `npm test` antes de subir. Hay 344 pruebas en `pruebas/`.
+- Cada cambio sube el `?v=NN` de **todas** las referencias de `index.html` (van 71): sin eso
+  los socios se quedan con la versión vieja en la caché.
+
+## Estado a 7 de septiembre de 2026
+
+Lo que hay dentro, y de dónde salió:
+
+- **347 socios** del censo real. Sólo los correos del censo pueden entrar, y la cuenta se
+  ata sola a su ficha. 33 socios no tienen correo y no pueden acceder hasta que secretaría
+  se lo anote.
+- **3.833 ejemplares**, 2.935 con padre y madre enlazados. Salieron de los pedigríes de
+  working-dog de los participantes en los cinco últimos Campeonatos Nacionales y en el
+  Mundial FMBB, más las actas de la RSCE.
+- **24 eventos y 1.718 resultados**. 931 títulos esperan la validación de la junta.
+- Ocho idiomas: castellano, catalán, valenciano, gallego, euskera, inglés, francés y alemán.
+
+## Decisiones tomadas que no se deducen del código
+
+1. **El nombre de un ejemplar lleva su afijo dentro**: «Ninfa de Supercan», no «Ninfa». Así
+   vinieron los 3.833 y así se pide en el alta. `nombrePerro()` en `js/util.js` es el único
+   sitio donde se decide cómo se escribe; úsalo en todas partes. El campo `afijo` es un dato
+   aparte —de qué criadero es—, deducido de los nombres (2.388 lo tienen).
+2. **Antes de dar de alta un ejemplar se cotejan los repetidos** contra todo el libro, no
+   contra lo que ese socio ve: si sólo mirase lo visible, el duplicado se colaría justo
+   contra las fichas reservadas. De una ficha que no puede ver no se le dice ni el nombre.
+3. **El simulador de cruce informa; quien autoriza es la Junta Directiva.** No dice «cruce
+   no autorizable»: dice qué le falta a cada uno. Cuando los dos cumplen, «Cruce autorizable
+   y recomendado por el club».
+4. **La camada la declara el propietario de la madre.** En el formulario y en la política de
+   la base de datos, que es la que manda.
+5. **Tesorería tiene acceso de gestión pero no de presidencia**: puede casi todo menos tocar
+   la configuración de la plataforma, nombrar jueces o repartir cargos. Y no se le nota.
+6. La plataforma **se instala en el móvil** como aplicación (PWA), sin pasar por ninguna
+   tienda. El service worker va **siempre a la red primero**: guardar copias significaría que
+   un socio se queda con una versión vieja del libro sin enterarse.
+
+## Pendiente
+
+- Mandar las 296 invitaciones a los socios que aún no han entrado (dijo: «no mandes
+  invitaciones aún»).
+- Socio nº 1108, Samuel Enrique Rios, sin fecha de alta (venía como 31 de febrero).
+- Dos fichas con el mismo LOE 2317281 —«Quelia del Clamiu» y «Aris»—, probablemente un LOE
+  mal transcrito en la importación. Lo tiene que mirar la junta con el pedigrí delante.
+- 931 títulos de working-dog esperando validación de la junta.
