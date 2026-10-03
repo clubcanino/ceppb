@@ -8,22 +8,22 @@
    enseña de fuera ni el censo, ni los ejemplares, ni los cargos. */
 const VISTAS = [
   {h:"", t:"La plataforma"},
-  {r:"muro",     n:"Novedades",        v:["admin","socio","visitante","sin-ficha"]},
+  {r:"muro",     n:"Novedades",        v:["admin","socio","consulta","visitante","sin-ficha","baja"]},
   {r:"socios",   n:"Socios",           v:["admin","socio"], ct:()=>C("socios").filter(perfilVisible).length || null},
-  {r:"perros",   n:"Ejemplares",       v:["admin","socio"], ct:()=>perrosVisibles().length || null},
-  {r:"eventos",  n:"Eventos",          v:["admin","socio"], ct:()=>C("eventos").length || null},
-  {r:"cargos",   n:"Cargos y jueces",  v:["admin","socio"], ct:()=>C("socios").filter(s=>(s.roles||[]).length).length || null},
+  {r:"perros",   n:"Ejemplares",       v:["admin","socio","consulta"], ct:()=>perrosVisibles().length || null},
+  {r:"eventos",  n:"Eventos",          v:["admin","socio","consulta"], ct:()=>C("eventos").length || null},
+  {r:"cargos",   n:"Cargos y jueces",  v:["admin","socio","consulta"], ct:()=>C("socios").filter(s=>(s.roles||[]).length).length || null},
 
   {h:"cria", t:"Cría"},
-  {r:"aptos",    n:"Aptos de cría",    v:["admin","socio"]},
-  {r:"cruce",    n:"Simulador de cruce", v:["admin","socio"]},
+  {r:"aptos",    n:"Aptos de cría",    v:["admin","socio","consulta"]},
+  {r:"cruce",    n:"Simulador de cruce", v:["admin","socio","consulta"]},
   /* Se llega desde el simulador, no desde el menú: es el mismo
      pedigrí, a pantalla completa. Pero se declara aquí para que le
      valgan los mismos permisos; sin declararla, render() no
      encontraría su definición y la habría dejado abierta a
      cualquiera. */
-  {r:"pedigri",  n:"Pedigrí de la camada", v:["admin","socio"], oculta:true},
-  {r:"camadas",  n:"Camadas",          v:["admin","socio"], ct:()=>C("camadas").length || null},
+  {r:"pedigri",  n:"Pedigrí de la camada", v:["admin","socio","consulta"], oculta:true},
+  {r:"camadas",  n:"Camadas",          v:["admin","socio","consulta"], ct:()=>C("camadas").length || null},
   {r:"intervar", n:"Cruces intervariedades", v:["admin","socio"], ct:()=>C("solicitudes").filter(x=>x.tipo==="intervariedad"&&x.estado==="pendiente").length || null},
 
   {h:"mio", t:"Mi área"},
@@ -36,8 +36,8 @@ const VISTAS = [
   {r:"yo",       n:"Mi perfil",        v:["socio","admin"], si:()=>!!SESION.socio},
   {r:"mensajes", n:"Mensajes",         v:["socio","admin"], si:()=>!!SESION.socio,
    ct:()=>C("mensajes").filter(m => m.paraId === miSocioId() && !m.leido).length || null},
-  {r:"ajustes",  n:"Mi cuenta",        v:["socio","admin","sin-ficha"]},
-  {r:"cuenta",   n:"Cuota y pagos",    v:["socio","admin"], si:()=>!!SESION.socio},
+  {r:"ajustes",  n:"Mi cuenta",        v:["socio","admin","consulta","sin-ficha","baja"]},
+  {r:"cuenta",   n:"Cuota y pagos",    v:["socio","admin"], si:()=>esDelCenso(SESION.socio)},
 
   {h:"adm", t:"Administración"},
   {r:"admin",    n:"Panel de la junta", v:["admin"]},
@@ -111,7 +111,10 @@ function pintarNav(){
 
   $("#rol-badge").textContent =
     SESION.esAdmin ? t("Junta directiva") :
-    SESION.socio   ? t("Socio") + " nº " + (SESION.socio.numero ?? "") :
+    SESION.socio   ? t(etiquetaAcceso(SESION.socio).replace(/ nº .*/, "")) +
+                     (esDelCenso(SESION.socio) ? " nº " + (SESION.socio.numero ?? "") : "") :
+    SESION.rol === "consulta" ? t("Invitado de consulta") :
+    SESION.rol === "baja" ? t("Acceso cerrado") :
     SESION.usuario ? t("Cuenta sin vincular") : t("Visitante");
 }
 

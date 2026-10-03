@@ -7,11 +7,11 @@ V.yo = function(){
   if(!s) return sinFichaVinculada();
   const mios = C("perros").filter(p => p.propietarioId === s.id);
   return `<div class="ficha-h">${avatar(s, 72)}<div style="flex:1;min-width:230px"><h2>${esc(s.nombreCompleto)}</h2>
-      <div class="meta"><span class="chip mono">Socio nº ${esc(s.numero)}</span><span class="chip">${esc(s.cuota||"")}</span>
+      <div class="meta"><span class="chip mono">${esc(etiquetaAcceso(s))}</span>${esDelCenso(s)?`<span class="chip">${esc(s.cuota||"")}</span>`:""}${s.accesoHasta?`<span class="chip">Hasta el ${fmtF(s.accesoHasta)}</span>`:""}
       ${s.afijo?`<span class="chip">Afijo ${esc(s.afijo)}</span>`:""}</div></div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         ${botonFoto("avatar","socio",s.id,s.avatar?"Cambiar foto":"Subir foto")}
-        <button class="btn" data-ir="carnet/${esc(s.id)}">${esc(t("Mi carnet de socio"))}</button>
+        ${esDelCenso(s) ? `<button class="btn" data-ir="carnet/${esc(s.id)}">${esc(t("Mi carnet de socio"))}</button>` : ""}
         <button class="btn brand" data-form="socio|${esc(s.id)}">Editar mis datos</button></div></div>
     <div class="cols23">
       <div class="grid">

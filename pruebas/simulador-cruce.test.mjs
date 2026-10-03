@@ -175,8 +175,8 @@ test("se puede dar de alta un reproductor sin salir del simulador", () => {
   assert.match(v, /data-alta-cruce="h"/);
   assert.match(v, /TRAS_ALTA\.fn = id => \{ cruceSel\[lado\] = id; ir\("cruce"\); \}/,
     "y se vuelve aquí con él puesto, no a su ficha");
-  assert.match(v, /SESION\.rol!=="visitante"/,
-    "un visitante no da de alta nada");
+  assert.match(v, /puedeAportar\(\)\?`<div class="note" style="margin-top:14px">/,
+    "un visitante, o un invitado de consulta, no da de alta nada");
 });
 
 test("el alta vuelve a donde se pidió, y no se queda colgada si se cancela", () => {
@@ -359,7 +359,7 @@ test("se mueve arrastrándolo, y arrastrar no abre la ficha de debajo", () => {
 
 test("tiene su propia página, con los mismos permisos y fuera del menú", () => {
   const app = lee("js/app.js");
-  assert.match(app, /\{r:"pedigri",  n:"Pedigrí de la camada", v:\["admin","socio"\], oculta:true\}/,
+  assert.match(app, /\{r:"pedigri",  n:"Pedigrí de la camada", v:\["admin","socio","consulta"\], oculta:true\}/,
     "sin declararla, render() no encontraría su definición y quedaría abierta a cualquiera");
   assert.match(app, /if \(v\.oculta\) return;/, "existe, pero no se anuncia en el menú");
   assert.match(lee("js/vistas/cria.js"), /V\.pedigri = function\(par\)/);

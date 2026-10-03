@@ -39,13 +39,22 @@ language sql stable security definer set search_path = public as $$
        and a.nivel = 'presidencia');
 $$;
 
+/* Quien puede leer el libro: socios e invitados de cualquier alcance,
+   mientras su ficha siga vigente —ni de baja ni caducada—. La baja
+   corta desde su misma fecha. */
 create or replace function es_socio() returns boolean
-language sql stable as $$ select auth.uid() is not null; $$;
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from socios
+     where auth_user_id = auth.uid()
+       and (fecha_baja is null or fecha_baja > current_date)
+       and (acceso_hasta is null or acceso_hasta >= current_date));
+$$;
 
 -- ---------- socios ----------
 create table if not exists socios (
   id              uuid primary key default gen_random_uuid(),
-  numero          integer unique not null,
+  numero          integer unique,   -- obligatorio para socios; los invitados no llevan
   auth_user_id    uuid unique references auth.users(id) on delete set null,
   nombre          text not null,
   apellidos       text not null,
@@ -68,6 +77,12 @@ create table if not exists socios (
   fecha_alta      date,
   fecha_baja      date,
   activo          boolean generated always as (fecha_baja is null) stored,
+  baja_motivo     text,
+  -- «socio» es del censo. «invitado» no es socio pero participa como
+  -- uno; «consulta» sólo ve el libro. Los dos últimos, hasta acceso_hasta.
+  acceso          text not null default 'socio'
+    check (acceso in ('socio','invitado','consulta')),
+  acceso_hasta    date,
   socio_honor     boolean default false,
   -- cinofilia
   rsce_socio      boolean default false,
@@ -92,7 +107,8 @@ create table if not exists socios (
   idioma          text default 'es'
     check (idioma in ('es','ca','va','gl','eu','en','fr','de')),
   notas           text,          -- notas internas de secretaría
-  creado          timestamptz default now()
+  creado          timestamptz default now(),
+  constraint socios_numero_si_socio check (acceso <> 'socio' or numero is not null)
 );
 create index if not exists socios_numero_idx   on socios(numero);
 create index if not exists socios_email_idx    on socios(lower(email));
@@ -323,7 +339,10 @@ begin
     raise exception 'El número de socio sólo lo cambia la secretaría';
   end if;
   if new.cuota is distinct from old.cuota or new.fecha_alta is distinct from old.fecha_alta
-     or new.fecha_baja is distinct from old.fecha_baja or new.notas is distinct from old.notas then
+     or new.fecha_baja is distinct from old.fecha_baja or new.notas is distinct from old.notas
+     or new.baja_motivo is distinct from old.baja_motivo
+     or new.acceso is distinct from old.acceso
+     or new.acceso_hasta is distinct from old.acceso_hasta then
     raise exception 'Los datos de secretaría sólo los cambia la Junta Directiva';
   end if;
   return new;
@@ -441,9 +460,15 @@ alter table megusta         enable row level security;
 alter table mensajes        enable row level security;
 alter table admins          enable row level security;
 
+/* Quien participa: tener perros, declarar camadas, escribir. Una baja,
+   un acceso caducado o uno de consulta se quedan sin nada que tocar. */
 create or replace function mi_socio_id() returns uuid
 language sql stable security definer set search_path = public as $$
-  select id from socios where auth_user_id = auth.uid();
+  select id from socios
+   where auth_user_id = auth.uid()
+     and acceso <> 'consulta'
+     and (fecha_baja is null or fecha_baja > current_date)
+     and (acceso_hasta is null or acceso_hasta >= current_date);
 $$;
 
 -- SOCIOS: el perfil se ve si su titular lo ha autorizado; los cargos son públicos
@@ -452,11 +477,11 @@ create policy socios_lectura on socios for select using (
   es_admin()
   or auth_user_id = auth.uid()
   or perfil_publico = 'publico'
-  or (perfil_publico = 'socios' and es_socio())
+  or (perfil_publico = 'socios' and mi_socio_id() is not null)
   or array_length(roles, 1) > 0        -- listado oficial de cargos (Cap. 5 y 6.2)
 );
 drop policy if exists socios_propia on socios;
-create policy socios_propia on socios for update using (es_admin() or auth_user_id = auth.uid());
+create policy socios_propia on socios for update using (es_admin() or id = mi_socio_id());
 drop policy if exists socios_alta on socios;
 create policy socios_alta on socios for insert with check (es_admin());
 
@@ -577,7 +602,10 @@ create policy mensajes_envio on mensajes for insert
     and para_id <> mi_socio_id()
     /* y no se escribe a quien ha dicho que no */
     and exists (select 1 from socios s
-                 where s.id = para_id and s.acepta_mensajes and s.fecha_baja is null));
+                 where s.id = para_id and s.acepta_mensajes
+                   and s.acceso <> 'consulta'
+                   and (s.fecha_baja is null or s.fecha_baja > current_date)
+                   and (s.acceso_hasta is null or s.acceso_hasta >= current_date)));
 drop policy if exists mensajes_leido on mensajes;
 create policy mensajes_leido on mensajes for update using (para_id = mi_socio_id());
 drop policy if exists mensajes_borrado on mensajes;

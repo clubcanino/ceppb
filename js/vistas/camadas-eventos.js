@@ -22,7 +22,7 @@ V.camadas = function(){
       return c.recomendada?`<span class="chip ok">Recomendada</span>`:`<span class="chip">No difundida</span>`;}},
   ];
   return `<div class="note" style="margin-bottom:14px">Para que una camada aparezca en las herramientas de difusión del club debe comunicarse <b>dentro de los 30 días</b> siguientes al nacimiento con los datos de los progenitores y el número y sexo de los cachorros (Cap. 6.1).</div>
-    ${SESION.rol!=="visitante"?`<div style="margin-bottom:12px"><button class="btn primary" data-form="camada|">Declarar camada</button></div>`:""}
+    ${puedeAportar()?`<div style="margin-bottom:12px"><button class="btn primary" data-form="camada|">Declarar camada</button></div>`:""}
     ${tabla("cam", cols, C("camadas"))}`;
 };
 

@@ -6,11 +6,23 @@
 
 
 /* --- Directorio de socios --- */
-let fSoc = {q:"", prov:"", cuota:"", criador:false, disc:"", rol:"", varie:""};
+let fSoc = {q:"", prov:"", cuota:"", criador:false, disc:"", rol:"", varie:"", sit:"vigentes"};
+
+/* Qué fichas enseña el directorio. Por defecto, el censo vivo: los
+   socios con alta vigente. Las bajas y los invitados, a un clic. */
+const SITUACIONES = [
+  ["vigentes",  "Socios con alta vigente", s => esDelCenso(s) && fichaVigente(s)],
+  ["bajas",     "Socios de baja",          s => esDelCenso(s) && !fichaVigente(s)],
+  ["invitados", "Invitados (no socios)",   s => !esDelCenso(s)],
+  ["todos",     "Todas las fichas",        () => true],
+];
 V.socios = function(){
   const censo = C("socios");
   let l = censo.filter(perfilVisible);
-  const ocultos = censo.length - l.length;
+  const ocultos = censo.filter(esDelCenso).length - l.filter(esDelCenso).length;
+  /* Fuera de la junta sólo se ve a quien sigue dentro. */
+  const sit = SESION.esAdmin ? (SITUACIONES.find(x => x[0] === fSoc.sit) || SITUACIONES[0]) : null;
+  l = sit ? l.filter(sit[2]) : l.filter(fichaVigente);
   if(fSoc.q){ const q = norm(fSoc.q); l = l.filter(s => norm(s.nombreCompleto+" "+s.afijo+" "+s.poblacion+" "+s.provincia+" "+s.numero).includes(q)); }
   if(fSoc.prov) l = l.filter(s => s.provincia === fSoc.prov);
   if(fSoc.cuota) l = l.filter(s => s.cuota === fSoc.cuota);
@@ -22,7 +34,7 @@ V.socios = function(){
   const cuotas = [...new Set(censo.map(s=>s.cuota).filter(Boolean))].sort();
   const cols = [
     {t:"Nº", s:s=>s.numero, r:s=>`<span class="num">${s.numero||"—"}</span>`},
-    {t:"Socio", s:s=>s.apellidos, r:s=>`<span class="celda-nm">${avatar(s,32)}<span><span class="nm">${esc(s.nombreCompleto)}</span>${s.socioHonor?` <span class="chip">Honor</span>`:""}</span></span>`},
+    {t:"Socio", s:s=>s.apellidos, r:s=>`<span class="celda-nm">${avatar(s,32)}<span><span class="nm">${esc(s.nombreCompleto)}</span>${s.socioHonor?` <span class="chip">Honor</span>`:""}${!esDelCenso(s)?` <span class="chip">${esc(etiquetaAcceso(s))}</span>`:""}${SESION.esAdmin&&!fichaVigente(s)?` <span class="chip warn">${s.fechaBaja&&s.fechaBaja<=hoy()?"Baja":"Caducado"}</span>`:""}</span></span>`},
     {t:"Afijo", s:s=>s.afijo, r:s=>s.afijo && visible(s,"afijo") ? `<span class="chip mono">${esc(s.afijo)}</span>` : `<span class="dim">—</span>`},
     {t:"Localidad", s:s=>s.provincia, r:s=>visible(s,"provincia") ? `${esc(s.poblacion||"")}${s.provincia?`<span class="dim"> · ${esc(s.provincia)}</span>`:""}` : `<span class="dim">Reservado</span>`},
     {t:"Disciplinas", s:s=>(s.disciplinas||[])[0]||"", r:s=>visible(s,"disciplinas") ? (s.disciplinas||[]).slice(0,2).map(d=>`<span class="chip">${esc(d)}</span>`).join(" ") + ((s.disciplinas||[]).length>2?` <span class="mini">+${s.disciplinas.length-2}</span>`:"") || `<span class="dim">—</span>` : `<span class="dim">—</span>`},
@@ -38,15 +50,17 @@ V.socios = function(){
       <select class="inp" id="f-soc-disc"><option value="">Toda disciplina</option>${DISCIPLINAS.map(d=>`<option ${fSoc.disc===d?"selected":""}>${esc(d)}</option>`).join("")}</select>
       <select class="inp" id="f-soc-varie"><option value="">Toda variedad</option>${VARIEDADES.map(v=>`<option ${fSoc.varie===v?"selected":""}>${esc(v)}</option>`).join("")}</select>
       <select class="inp" id="f-soc-rol"><option value="">Cualquier condición</option>${ROLES_CLUB.map(r=>`<option ${fSoc.rol===r?"selected":""}>${esc(r)}</option>`).join("")}</select>
+      ${SESION.esAdmin ? `<select class="inp" id="f-soc-sit">${SITUACIONES.map(([k,n])=>`<option value="${k}" ${fSoc.sit===k?"selected":""}>${esc(n)}</option>`).join("")}</select>` : ""}
       <label class="chip" style="cursor:pointer"><input type="checkbox" id="f-soc-cri" ${fSoc.criador?"checked":""}> Sólo criadores</label>
       <span class="spacer"></span><span class="mini">${l.length} socio(s)</span>
       ${SESION.esAdmin ? `
         <button class="btn brand" data-form="socio|">Dar de alta un socio</button>
+        <button class="btn" data-form="invitado|">Dar acceso a un invitado</button>
         <button class="btn" data-exportar="censo">Exportar a Excel</button>
         <button class="btn sm" data-exportar="censo-completo" title="Incluye DNI, dirección e IBAN">Con datos reservados</button>` : ""}
     </div>
     ${ocultos ? `<div class="note" style="margin-bottom:14px">${SESION.esAdmin
-      ? `<b>${ocultos} de ${censo.length} socios no han hecho visible su perfil.</b> Como junta los ves aquí igualmente, pero para el resto del club no aparecen en el directorio.`
+      ? `<b>${ocultos} de ${censo.filter(esDelCenso).length} socios no han hecho visible su perfil.</b> Como junta los ves aquí igualmente, pero para el resto del club no aparecen en el directorio.`
       : `${ocultos} socios han preferido no aparecer en el directorio. Cada uno decide si figura y qué datos comparte.`}</div>` : ""}
     ${tabla("soc", cols, l, s=>"socio/"+s.id)}`;
 };
@@ -70,10 +84,14 @@ V.socio = function(id){
     <div style="flex:1;min-width:250px">
       <h2>${esc(s.nombreCompleto)}</h2>
       <div class="meta">
-        <span class="chip mono">Socio nº ${esc(s.numero)}</span>
+        <span class="chip mono">${esc(etiquetaAcceso(s))}</span>
+        ${s.accesoHasta?`<span class="chip">Acceso hasta el ${fmtF(s.accesoHasta)}</span>`:""}
         ${s.socioHonor?`<span class="chip ok">Socio de honor</span>`:""}
         ${s.afijo&&visible(s,"afijo")?`<span class="chip">Afijo ${esc(s.afijo)}</span>`:""}
-        ${s.activo?`<span class="chip ok">Alta vigente</span>`:`<span class="chip">Baja</span>`}
+        ${fichaVigente(s) ? (esDelCenso(s)?`<span class="chip ok">Alta vigente</span>`:"")
+          : s.fechaBaja && s.fechaBaja <= hoy() ? `<span class="chip warn">Baja desde el ${fmtF(s.fechaBaja)}${SESION.esAdmin&&s.bajaMotivo?` · ${esc(s.bajaMotivo)}`:""}</span>`
+          : `<span class="chip warn">Acceso caducado</span>`}
+        ${fichaVigente(s) && s.fechaBaja ? `<span class="chip warn">Baja prevista el ${fmtF(s.fechaBaja)}</span>` : ""}
         ${s.rsceSocio?`<span class="chip">RSCE</span>`:""}
         ${(s.roles||[]).slice(0,3).map(r=>`<span class="chip est">${esc(r)}</span>`).join("")}
       </div>
@@ -81,6 +99,9 @@ V.socio = function(id){
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       ${yo?`${botonFoto("avatar","socio",id,s.avatar?"Cambiar foto":"Subir foto")}<button class="btn brand" data-form="socio|${esc(id)}">Editar perfil</button>`:""}
+      ${SESION.esAdmin ? (s.fechaBaja
+          ? `<button class="btn" data-form="readmitir|${esc(id)}">Readmitir</button>`
+          : `<button class="btn" data-form="baja|${esc(id)}">Dar de baja</button>`) : ""}
       ${!yo && SESION.socio ? `<button class="btn" data-escribir="${esc(id)}|">${esc(t("Escribirle"))}</button>` : ""}
     </div>
   </div>

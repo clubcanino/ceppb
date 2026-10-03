@@ -15,8 +15,9 @@ V.muro = function(){
   /* Y quien ha entrado con un correo que no consta en el censo
      tampoco ve el libro: el libro es de los socios del club. */
   if (SESION.rol === "sin-ficha") return sinFichaEnElCenso();
+  if (SESION.rol === "baja") return accesoCerrado();
 
-  const socios = C("socios");
+  const socios = C("socios").filter(esDelCenso);
   const perros = perrosVisibles();
   const res    = C("resultados");
   const items  = [];
@@ -129,7 +130,7 @@ V.muro = function(){
     </div>
     <div class="mast-stats">
       ${SESION.esAdmin ? `<div class="stat"><div class="k">Socios</div><div class="v">${socios.length}</div>
-        <div class="n">${socios.filter(s=>s.activo).length} con alta vigente</div></div>
+        <div class="n">${socios.filter(fichaVigente).length} con alta vigente</div></div>
       <div class="stat"><div class="k">Criadores</div><div class="v">${conAfijo}</div>
         <div class="n">Con afijo FCI/RSCE</div></div>` : ""}
       <div class="stat"><div class="k">Ejemplares</div><div class="v">${perros.length}</div>
@@ -256,6 +257,22 @@ function portadaPublica(){
    O no es socio del club, o secretaría tiene otro correo suyo. No
    se le echa: se le explica y se le dan las dos salidas.
    ============================================================ */
+/* La ficha existe pero ya no abre: una baja, o un acceso de invitado
+   que ha caducado. No se le enseña nada del libro, pero sí por qué. */
+function accesoCerrado(){
+  const f = SESION.ficha || {};
+  const motivo = f.fechaBaja && f.fechaBaja <= hoy()
+    ? t("Tu ficha consta de baja en el club desde el") + " " + fmtF(f.fechaBaja) + "."
+    : t("Tu acceso como invitado terminó el") + " " + fmtF(f.accesoHasta) + ".";
+  return `
+    <div class="card" style="max-width:560px"><div class="card-h">
+      <h3>${esc(t("Tu acceso está cerrado"))}</h3></div>
+      <div class="card-b">
+        <div class="note warn" style="margin-bottom:14px">${esc(motivo)}</div>
+        <p class="dim">${esc(t("No se ha borrado nada: tus datos y tus perros siguen en el libro. Si crees que es un error o quieres volver, escribe a la secretaría del club y, en cuanto te readmitan, entrarás como siempre."))}</p>
+      </div></div>`;
+}
+
 function sinFichaEnElCenso(){
   const varias = (SESION.fichasPosibles || []).length > 1;
   const correo = (SESION.usuario && SESION.usuario.email) || "";

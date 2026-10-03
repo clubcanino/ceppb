@@ -67,7 +67,17 @@ Lo que hay dentro, y de dónde salió:
    la base de datos, que es la que manda.
 5. **El nivel «gestión» no es presidencia** (tesorería lo fue hasta el 3-10-2026): puede casi todo menos tocar
    la configuración de la plataforma, nombrar jueces o repartir cargos. Y no se le nota.
-6. La plataforma **se instala en el móvil** como aplicación (PWA), sin pasar por ninguna
+6. **La baja cierra la puerta desde su misma fecha** (3-10-2026). No se borra nada: sus
+   perros y su historial se quedan en el libro, y «Readmitir» lo devuelve todo y deja la
+   baja anterior apuntada en sus notas. Lo decide `es_socio()` / `mi_socio_id()` en la base
+   de datos; `fichaVigente()` en `js/privacidad.js` hace la misma cuenta para la pantalla.
+7. **Puede entrar gente que no es socia** (3-10-2026): la columna `socios.acceso` vale
+   `socio`, `invitado` (participa como un socio) o `consulta` (sólo ve el libro: ni
+   directorio, ni mensajes, ni registra nada), con `acceso_hasta` opcional. Llevan ficha en
+   `socios` porque es la ficha la que se ata sola a la cuenta al entrar con su correo, pero
+   no llevan número ni cuentan en el censo, estadísticas ni cobros: filtra con
+   `esDelCenso()`. La junta los da de alta con «Dar acceso a un invitado» en *Socios*.
+8. La plataforma **se instala en el móvil** como aplicación (PWA), sin pasar por ninguna
    tienda. El service worker va **siempre a la red primero**: guardar copias significaría que
    un socio se queda con una versión vieja del libro sin enterarse.
 
@@ -158,6 +168,10 @@ Cada una costó tiempo. Están aquí para no repetirlas.
     `js/util.js` no se pueden sobrescribir dentro del contexto.
 11. **macOS puede revocar el acceso a ~/Desktop y ~/Downloads a mitad de sesión.** Si hace
     falta trabajar con archivos de ahí, cópialos a `/tmp` al empezar.
+12. **El editor SQL de Supabase se queda en «Running…»** con `begin; … commit;` aunque la
+    consulta haya terminado. Comprueba el resultado con otra consulta. Para pruebas que se
+    deshacen, mejor un bloque `do $$ … raise exception 'RESULTADO %', salida; $$`: la
+    excepción lo deshace todo y el mensaje trae los resultados.
 
 ## Cómo trabajar
 
@@ -171,8 +185,8 @@ Cada una costó tiempo. Están aquí para no repetirlas.
   suplantar a un socio en el editor SQL, dentro de una transacción que se deshace:
   `select set_config('request.jwt.claims', json_build_object('sub', <auth_user_id>)::text, true);`
   `set local role authenticated;` … `rollback;`
-- `npm test` antes de subir. Hay 344 pruebas en `pruebas/`.
-- Cada cambio sube el `?v=NN` de **todas** las referencias de `index.html` (van 71): sin eso
+- `npm test` antes de subir. Hay 350 pruebas en `pruebas/`.
+- Cada cambio sube el `?v=NN` de **todas** las referencias de `index.html` (van 72): sin eso
   los socios se quedan con la versión vieja en la caché.
 
 ## Desplegar

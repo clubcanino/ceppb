@@ -51,7 +51,34 @@ function nombreSocio(id){
 function perroVisible(p){
   if (SESION.esAdmin || (p.propietarioId && esYo(p.propietarioId))) return true;
   const v = p.visibilidad || "socios";
-  return v === "publico" || (v === "socios" && SESION.rol === "socio");
+  /* El libro lo leen también los invitados de consulta: es para lo
+     que se les da acceso. Lo que no ven es el directorio de socios. */
+  return v === "publico" || (v === "socios" && (SESION.rol === "socio" || SESION.rol === "consulta"));
+}
+
+/* ---------- socios, invitados y bajas ----------
+   Una ficha es del censo si es de socio. Las de invitado —participa
+   como un socio— y las de consulta —sólo ve el libro— no cuentan en el
+   censo, ni llevan número, ni pagan cuota.
+
+   Vigente es que no esté de baja ni caducada. La baja corta desde su
+   misma fecha; la caducidad, al día siguiente de la indicada. Es la
+   misma cuenta que hace la base de datos, que es la que manda. */
+function esDelCenso(s){ return !!s && (s.acceso || "socio") === "socio"; }
+function fichaVigente(s){
+  if (!s) return false;
+  const h = hoy();
+  if (s.fechaBaja && s.fechaBaja <= h) return false;
+  if (s.accesoHasta && s.accesoHasta < h) return false;
+  return true;
+}
+const ACCESOS = [
+  ["invitado", "Invitado: lo mismo que un socio"],
+  ["consulta", "Consulta: sólo ve el libro"],
+];
+function etiquetaAcceso(s){
+  if (esDelCenso(s)) return "Socio nº " + (s.numero ?? "—");
+  return s.acceso === "consulta" ? "Invitado de consulta" : "Invitado";
 }
 function perrosVisibles(){ return C("perros").filter(perroVisible); }
 

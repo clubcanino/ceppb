@@ -250,6 +250,7 @@ document.addEventListener("change", ev => {
   if(t.id === "f-soc-cri"){ fSoc.criador = t.checked; render(); }
   if(t.id === "f-soc-disc"){ fSoc.disc = t.value; render(); }
   if(t.id === "f-soc-rol"){ fSoc.rol = t.value; render(); }
+  if(t.id === "f-soc-sit"){ fSoc.sit = t.value; render(); }
   if(t.id === "f-soc-varie"){ fSoc.varie = t.value; render(); }
   if(t.id === "f-per-afijo"){ fPer.afijo = t.value; render(); }
   if(t.id === "f-per-var"){ fPer.var = t.value; render(); }

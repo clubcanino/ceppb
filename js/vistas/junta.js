@@ -3,7 +3,7 @@
 
 /* --- Panel de la junta --- */
 V.admin = function(){
-  const socios = C("socios"), perros = C("perros"), res = C("resultados");
+  const socios = C("socios").filter(esDelCenso), perros = C("perros"), res = C("resultados");
   const sinEmail = socios.filter(s => !s.email);
   const sinAlta = socios.filter(s => !s.fechaAlta);
   const sinSalud = perros.filter(p => !R.anexoA(p).ok && !R.anexoA(p).bloqueos.length);
@@ -168,7 +168,7 @@ V.altas = function(){
 
 /* --- Cuotas y cobros --- */
 V.cobros = function(){
-  const socios = C("socios"), pagos = C("pagos");
+  const socios = C("socios").filter(esDelCenso), pagos = C("pagos");
   const anio = new Date().getFullYear();
   const filas = socios.map(s => {
     const p = pagos.filter(x => x.socioId === s.id);

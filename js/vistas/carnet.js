@@ -25,6 +25,7 @@ function codigoDeSocio(s){
    por años naturales, así que se dice hasta cuándo. */
 function vigenciaCarnet(s){
   const anio = new Date().getFullYear();
+  if (!esDelCenso(s)) return { ok: false, texto: t("Invitado, no socio") };
   if (s.fechaBaja) return { ok: false, texto: t("Baja el") + " " + fmtF(s.fechaBaja) };
   return { ok: true, texto: t("Válido durante") + " " + anio };
 }

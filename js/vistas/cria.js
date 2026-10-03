@@ -24,7 +24,7 @@ V.aptos = function(){
   const casi = l.filter(x => x.figs.some(f => !f.cumple && !f.excluido && f.faltan === 1));
   if(!l.length) return `<div class="card"><div class="empty"><b>Sin ejemplares que evaluar</b>
     Esta pantalla cruza cada perro registrado con las cinco figuras del Capítulo 2 y señala qué le falta a cada uno.
-    ${SESION.rol!=="visitante"?`<div style="margin-top:14px"><button class="btn brand" data-form="perro|">Dar de alta un ejemplar</button></div>`:""}</div></div>`;
+    ${puedeAportar()?`<div style="margin-top:14px"><button class="btn brand" data-form="perro|">Dar de alta un ejemplar</button></div>`:""}</div></div>`;
   return `<div class="note" style="margin-bottom:14px">Cada columna es una de las cinco figuras del <b>Capítulo 2</b>. Pasa el cursor sobre un aviso para ver qué falta exactamente.</div>
     ${tarjetaReglamentos()}
     ${casi.length?`<div class="card" style="margin-bottom:14px"><div class="card-h"><h3>A un solo requisito del apto</h3><span class="hint">${casi.length} ejemplares</span></div>
@@ -57,7 +57,7 @@ function panelDeCruce(){
   let panel = perros.length
     ? `<div class="empty"><b>Escribe los dos reproductores</b>Empieza a escribir el nombre y van saliendo los del libro; con tres letras basta. Se comprueban edad, Anexo A, genética y variedades contra el reglamento.</div>`
     : `<div class="empty"><b>Aún no hay ejemplares registrados</b>El simulador compara dos reproductores contra el reglamento; primero hay que dar de alta al menos un macho y una hembra.
-        ${SESION.rol!=="visitante"?`<div style="margin-top:14px"><button class="btn brand" data-form="perro|">Dar de alta un ejemplar</button></div>`:""}</div>`;
+        ${puedeAportar()?`<div style="margin-top:14px"><button class="btn brand" data-form="perro|">Dar de alta un ejemplar</button></div>`:""}</div>`;
   if(m && h){
     const l = R.cruce(m, h, C("perros"), res), v = R.cruceVeredicto(l);
     const orden = {bloqueo:0, aviso:1, ok:2};
@@ -82,7 +82,7 @@ function panelDeCruce(){
               : sol&&sol.estado==="denegada" ? "Este cruce fue denegado. La camada no puede publicarse."
               : sol ? "Expediente presentado y pendiente de resolución. Hasta que se resuelva, la camada no se publica."
               : "Este cruce necesita autorización previa de la Comisión de Cría antes de realizarse. Sin ella, la camada queda retenida y no se difunde."}</div>
-            ${!sol&&SESION.rol!=="visitante"?`<div style="margin-top:12px"><button class="btn brand" data-form="solicitud|${esc(m.id)}~${esc(h.id)}">Solicitar autorización</button></div>`:""}
+            ${!sol&&puedeAportar()?`<div style="margin-top:12px"><button class="btn brand" data-form="solicitud|${esc(m.id)}~${esc(h.id)}">Solicitar autorización</button></div>`:""}
             ${sol?`<div style="margin-top:12px"><button class="btn" data-go="intervar">Ver el expediente</button></div>`:""}
           </div></div>`; })() : ""}
       ${GENES.some(g=>((m.salud?.genes||{})[g.k]==="portador")||((h.salud?.genes||{})[g.k]==="portador")) ? `
@@ -125,7 +125,7 @@ V.cruce = function(){
         <div class="f"><label>Hembra</label>
           ${buscadorDeFicha("crh", ficha(hembras), cruceSel.h,
             {alElegir:"cruceHembra", ph:"Escribe el nombre de la perra…"})}</div>
-        ${SESION.rol!=="visitante"?`<div class="note" style="margin-top:14px">
+        ${puedeAportar()?`<div class="note" style="margin-top:14px">
           ¿No está en el libro? Dalo de alta y vuelves aquí con él puesto.
           Queda a tu nombre.
           <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">

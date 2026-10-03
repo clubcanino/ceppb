@@ -36,12 +36,18 @@ const FORMS = {
         d:"Los nombra la Junta Directiva (Cap. 5). El socio no puede asignárselos.", f:[
         {k:"roles", l:"Condición dentro del CEPPB", tipo:"checks", op:ROLES_CLUB, v:s.roles},
       ]},
-      {t:"Sólo secretaría", d:"Estos campos no los edita el socio.", f:[
+      esDelCenso(s) ? {t:"Sólo secretaría", d:"Estos campos no los edita el socio.", f:[
         {k:"numero", l:"Nº de socio", tipo:"number", v:s.numero ?? siguienteNumeroSocio(),
          h: nuevo ? "Se propone el siguiente libre; cámbialo si secretaría usa otro" : ""},
         {k:"cuota", l:"Cuota", tipo:"select", op:["Individual","Familiar","Familiar principal","Familiar secundaria","Honorífica","Sin asignar"], v:s.cuota},
         {k:"fechaAlta", l:"Fecha de alta", tipo:"date", v:s.fechaAlta},
-        {k:"fechaBaja", l:"Fecha de baja", tipo:"date", v:s.fechaBaja},
+        {k:"fechaBaja", l:"Fecha de baja", tipo:"date", v:s.fechaBaja, h:"Desde ese día deja de poder entrar"},
+        {k:"bajaMotivo", l:"Motivo de la baja", tipo:"select", op:MOTIVOS_BAJA, v:s.bajaMotivo},
+        {k:"notas", l:"Notas internas", tipo:"textarea", v:s.notas},
+      ]} : {t:"Acceso de invitado", d:"No es socio: no cuenta en el censo ni lleva número.", f:[
+        {k:"acceso", l:"Qué puede hacer", tipo:"select", op:ACCESOS, v:s.acceso},
+        {k:"accesoHasta", l:"Acceso hasta", tipo:"date", v:s.accesoHasta, h:"En blanco, sin fecha de fin"},
+        {k:"fechaBaja", l:"Retirar el acceso desde", tipo:"date", v:s.fechaBaja},
         {k:"notas", l:"Notas internas", tipo:"textarea", v:s.notas},
       ]}] : []),
     ], async d => {
@@ -70,6 +76,78 @@ const FORMS = {
       } catch(e){ toast(e.message || "No se ha podido guardar"); }
     });
   },
+  /* Dar acceso a alguien que no es socio. Lleva ficha, como un socio,
+     porque es esa ficha la que se ata sola a su cuenta cuando entra
+     con su correo. Pero ni número, ni cuota, ni cuenta en el censo. */
+  invitado(){
+    abrirForm("Dar acceso a un invitado", [
+      {t:"Quién es", d:"Un juez, un veterinario, un criador de otro club… Entrará en Mi CEPPB con este correo, igual que un socio: pide el enlace en «Entrar» y queda dentro.", f:[
+        {k:"nombre", l:"Nombre"}, {k:"apellidos", l:"Apellidos"},
+        {k:"email", l:"Correo", tipo:"email", wide:true},
+        {k:"notas", l:"Quién es y por qué entra", tipo:"textarea", ph:"Juez del Mundial FMBB, veterinaria del grupo de trabajo…"},
+      ]},
+      {t:"Qué puede hacer", f:[
+        {k:"acceso", l:"Alcance", tipo:"select", op:ACCESOS, v:"consulta"},
+        {k:"accesoHasta", l:"Acceso hasta", tipo:"date", h:"En blanco, sin fecha de fin"},
+      ]},
+    ], async d => {
+      if (!d.nombre || !d.apellidos) return toast("Hacen falta el nombre y los apellidos");
+      const correo = String(d.email || "").trim().toLowerCase();
+      if (!correo.includes("@")) return toast("Hace falta su correo: es con el que entrará");
+      const ya = C("socios").find(x => (x.email || "").toLowerCase() === correo);
+      if (ya) return toast(`Ese correo ya es de la ficha de ${ya.nombreCompleto}`);
+      const n = { nombre: d.nombre, apellidos: d.apellidos, email: correo,
+        acceso: d.acceso, accesoHasta: d.accesoHasta || null, notas: d.notas,
+        perfilPublico: "oculto", fechaAlta: hoy() };
+      try {
+        const nid = await guardar("socios", null, n);
+        toast(`${d.nombre} ya puede entrar con ${correo}`);
+        ir("socio/" + nid);
+      } catch(e){ toast(e.message || "No se ha podido guardar"); }
+    });
+  },
+
+  /* La baja no borra nada: cierra la puerta desde su fecha. Sus perros
+     y su historial siguen en el libro, y readmitirlo lo devuelve todo. */
+  baja(id){
+    const s = byId(C("socios"), id); if (!s) return;
+    abrirForm("Dar de baja · " + s.nombreCompleto, [
+      {t:"La baja", d:"Desde esa fecha no podrá entrar en Mi CEPPB. No se borra nada: sus perros y su historial se quedan en el libro, y si se le readmite lo recupera todo.", f:[
+        {k:"fechaBaja", l:"Fecha de baja", tipo:"date", v:hoy()},
+        {k:"bajaMotivo", l:"Motivo", tipo:"select", op:MOTIVOS_BAJA, v:"Voluntaria"},
+      ]},
+    ], async d => {
+      if (!d.fechaBaja) return toast("Hace falta la fecha de baja");
+      const n = Object.assign({}, s, { fechaBaja: d.fechaBaja, bajaMotivo: d.bajaMotivo || null });
+      delete n.id;
+      try {
+        await guardar("socios", id, n);
+        toast(d.fechaBaja <= hoy() ? `${s.nombreCompleto}, de baja` : `Baja prevista el ${fmtF(d.fechaBaja)}`);
+        render();
+      } catch(e){ toast(e.message || "No se ha podido guardar"); }
+    });
+  },
+
+  readmitir(id){
+    const s = byId(C("socios"), id); if (!s) return;
+    abrirForm("Readmitir · " + s.nombreCompleto, [
+      {t:"Readmisión", d:`Consta de baja desde el ${fmtF(s.fechaBaja)}${s.bajaMotivo?` (${esc(s.bajaMotivo)})`:""}. Al readmitirlo vuelve a entrar con su correo y recupera sus perros y su perfil. La baja anterior queda apuntada en las notas internas.`, f:[
+        {k:"fechaReadmision", l:"Fecha de readmisión", tipo:"date", v:hoy()},
+      ]},
+    ], async d => {
+      const fecha = d.fechaReadmision || hoy();
+      const rastro = `Baja el ${fmtF(s.fechaBaja)}${s.bajaMotivo?` (${s.bajaMotivo})`:""}; readmitido el ${fmtF(fecha)}.`;
+      const n = Object.assign({}, s, { fechaBaja: null, bajaMotivo: null,
+        notas: [s.notas, rastro].filter(Boolean).join("\n") });
+      delete n.id;
+      try {
+        await guardar("socios", id, n);
+        toast(`${s.nombreCompleto}, readmitido`);
+        render();
+      } catch(e){ toast(e.message || "No se ha podido guardar"); }
+    });
+  },
+
   perro(id){
     const p = byId(C("perros"), id) || {};
     abrirForm(id ? "Editar ejemplar" : "Dar de alta un ejemplar", [
@@ -703,6 +781,8 @@ async function ponerAbuelos(hijoId, nombrePadre, nombreMadre){
   catch(e){ /* si no tiene permiso sobre esa ficha, se deja como está */ }
 }
 
+
+const MOTIVOS_BAJA = ["", "Voluntaria", "Impago de la cuota", "Fallecimiento", "Expulsión", "Otro"];
 
 /* El siguiente número libre del censo, para no tener que buscarlo */
 function siguienteNumeroSocio(){

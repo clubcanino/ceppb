@@ -10,14 +10,15 @@
 const SESION = {
   sb: null,
   usuario: null,     // usuario de Supabase Auth (o null si es visitante)
-  socio: null,       // ficha del socio atada a esa cuenta (o null)
+  socio: null,       // ficha con la que participa: socio o invitado, vigente (o null)
+  ficha: null,       // su ficha tal cual, aunque esté de baja o sea de consulta
   esAdmin: false,    // pertenece a la junta directiva
   /* Dentro de la junta hay dos niveles. «Presidencia» manda del todo:
      es quien toca la lista de administradores y quien nombra los
      cargos del club. «Gestión» hace todo el trabajo diario —validar,
      censo, cuotas, traspasos— pero no cambia la plataforma. */
   esPresidencia: false,
-  rol: "visitante",  // visitante | socio | admin
+  rol: "visitante",  // visitante | socio | consulta | baja | sin-ficha | admin
 
   /* Mientras esto sea falso todavía no se sabe quién entra: preguntar
      a Supabase lleva su tiempo. Hasta entonces el rol dice «visitante»
@@ -55,7 +56,7 @@ SESION.iniciar = async function(sb){
       await recargar();
       SESION.avisarSiFaltaContrasena();
     } else {
-      SESION.socio = null; SESION.esAdmin = false;
+      SESION.socio = null; SESION.ficha = null; SESION.esAdmin = false;
       SESION.esPresidencia = false; SESION.rol = "visitante";
     }
     SESION.resuelta = true;
@@ -86,6 +87,7 @@ SESION.avisarSiFaltaContrasena = function(){
 SESION.refrescar = async function(){
   if (!SESION.usuario){
     SESION.rol = "visitante"; SESION.esAdmin = false; SESION.esPresidencia = false;
+    SESION.socio = null; SESION.ficha = null;
     return;
   }
 
@@ -126,8 +128,19 @@ SESION.refrescar = async function(){
   }
 
   /* Socio es quien tiene ficha en el censo. Quien entra con un correo
-     que no consta no es socio: no ve el libro. */
-  SESION.rol = SESION.esAdmin ? "admin" : (SESION.socio ? "socio" : "sin-ficha");
+     que no consta no es socio: no ve el libro.
+
+     La ficha puede estar de baja o caducada, y entonces la puerta se
+     cierra; o ser de un invitado de consulta, que lee el libro pero no
+     participa. En los dos casos SESION.socio se queda vacío: todo lo
+     que sea registrar, escribir o tener perros cuelga de él. */
+  SESION.ficha = SESION.socio;
+  const f = SESION.ficha;
+  if (f && (!fichaVigente(f) || f.acceso === "consulta")) SESION.socio = null;
+  SESION.rol = SESION.esAdmin ? "admin"
+    : SESION.socio ? "socio"
+    : f ? (fichaVigente(f) ? "consulta" : "baja")
+    : "sin-ficha";
 
   /* Cada socio ve la plataforma en su idioma, esté donde esté */
   if (typeof ponerIdioma === "function") ponerIdioma(idiomaDe(SESION.socio));
@@ -218,3 +231,6 @@ SESION.reclamarPendiente = async function(){
 function miSocioId(){ return SESION.socio ? SESION.socio.id : null; }
 function esYo(socioId){ return socioId && socioId === miSocioId(); }
 function puedeEditarSocio(id){ return SESION.esAdmin || esYo(id); }
+/* Registrar algo —un perro, una camada, una solicitud— es de quien
+   participa: la junta, los socios y los invitados. No la consulta. */
+function puedeAportar(){ return SESION.esAdmin || !!SESION.socio; }
