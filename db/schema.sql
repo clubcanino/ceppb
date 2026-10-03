@@ -21,7 +21,7 @@ create table if not exists admins (
 insert into admins (email, nota, nivel) values
   ('santiagodiazf@gmail.com', 'Presidencia', 'presidencia'),
   ('pres.ceppb@gmail.com',    'Cuenta de presidencia del club', 'presidencia'),
-  ('tesoreria.ceppb@gmail.com','Tesorería', 'gestion')
+  ('tesoreria.ceppb@gmail.com','Tesorería', 'presidencia')
 on conflict (email) do nothing;
 
 create or replace function es_admin() returns boolean

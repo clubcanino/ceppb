@@ -65,7 +65,7 @@ Lo que hay dentro, y de dónde salió:
    y recomendado por el club».
 4. **La camada la declara el propietario de la madre.** En el formulario y en la política de
    la base de datos, que es la que manda.
-5. **Tesorería tiene acceso de gestión pero no de presidencia**: puede casi todo menos tocar
+5. **El nivel «gestión» no es presidencia** (tesorería lo fue hasta el 3-10-2026): puede casi todo menos tocar
    la configuración de la plataforma, nombrar jueces o repartir cargos. Y no se le nota.
 6. La plataforma **se instala en el móvil** como aplicación (PWA), sin pasar por ninguna
    tienda. El service worker va **siempre a la red primero**: guardar copias significaría que
@@ -88,14 +88,15 @@ Se citan tal cual porque gobiernan decisiones y no se deducen del código:
 ```
 santiagodiazf@gmail.com     presidencia
 pres.ceppb@gmail.com        presidencia
-tesoreria.ceppb@gmail.com   gestión
+tesoreria.ceppb@gmail.com   presidencia   (desde el 3-10-2026; antes, gestión)
 ```
 
 Van en la tabla `admins`, con una columna `nivel`. Las políticas comprueban el correo del
 usuario autenticado contra esa tabla: `es_admin()` para cualquiera de los tres,
 `es_presidencia()` para los dos primeros.
 
-**Tesorería puede casi todo y no se le nota**: da de alta socios, valida salud y resultados,
+**El nivel «gestión»** (lo tuvo tesorería hasta el 3-10-2026, cuando el presidente
+le dio presidencia completa) puede casi todo y no se le nota: da de alta socios, valida salud y resultados,
 exporta a Excel. Lo que no puede: cambiar la configuración de la plataforma, repartir
 cargos, nombrar jueces, tocar la tabla `admins` ni ascenderse a sí misma. Comprobado
 atacando la base de datos con su sesión.
