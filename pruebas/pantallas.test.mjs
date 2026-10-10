@@ -1418,3 +1418,48 @@ test("un IBAN mal copiado se nota antes de que lo devuelva el banco", () => {
   assert.equal(vale("ES" + "0".repeat(22)), false, "el relleno de ceros no es una cuenta");
   assert.equal(vale(""), false);
 });
+
+/* Qué campos pide el formulario de socio, según quién lo abre y para qué */
+function camposDelFormularioDeSocio(rol, id){
+  const { ctx } = fichaDeSocio(rol);
+  return JSON.parse(vm.runInContext(`
+    let pedidos = []; const abrirDeVerdad2 = abrirForm;
+    abrirForm = (t, gs) => { pedidos = gs.flatMap(g => g.f.map(f => f.k)); };
+    FORMS.socio(${JSON.stringify(id)}); abrirForm = abrirDeVerdad2;
+    JSON.stringify(pedidos)`, ctx));
+}
+
+test("al dar de alta un socio, la junta apunta ya su DNI, dirección y cuenta", () => {
+  const campos = camposDelFormularioDeSocio("admin", null);
+  for (const k of ["dni", "direccion", "iban"]) assert.ok(campos.includes(k), "falta " + k);
+});
+
+test("y esos campos no se cuelan en el formulario que edita un perfil", () => {
+  /* ahí se cambian con su botón, en la tarjeta de la junta: un socio que
+     edita su perfil no debe encontrarse su DNI en el formulario */
+  for (const rol of ["admin", "socio"]){
+    const campos = camposDelFormularioDeSocio(rol, "s1");
+    for (const k of ["dni", "direccion", "iban"]) assert.equal(campos.includes(k), false, rol + " ve " + k);
+  }
+});
+
+test("los datos reservados del alta van a su tabla, no a la ficha del socio", async () => {
+  const { ctx } = fichaDeSocio("admin");
+  const guardado = vm.runInContext(`
+    let alta = null; const abrir3 = abrirForm;
+    abrirForm = (t, gs, ok) => { alta = ok; };
+    FORMS.socio(null); abrirForm = abrir3;
+    const escrito = [];
+    guardar = async (col, id, datos) => { escrito.push({col, id, datos}); return "nuevo"; };
+    ir = () => {};
+    alta({nombre:"Eva", apellidos:"Sanz", numero:"77", dni:"00000000-t",
+          direccion:"Calle Falsa 2", iban:""}).then(() => JSON.stringify(escrito))`, ctx);
+  const escrito = JSON.parse(await guardado);
+  assert.equal(escrito.length, 2);
+  assert.equal(escrito[0].col, "socios");
+  for (const k of ["dni", "direccion", "iban"]) assert.equal(k in escrito[0].datos, false, k + " en la ficha");
+  assert.equal(escrito[1].col, "socios_privado");
+  assert.equal(escrito[1].id, "nuevo");
+  assert.equal(escrito[1].datos.dni, "00000000T");
+  assert.equal(escrito[1].datos.direccion, "Calle Falsa 2");
+});

@@ -185,8 +185,8 @@ Cada una costó tiempo. Están aquí para no repetirlas.
   suplantar a un socio en el editor SQL, dentro de una transacción que se deshace:
   `select set_config('request.jwt.claims', json_build_object('sub', <auth_user_id>)::text, true);`
   `set local role authenticated;` … `rollback;`
-- `npm test` antes de subir. Hay 350 pruebas en `pruebas/`.
-- Cada cambio sube el `?v=NN` de **todas** las referencias de `index.html` (van 73): sin eso
+- `npm test` antes de subir. Hay 356 pruebas en `pruebas/`.
+- Cada cambio sube el `?v=NN` de **todas** las referencias de `index.html` (van 74): sin eso
   los socios se quedan con la versión vieja en la caché.
 
 ## Desplegar

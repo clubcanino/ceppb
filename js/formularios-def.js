@@ -49,7 +49,12 @@ const FORMS = {
         {k:"accesoHasta", l:"Acceso hasta", tipo:"date", v:s.accesoHasta, h:"En blanco, sin fecha de fin"},
         {k:"fechaBaja", l:"Retirar el acceso desde", tipo:"date", v:s.fechaBaja},
         {k:"notas", l:"Notas internas", tipo:"textarea", v:s.notas},
-      ]}] : []),
+      ]},
+      /* En el alta, la hoja de inscripción trae el DNI, la dirección y
+         la cuenta: se apuntan aquí mismo en vez de dar de alta y volver
+         luego a la ficha. Después se cambian desde ella. */
+      ...(nuevo ? [{t:"Datos reservados", d:"Los ven su titular y la junta, nadie más. Puedes dejarlos en blanco y apuntarlos después desde su ficha.", f:CAMPOS_RESERVADOS({})}] : []),
+      ] : []),
     ], async d => {
       const n = Object.assign({}, s, d);
       n.rsceSocio = !!d.rsceSocio;
@@ -57,6 +62,11 @@ const FORMS = {
       if(d.numero) n.numero = Number(d.numero);
 
       if (!n.nombre || !n.apellidos) return toast("Hacen falta el nombre y los apellidos");
+
+      /* Van a otra tabla: en la ficha de socio no hay donde ponerlos. */
+      const reservados = nuevo && SESION.esAdmin ? leerReservados(d, {}) : null;
+      if (reservados === false) return false;
+      for (const k of ["dni", "direccion", "iban"]) delete n[k];
 
       if (nuevo){
         if (!n.numero) return toast("El socio necesita un número");
@@ -70,6 +80,8 @@ const FORMS = {
       delete n.id;
       try {
         const nid = await guardar("socios", id, n);
+        if (reservados && (reservados.dni || reservados.direccion || reservados.iban))
+          await guardar("socios_privado", nid, reservados);
         toast(nuevo ? `Socio nº ${n.numero} dado de alta` : "Perfil actualizado");
         if (nuevo) ir("socio/" + nid);
         else render();
@@ -665,31 +677,42 @@ const FORMS = {
     const s = byId(C("socios"), id); if(!s) return;
     const pr = byId(C("socios_privado"), id) || {};
     abrirForm("Datos reservados · " + s.nombreCompleto, [
-      {t:"Sólo junta directiva", d:"El DNI, la dirección y la cuenta bancaria. Los ven su titular y la junta, nadie más: no salen en el directorio ni en el carnet.", f:[
-        {k:"dni", l:"DNI / NIE", v:pr.dni, ph:"00000000A"},
-        {k:"direccion", l:"Dirección", v:pr.direccion, wide:true},
-        {k:"iban", l:"IBAN de domiciliación", v:pr.iban, wide:true, ph:"ES00 0000 0000 0000 0000 0000",
-         h:"En blanco, sin domiciliar: paga por transferencia"},
-      ]},
+      {t:"Sólo junta directiva", d:"El DNI, la dirección y la cuenta bancaria. Los ven su titular y la junta, nadie más: no salen en el directorio ni en el carnet.", f:CAMPOS_RESERVADOS(pr)},
     ], async d => {
-      const iban = limpiarIban(d.iban);
-      /* Una cuenta mal copiada no falla aquí: falla en el banco, con el
-         recibo devuelto y su comisión. Sólo se comprueba la que cambia,
-         para no impedir corregir el DNI de quien ya tenía una mala. */
-      if (iban && iban !== limpiarIban(pr.iban) && !ibanValido(iban)){
-        toast("Ese IBAN no cuadra: repasa los números");
-        return false;
-      }
+      const reservados = leerReservados(d, pr);
+      if (reservados === false) return false;
       try {
-        await guardar("socios_privado", id, {
-          dni: String(d.dni || "").replace(/[\s.-]/g, "").toUpperCase(),
-          direccion: d.direccion, iban });
+        await guardar("socios_privado", id, reservados);
         toast("Datos reservados actualizados");
         render();
       } catch(e){ return false; }
     });
   },
 };
+
+/* Los tres datos reservados, iguales en el alta y en la ficha. */
+const CAMPOS_RESERVADOS = pr => [
+  {k:"dni", l:"DNI / NIE", v:pr.dni, ph:"00000000A"},
+  {k:"direccion", l:"Dirección", v:pr.direccion, wide:true},
+  {k:"iban", l:"IBAN de domiciliación", v:pr.iban, wide:true, ph:"ES00 0000 0000 0000 0000 0000",
+   h:"En blanco, sin domiciliar: paga por transferencia"},
+];
+
+/* Lo escrito en esos campos, listo para guardar. Devuelve `false`, y
+   avisa, si la cuenta no cuadra: el formulario se queda abierto.
+
+   Una cuenta mal copiada no falla aquí: falla en el banco, con el
+   recibo devuelto y su comisión. Sólo se comprueba la que cambia,
+   para no impedir corregir el DNI de quien ya tenía una mala. */
+function leerReservados(d, pr){
+  const iban = limpiarIban(d.iban);
+  if (iban && iban !== limpiarIban(pr.iban) && !ibanValido(iban)){
+    toast("Ese IBAN no cuadra: repasa los números");
+    return false;
+  }
+  return { dni: String(d.dni || "").replace(/[\s.-]/g, "").toUpperCase(),
+           direccion: d.direccion || "", iban };
+}
 
 /* El IBAN, como lo quiere el banco: sin espacios ni guiones. */
 function limpiarIban(v){
