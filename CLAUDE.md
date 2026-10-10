@@ -186,7 +186,7 @@ Cada una costó tiempo. Están aquí para no repetirlas.
   `select set_config('request.jwt.claims', json_build_object('sub', <auth_user_id>)::text, true);`
   `set local role authenticated;` … `rollback;`
 - `npm test` antes de subir. Hay 350 pruebas en `pruebas/`.
-- Cada cambio sube el `?v=NN` de **todas** las referencias de `index.html` (van 72): sin eso
+- Cada cambio sube el `?v=NN` de **todas** las referencias de `index.html` (van 73): sin eso
   los socios se quedan con la versión vieja en la caché.
 
 ## Desplegar

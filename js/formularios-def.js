@@ -655,7 +655,60 @@ const FORMS = {
       toast("Domiciliación actualizada");
     });
   },
+  /* El DNI, la dirección y la cuenta de un socio, corregidos por la
+     junta desde su ficha. Secretaría los recibe por correo o por
+     teléfono y hasta ahora sólo podía verlos: para cambiar una cuenta
+     había que pedirle al socio que entrase él. Quién puede escribir
+     aquí lo decide la política de `socios_privado`, no este aviso. */
+  reservados(id){
+    if(!SESION.esAdmin) return toast("Sólo la junta directiva");
+    const s = byId(C("socios"), id); if(!s) return;
+    const pr = byId(C("socios_privado"), id) || {};
+    abrirForm("Datos reservados · " + s.nombreCompleto, [
+      {t:"Sólo junta directiva", d:"El DNI, la dirección y la cuenta bancaria. Los ven su titular y la junta, nadie más: no salen en el directorio ni en el carnet.", f:[
+        {k:"dni", l:"DNI / NIE", v:pr.dni, ph:"00000000A"},
+        {k:"direccion", l:"Dirección", v:pr.direccion, wide:true},
+        {k:"iban", l:"IBAN de domiciliación", v:pr.iban, wide:true, ph:"ES00 0000 0000 0000 0000 0000",
+         h:"En blanco, sin domiciliar: paga por transferencia"},
+      ]},
+    ], async d => {
+      const iban = limpiarIban(d.iban);
+      /* Una cuenta mal copiada no falla aquí: falla en el banco, con el
+         recibo devuelto y su comisión. Sólo se comprueba la que cambia,
+         para no impedir corregir el DNI de quien ya tenía una mala. */
+      if (iban && iban !== limpiarIban(pr.iban) && !ibanValido(iban)){
+        toast("Ese IBAN no cuadra: repasa los números");
+        return false;
+      }
+      try {
+        await guardar("socios_privado", id, {
+          dni: String(d.dni || "").replace(/[\s.-]/g, "").toUpperCase(),
+          direccion: d.direccion, iban });
+        toast("Datos reservados actualizados");
+        render();
+      } catch(e){ return false; }
+    });
+  },
 };
+
+/* El IBAN, como lo quiere el banco: sin espacios ni guiones. */
+function limpiarIban(v){
+  return String(v ?? "").replace(/[\s-]/g, "").toUpperCase();
+}
+
+/* La comprobación de siempre (ISO 13616): las cuatro primeras al
+   final, las letras a números, y el resto de dividir entre 97 ha de
+   ser 1. Se hace por trozos porque el número no cabe en un entero. */
+function ibanValido(v){
+  const iban = limpiarIban(v);
+  if (!/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(iban)) return false;
+  if (iban.startsWith("ES") && iban.length !== 24) return false;
+  const cifras = (iban.slice(4) + iban.slice(0, 4))
+    .replace(/[A-Z]/g, c => String(c.charCodeAt(0) - 55));
+  let resto = 0;
+  for (const c of cifras) resto = (resto * 10 + Number(c)) % 97;
+  return resto === 1;
+}
 
 
 /* ------------------------------------------------------------

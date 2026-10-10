@@ -148,6 +148,7 @@ V.socio = function(id){
           <dt>IBAN</dt><dd class="num">${esc(priv?.iban||"—")}</dd>
           <dt>Cuota</dt><dd>${esc(s.cuota||"—")}</dd>
         </dl>
+        <button class="btn sm" style="margin-top:12px" data-form="reservados|${esc(id)}">Cambiar DNI, dirección o cuenta</button>
         ${s.notas?`<div class="note" style="margin-top:12px;white-space:pre-wrap;max-height:180px;overflow:auto">${esc(s.notas)}</div>`:""}
       </div></div>`:""}
     </div>

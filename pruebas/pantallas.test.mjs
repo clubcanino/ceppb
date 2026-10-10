@@ -1356,3 +1356,65 @@ test("un socio de baja lo lleva marcado", () => {
   assert.match(html, /chip block/);
   assert.equal(/Válido durante/.test(html), false);
 });
+
+/* ============================================================
+   Los datos reservados de un socio: la junta los corrige desde la
+   ficha. Antes sólo podía verlos.
+   ============================================================ */
+function fichaDeSocio(rol){
+  const ctx = montar();
+  vm.runInContext(`
+    SESION.rol=${JSON.stringify(rol)}; SESION.esAdmin=${rol === "admin"};
+    SESION.usuario={id:"u1", email:"x@y.z"};
+    SESION.socio={id:"s9", numero:9, nombreCompleto:"Otro Socio"};
+    S.listo=true; S.error=null;
+    S.data.socios=[{id:"s1", numero:1, nombre:"Ana", apellidos:"Ruiz", nombreCompleto:"Ana Ruiz",
+                    perfilPublico:"socios", acceso:"socio", fechaAlta:"2015-03-12"},
+                   {id:"s9", numero:9, nombreCompleto:"Otro Socio", acceso:"socio", fechaAlta:"2015-03-12"}];
+    S.data.socios_privado=[{id:"s1", socioId:"s1", dni:"00000000T", direccion:"Calle Falsa 1",
+                            iban:"ES0000000000000000000000"}];
+  `, ctx);
+  return { ctx, html: vm.runInContext('String(V.socio("s1"))', ctx) };
+}
+
+test("la junta puede cambiar el DNI y la cuenta desde la ficha del socio", () => {
+  const { html } = fichaDeSocio("admin");
+  assert.match(html, /data-form="reservados\|s1"/);
+  assert.match(html, /ES0{22}/);
+});
+
+test("y otro socio ni ve esos datos ni el botón para cambiarlos", () => {
+  const { ctx, html } = fichaDeSocio("socio");
+  assert.equal(/reservados\|/.test(html), false);
+  assert.equal(/00000000T|ES0{22}/.test(html), false);
+  /* aunque llamase al formulario a mano, no se le abre */
+  const abierto = vm.runInContext(`
+    let seAbrio = false; const abrirDeVerdad = abrirForm;
+    abrirForm = () => { seAbrio = true; };
+    FORMS.reservados("s1"); abrirForm = abrirDeVerdad; seAbrio`, ctx);
+  assert.equal(abierto, false);
+});
+
+/* Los IBAN de la prueba se fabrican aquí, con sus dígitos de control
+   bien calculados, en vez de escribirlos: el cerrojo del repositorio
+   no deja entrar nada con forma de cuenta, y hace bien. */
+function ibanDe(pais, cuenta){
+  const cifras = (cuenta + pais + "00").replace(/[A-Z]/g, c => String(c.charCodeAt(0) - 55));
+  let resto = 0;
+  for (const c of cifras) resto = (resto * 10 + Number(c)) % 97;
+  return pais + String(98 - resto).padStart(2, "0") + cuenta;
+}
+
+test("un IBAN mal copiado se nota antes de que lo devuelva el banco", () => {
+  const ctx = montar();
+  const vale = v => vm.runInContext(`ibanValido(${JSON.stringify(v)})`, ctx);
+  const bueno = ibanDe("ES", "21000418450200051332");
+  assert.equal(vale(bueno), true);
+  assert.equal(vale(bueno.toLowerCase().replace(/(.{4})/g, "$1 ")), true, "con espacios y en minúsculas");
+  const cambiado = bueno.slice(0, -1) + (bueno.endsWith("3") ? "4" : "3");
+  assert.equal(vale(cambiado), false, "un dígito cambiado");
+  assert.equal(vale(bueno.slice(0, -1)), false, "le falta uno");
+  assert.equal(vale(ibanDe("DE", "370400440532013000")), true, "una cuenta de fuera también vale");
+  assert.equal(vale("ES" + "0".repeat(22)), false, "el relleno de ceros no es una cuenta");
+  assert.equal(vale(""), false);
+});
